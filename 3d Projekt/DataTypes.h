@@ -3,7 +3,7 @@
 struct Vertex {
 
 	float x, y, z;	
-	float u, v;
+	float r, g, b; //change this to UV later
 };
 
 

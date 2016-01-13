@@ -2,7 +2,7 @@
 #include <crtdbg.h>
 #include "Linker.h"
 #include "windowInit.h"
-#define _CRTDBG_MAP_ALLOC
+//#define _CRTDBG_MAP_ALLOC
 HWND InitWindow(HINSTANCE hInstance);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
@@ -29,10 +29,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			}
 			else
 			{
-				//engine->run();
+				engine.run();
 			}
 		}
-
+		engine.~Engine();
 		DestroyWindow(wndHandle);
 	}
 	return (int)msg.wParam;

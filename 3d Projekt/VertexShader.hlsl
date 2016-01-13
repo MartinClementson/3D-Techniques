@@ -18,10 +18,10 @@ struct VS_OUT
 
 VS_OUT VS_main( VS_IN input )
 {
-	VS_OUT output; //perhaps its supposed to say VS_OUT output = (VS_OUT)0;
+	VS_OUT output = (VS_OUT)0; //perhaps its supposed to say VS_OUT output = (VS_OUT)0;
 
 	//setting the attributes
-	output.pos = (input.pos, 1.0f);
+	output.pos = float4(input.pos, 1.0f);
 	output.color = input.color;
 
 	return output;
