@@ -1,80 +1,122 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-<<<<<<< HEAD
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Cube.cpp" />
-    <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="Input.cpp" />
-    <ClCompile Include="Light.cpp" />
-    <ClCompile Include="Logic.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Material.cpp" />
-    <ClCompile Include="Model.cpp" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Render.cpp" />
-    <ClCompile Include="Triangle.cpp" />
-    <ClCompile Include="windowInit.cpp" />
-=======
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
+    <FxCompile Include="PixelShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexShader.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Render.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Logic.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Classes\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Classes\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>Classes\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Classes\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Classes\Light</Filter>
+    </ClCompile>
+    <ClCompile Include="windowInit.cpp">
+      <Filter>Classes\Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Cube.cpp">
+      <Filter>Classes\Model\Cube</Filter>
+    </ClCompile>
+    <ClCompile Include="Triangle.cpp">
+      <Filter>Classes\Model\Triangle</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Constants.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="DataTypes.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Linker.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Classes\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Classes\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>Classes\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Classes\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Classes\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="windowInit.h">
+      <Filter>Classes\Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Cube.h">
+      <Filter>Classes\Model\Cube</Filter>
+    </ClInclude>
+    <ClInclude Include="Triangle.h">
+      <Filter>Classes\Model\Triangle</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
     <Filter Include="Classes">
-      <UniqueIdentifier>{398292a6-59c1-44d7-b675-a1d1a3c09c43}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Classes\Engine">
-      <UniqueIdentifier>{4ee7e281-ee93-4bb1-85f0-365744f54075}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Classes\Camera">
-      <UniqueIdentifier>{f4e82ea3-edd6-4166-a90d-65b1b8cdfc5a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Classes\Light">
-      <UniqueIdentifier>{d84bd33c-3621-4077-8d91-e181631b5519}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Classes\Material">
-      <UniqueIdentifier>{94a8620c-4624-406e-82d4-095fc00753f5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Classes\Model">
-      <UniqueIdentifier>{9b4a67b1-c492-4348-a877-1c85376fd097}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Classes\Model\Primitives">
-      <UniqueIdentifier>{e48a9788-d0bc-458c-aeb5-77e934c17e36}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Classes\Model\Primitives\Triangle">
-      <UniqueIdentifier>{8838eb39-882f-4825-8f49-7da26f42691b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Classes\Model\Primitives\Cube">
-      <UniqueIdentifier>{15ff98ef-26d5-4aa4-b987-226d827a1345}</UniqueIdentifier>
+      <UniqueIdentifier>{d27945d2-7119-4b2f-a4cd-5701ab015c2b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Shaders">
-      <UniqueIdentifier>{1943989f-927a-4593-80e9-8597436ae0ce}</UniqueIdentifier>
+      <UniqueIdentifier>{3a6c2099-8bfa-42a0-bec1-af9e6d7a0ccf}</UniqueIdentifier>
     </Filter>
->>>>>>> parent of fe72589... Revert "Engine Init"
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Constants.h" />
-    <ClInclude Include="Cube.h" />
-    <ClInclude Include="Engine.h" />
-    <ClInclude Include="DataTypes.h" />
-    <ClInclude Include="Light.h" />
-    <ClInclude Include="Linker.h" />
-    <ClInclude Include="Material.h" />
-    <ClInclude Include="Model.h" />
-    <ClInclude Include="Triangle.h" />
-    <ClInclude Include="windowInit.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="VertexShader.hlsl" />
-    <FxCompile Include="PixelShader.hlsl" />
+    <Filter Include="Headers">
+      <UniqueIdentifier>{09f4acec-5ec0-4ccd-8c70-f5fdc359a320}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{8f65f1c2-2632-4f79-9940-df278f533c93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Camera">
+      <UniqueIdentifier>{95a7ad41-e049-47bf-9be8-552904ae5675}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Model">
+      <UniqueIdentifier>{bd54e66f-47e9-4ee5-8f23-1a2be192bec2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Engine">
+      <UniqueIdentifier>{830ec384-91be-47d1-9821-b90238c605c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Light">
+      <UniqueIdentifier>{14bd8916-604b-4a57-9432-92f361e0d90c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Window">
+      <UniqueIdentifier>{25321fef-b073-4319-bcc3-23d2ba057f1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Model\Cube">
+      <UniqueIdentifier>{f03dc245-27f5-4db7-87eb-772007861b33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Model\Triangle">
+      <UniqueIdentifier>{1f78ccc0-771d-4c93-94e9-9024cc525827}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
