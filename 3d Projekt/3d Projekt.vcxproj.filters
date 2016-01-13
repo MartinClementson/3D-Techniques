@@ -121,7 +121,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <FxCompile Include="PixelShader.hlsl">
+=======
+    <FxCompile Include="VertexShader.hlsl">
+>>>>>>> origin/master
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
