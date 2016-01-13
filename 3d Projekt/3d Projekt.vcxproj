@@ -173,7 +173,6 @@
     <ClInclude Include="Triangle.h" />
     <ClInclude Include="windowInit.h" />
   </ItemGroup>
-<<<<<<< HEAD
   <ItemGroup>
 <<<<<<< HEAD
     <FxCompile Include="PixelShader.hlsl">
@@ -192,8 +191,6 @@
 >>>>>>> origin/master
     </FxCompile>
   </ItemGroup>
-=======
->>>>>>> parent of f08beda... Created pixelShader
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
