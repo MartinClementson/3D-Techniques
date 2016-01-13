@@ -40,9 +40,6 @@
     <Filter Include="Classes\Model\Primitives\Cube">
       <UniqueIdentifier>{15ff98ef-26d5-4aa4-b987-226d827a1345}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{1943989f-927a-4593-80e9-8597436ae0ce}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
