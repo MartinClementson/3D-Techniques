@@ -12,6 +12,8 @@ Engine::Engine(HWND* winHandle)
 
 	setViewPort();
 
+	createShaders();
+
 	/*models = new Model();*/ //this will be an array 
 
 	//temporary, to be moved
@@ -28,7 +30,7 @@ Engine::Engine(HWND* winHandle)
 	//data.pSysMem = tempVerts;
 	//this->gDevice->CreateBuffer(&bufferDesc, &data, &gVertexBuffer);
 	//
-	//newFunction();
+	newFunction();
 	
 }
 
@@ -181,7 +183,7 @@ void Engine::newFunction()
 
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	bufferDesc.ByteWidth = sizeof(vertices); //kan vara fel
+	bufferDesc.ByteWidth = sizeof(vertices); 
 
 	D3D11_SUBRESOURCE_DATA data;
 	data.pSysMem = vertices;
