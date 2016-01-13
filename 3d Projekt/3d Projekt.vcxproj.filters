@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+<<<<<<< HEAD
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="Engine.cpp" />
@@ -14,6 +15,50 @@
     <ClCompile Include="Render.cpp" />
     <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="windowInit.cpp" />
+=======
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Classes">
+      <UniqueIdentifier>{398292a6-59c1-44d7-b675-a1d1a3c09c43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Engine">
+      <UniqueIdentifier>{4ee7e281-ee93-4bb1-85f0-365744f54075}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Camera">
+      <UniqueIdentifier>{f4e82ea3-edd6-4166-a90d-65b1b8cdfc5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Light">
+      <UniqueIdentifier>{d84bd33c-3621-4077-8d91-e181631b5519}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Material">
+      <UniqueIdentifier>{94a8620c-4624-406e-82d4-095fc00753f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Model">
+      <UniqueIdentifier>{9b4a67b1-c492-4348-a877-1c85376fd097}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Model\Primitives">
+      <UniqueIdentifier>{e48a9788-d0bc-458c-aeb5-77e934c17e36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Model\Primitives\Triangle">
+      <UniqueIdentifier>{8838eb39-882f-4825-8f49-7da26f42691b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Model\Primitives\Cube">
+      <UniqueIdentifier>{15ff98ef-26d5-4aa4-b987-226d827a1345}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{1943989f-927a-4593-80e9-8597436ae0ce}</UniqueIdentifier>
+    </Filter>
+>>>>>>> parent of fe72589... Revert "Engine Init"
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
