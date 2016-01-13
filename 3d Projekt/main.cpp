@@ -32,7 +32,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 				engine.run();
 			}
 		}
-		engine.~Engine();
+		engine.release();
 		DestroyWindow(wndHandle);
 	}
 	return (int)msg.wParam;

@@ -39,18 +39,19 @@ Engine::Engine(HWND* winHandle)
 Engine::~Engine()
 {
 	//delete models; //this needs to be an array delete <------------
-	//Releasing everything
+}
+
+void Engine::release()
+{
+	gVertexBuffer->Release();
 	gVertexLayout->Release();
 	gVertexShader->Release();
 	gPixelShader->Release();
-	gVertexBuffer->Release();
 	//gGeometryShader->Release()  Geometry shader not in use yet
-	gSwapChain->Release();
 	gBackbufferRTV->Release();
-	gDeviceContext->Release();
+	gSwapChain->Release();
 	gDevice->Release();
-
-
+	gDeviceContext->Release();
 }
 
 
@@ -224,7 +225,7 @@ void Engine::render()
 	UINT32 vertexSize = sizeof(Vertex);
 	UINT32 offset = 0;
 
-	this->gDeviceContext->IAGetVertexBuffers(0, 1, &gVertexBuffer, &vertexSize, &offset);
+	this->gDeviceContext->IASetVertexBuffers(0, 1, &gVertexBuffer, &vertexSize, &offset);
 
 	this->gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	this->gDeviceContext->IASetInputLayout(gVertexLayout);

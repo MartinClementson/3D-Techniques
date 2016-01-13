@@ -32,6 +32,7 @@ public:
 	Engine(HWND* winHandle);
 	virtual ~Engine();
 
+	void release();
 	void run();
 	void update();
 	void render();
