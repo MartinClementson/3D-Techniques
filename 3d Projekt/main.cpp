@@ -1,6 +1,9 @@
+#define CRTDBG_MAP_ALLOC
+
 #include <stdlib.h>
 #include <crtdbg.h>
 #include "Linker.h"
+#include "Engine.h"
 #include "windowInit.h"
 //#define _CRTDBG_MAP_ALLOC
 HWND InitWindow(HINSTANCE hInstance);
@@ -33,8 +36,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			}
 		}
 		engine.release();
+		engine.~Engine();
 		DestroyWindow(wndHandle);
 	}
+	_CrtDumpMemoryLeaks();
 	return (int)msg.wParam;
 }
 

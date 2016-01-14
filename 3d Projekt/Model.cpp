@@ -5,22 +5,62 @@
 Model::Model()
 {
 
-	//this->vertices = new Vertex[3]{
-	//	//First Tris
-	//	-0.5f, 0.5f, 0.0f,	//v0 pos														
-	//	 0.0f, 1.0f, 0.0f,
+	this->vertices = new std::vector<Vertex>;
 
-	//	 0.5f, 0.5f, 0.0f,	//v1
-	//	 0.0f, 0.0f, 1.0f,
+	vertices->push_back(Vertex {
+	
+		//First Tris
+		0.0f, 0.5f, 0.0f, PAD,	//v0 pos														
+		1.0f, 0.0f, 0.0f, PAD });
 
-	//	-0.5f,-0.5f, 0.0f, //v2
-	//	 1.0f, 0.0f, 0.0f,
-	//};
+	vertices->push_back(Vertex{
+		//second Tris
+		0.5f, -0.5f, 0.0f,PAD,	//v1
+		0.0f,  1.0f, 0.0f,PAD });
+
+	vertices->push_back(Vertex{
+		//Third Tris
+
+	   -0.5f, -0.5f, 0.0f,PAD, //v2
+		0.0f,  0.0f, 1.0f,PAD });
+	
 
 
 }
 
-Vertex* Model::getVerts()
+Model::Model(const Model &obj) //Copy Constructor
+{
+	this->pivotPoint = obj.pivotPoint;
+	this->translation = obj.translation;
+	this->rotation = obj.rotation;
+	this->scale = obj.scale;
+
+	this->vertices = new std::vector<Vertex>;
+
+	for (size_t i = 0; i < obj.vertices->size(); i++)
+	{
+		this->vertices->push_back(obj.vertices->at(i));
+	}
+
+
+}
+
+
+void Model::setPivotPoint(XMFLOAT3 newPosition)
+{
+
+	this->pivotPoint = newPosition;
+
+}
+
+XMFLOAT3 Model::getPivotPoint()
+{
+	return this->pivotPoint;
+
+}
+
+
+std::vector<Vertex>* Model::getVerts()
 {
 
 	return this->vertices;
@@ -30,7 +70,7 @@ Vertex* Model::getVerts()
 Model::~Model()
 {
 
-	delete[] vertices;
+	delete vertices;
 }
 
 

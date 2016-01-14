@@ -45,9 +45,10 @@
     <ClCompile Include="Cube.cpp">
       <Filter>Classes\Model\Cube</Filter>
     </ClCompile>
-    <ClCompile Include="Triangle.cpp">
-      <Filter>Classes\Model\Triangle</Filter>
+    <ClCompile Include="Pyramid.cpp">
+      <Filter>Classes\Model\Pyramid</Filter>
     </ClCompile>
+    <ClCompile Include="Plane.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h">
@@ -80,9 +81,10 @@
     <ClInclude Include="Cube.h">
       <Filter>Classes\Model\Cube</Filter>
     </ClInclude>
-    <ClInclude Include="Triangle.h">
-      <Filter>Classes\Model\Triangle</Filter>
+    <ClInclude Include="Pyramid.h">
+      <Filter>Classes\Model\Pyramid</Filter>
     </ClInclude>
+    <ClInclude Include="Plane.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Classes">
@@ -115,8 +117,11 @@
     <Filter Include="Classes\Model\Cube">
       <UniqueIdentifier>{f03dc245-27f5-4db7-87eb-772007861b33}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Classes\Model\Triangle">
+    <Filter Include="Classes\Model\Pyramid">
       <UniqueIdentifier>{1f78ccc0-771d-4c93-94e9-9024cc525827}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Model\Plane">
+      <UniqueIdentifier>{28827010-3dc8-4a00-a165-1cee1a79734e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

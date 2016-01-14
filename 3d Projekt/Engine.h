@@ -1,9 +1,17 @@
 #pragma once
 #include "Linker.h"
+#include "Model.h"
+#include "Cube.h"
+#include "Pyramid.h"
+#include "Plane.h"
 class Engine
 {
 
 private:
+	int vertexAmount;
+	int modelAmount;
+	std::vector<Model>* models;
+	std::vector<Vertex>* verticesToRender;
 
 	HRESULT hr;
 	ID3D11Device *gDevice = nullptr;
@@ -22,7 +30,6 @@ private:
 	//ID3D11GeometryShader* gGeometryShader = nullptr;
 	ID3D11PixelShader* gPixelShader = nullptr;
 
-	//Model* models;
 
 	HRESULT CreateDirect3DContext(HWND* wndHandle);
 	void setViewPort();
@@ -30,14 +37,18 @@ private:
 public:
 	Engine();
 	Engine(HWND* winHandle);
+	
+
 	virtual ~Engine();
+
+	void addModel(Primitives type);
 
 	void release();
 	void run();
 	void update();
 	void render();
-
-	void newFunction();
+	void loadModels();
+	void loadVertices();
 
 
 

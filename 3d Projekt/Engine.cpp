@@ -2,35 +2,31 @@
 
 
 
+
 Engine::Engine()
 {
 }
 
 Engine::Engine(HWND* winHandle)
 {
+	this->vertexAmount = 0;
+	this->modelAmount = 0;
 	hr = CreateDirect3DContext(winHandle);
 
 	setViewPort();
 
 	createShaders();
 
-	/*models = new Model();*/ //this will be an array 
+	//Load the models and get their vertices
+	this->models = new std::vector<Model>; //this will be an array 
+	
+	this->verticesToRender = new std::vector<Vertex>;
+	loadModels();
+	loadVertices();
 
-	//temporary, to be moved
-
-	//D3D11_BUFFER_DESC bufferDesc;
-	//Vertex* tempVerts = models->getVerts();
-	//memset(&bufferDesc, 0, sizeof(bufferDesc));
-
-	//bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	//bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	//bufferDesc.ByteWidth = sizeof(tempVerts); //kan vara fel
-
-	//D3D11_SUBRESOURCE_DATA data;
-	//data.pSysMem = tempVerts;
-	//this->gDevice->CreateBuffer(&bufferDesc, &data, &gVertexBuffer);
-	//
-	newFunction();
+	
+	
+	
 	
 }
 
@@ -38,11 +34,13 @@ Engine::Engine(HWND* winHandle)
 
 Engine::~Engine()
 {
-	//delete models; //this needs to be an array delete <------------
+	delete models; 
+	delete verticesToRender;
 }
 
 void Engine::release()
 {
+	
 	gVertexBuffer->Release();
 	gVertexLayout->Release();
 	gVertexShader->Release();
@@ -53,7 +51,6 @@ void Engine::release()
 	gDevice->Release();
 	gDeviceContext->Release();
 }
-
 
 HRESULT Engine::CreateDirect3DContext(HWND* wndHandle) 
 {
@@ -141,7 +138,7 @@ void Engine::createShaders()
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] = 
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0},
-		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA,0}
+		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA,0}
 		//Normals and UV goes here
 
 	};
@@ -165,31 +162,57 @@ void Engine::createShaders()
 	pPs->Release();
 }
 
-void Engine::newFunction()
+void Engine::loadModels()
 {
+	
+	this->models->push_back(Model());
 
-	Vertex vertices[3]{
-		//First Tris
-		0.0f, 0.5f, 0.0f,	//v0 pos														
-		1.0f, 0.0f, 0.0f,
+	this->modelAmount += 1;
+	
+}
 
-		0.5f, -0.5f, 0.0f,	//v1
-		0.0f, 1.0f, 0.0f,
+void Engine::loadVertices()
+{
+	//Loop through every model we have loaded
+	for (int j = 0; j < modelAmount; j++)
+	{	
+		//Get the vertices of that model
+		std::vector<Vertex>* tempVerts = models->at(j).getVerts();
 
-		-0.5f,-0.5f, 0.0f, //v2
-		0.0f, 0.0f, 1.0f,
-	};
+			
+			int modelVerts = tempVerts->size(); //using "modelVerts" to avoid doing function call every loop
+			
+			this->vertexAmount += modelVerts; //At the verts to the global vertCounter
+			
+			//For every model, loop through the vertices
+			for (int i = 0; i < modelVerts; i++)
+			{
+				//Put each vertex into the dynamic array	
+				this->verticesToRender->push_back(tempVerts->at(i));
+
+			}
+	}
+
+
+
+
 	D3D11_BUFFER_DESC bufferDesc;
 	memset(&bufferDesc, 0, sizeof(bufferDesc));
-
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	bufferDesc.ByteWidth = sizeof(vertices); 
+	bufferDesc.ByteWidth = sizeof(Vertex)* vertexAmount; 
+	
 
 	D3D11_SUBRESOURCE_DATA data;
-	data.pSysMem = vertices;
+	//Send the array of vertices in to pSysMem
+	data.pSysMem = verticesToRender->data() ;
+	// data() "Returns a direct pointer to the memory array used internally by the vector to store its owned elements."
+	
 	this->gDevice->CreateBuffer(&bufferDesc, &data, &gVertexBuffer);
+
+	
 }
+
 void Engine::run()
 {
 
@@ -230,8 +253,42 @@ void Engine::render()
 	this->gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	this->gDeviceContext->IASetInputLayout(gVertexLayout);
 
-	this->gDeviceContext->Draw(3, 0); //This will be dynamic,
+	this->gDeviceContext->Draw(vertexAmount, 0); //This will be dynamic,
 
+
+
+}
+
+void Engine::addModel(Primitives type)
+{
+	//"Primitives" datatype is an Enumeration of our 3d primitives.
+	//With the "type" parameter we choose what kind of model will be added
+
+	//In the switch we create the model accordingly
+	switch (type)
+	{
+		case CUBE:
+		{
+			this->models->push_back(Cube());
+			this->modelAmount += 1;
+			break;
+		}
+
+		case PLANE:
+		{
+			this->models->push_back(Plane());
+			this->modelAmount += 1;
+			break;
+		}
+
+		case PYRAMID:
+		{
+			this->models->push_back(Pyramid());
+			this->modelAmount += 1;
+			break;
+		}
+
+	}
 
 
 }
