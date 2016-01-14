@@ -1,11 +1,17 @@
 #pragma once
 #include "Linker.h"
 #include "Model.h"
+#include "Cube.h"
+#include "Pyramid.h"
+#include "Plane.h"
 class Engine
 {
 
 private:
-	Model* models;
+	int vertexAmount;
+	int modelAmount;
+	std::vector<Model>* models;
+	std::vector<Vertex>* verticesToRender;
 
 	HRESULT hr;
 	ID3D11Device *gDevice = nullptr;
@@ -31,13 +37,17 @@ private:
 public:
 	Engine();
 	Engine(HWND* winHandle);
+	
+
 	virtual ~Engine();
+
+	void addModel(Primitives type);
 
 	void release();
 	void run();
 	void update();
 	void render();
-
+	void loadModels();
 	void loadVertices();
 
 

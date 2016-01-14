@@ -156,8 +156,9 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Plane.cpp" />
+    <ClCompile Include="Pyramid.cpp" />
     <ClCompile Include="Render.cpp" />
-    <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="windowInit.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -170,7 +171,8 @@
     <ClInclude Include="Linker.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Model.h" />
-    <ClInclude Include="Triangle.h" />
+    <ClInclude Include="Plane.h" />
+    <ClInclude Include="Pyramid.h" />
     <ClInclude Include="windowInit.h" />
   </ItemGroup>
   <ItemGroup>

@@ -12,20 +12,21 @@ protected:
 	XMFLOAT3 rotation;
 	XMFLOAT3 scale;
 
+	std::vector<Vertex> *vertices;
 
-	Vertex* vertices;
 
 
 public:
-	Model();
+	Model();//Default constuctor
+	Model(const Model &obj); //copy constructor
 	virtual ~Model();
 	
-	Vertex* getVerts();
 
 	//Setters
 	void setPivotPoint(XMFLOAT3 newPosition);
 
 	//Getters
+	std::vector<Vertex>* getVerts();
 	XMFLOAT3 getPivotPoint();
 
 };

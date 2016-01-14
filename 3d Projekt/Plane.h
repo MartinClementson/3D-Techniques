@@ -1,10 +1,10 @@
 #pragma once
 #include "Model.h"
-class Triangle :
+class Plane :
 	public Model
 {
 public:
-	Triangle();
-	virtual ~Triangle();
+	Plane();
+	virtual ~Plane();
 };
 
