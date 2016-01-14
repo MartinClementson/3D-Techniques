@@ -2,8 +2,10 @@
 
 struct Vertex {
 
-	float x, y, z;	
-	float r, g, b; //change this to UV later
+	float x, y, z, pad;
+	
+	float r, g, b, ColorPad; //change this to UV later
+	
 };
 
 

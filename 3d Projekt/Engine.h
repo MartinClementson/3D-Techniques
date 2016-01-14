@@ -1,5 +1,6 @@
 #pragma once
 #include "Linker.h"
+#include "Model.h"
 class Engine
 {
 
@@ -22,7 +23,7 @@ private:
 	//ID3D11GeometryShader* gGeometryShader = nullptr;
 	ID3D11PixelShader* gPixelShader = nullptr;
 
-	//Model* models;
+	Model* models;
 
 	HRESULT CreateDirect3DContext(HWND* wndHandle);
 	void setViewPort();

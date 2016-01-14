@@ -14,23 +14,23 @@ Engine::Engine(HWND* winHandle)
 
 	createShaders();
 
-	/*models = new Model();*/ //this will be an array 
+	models = new Model(); //this will be an array 
 
 	//temporary, to be moved
 
-	//D3D11_BUFFER_DESC bufferDesc;
-	//Vertex* tempVerts = models->getVerts();
-	//memset(&bufferDesc, 0, sizeof(bufferDesc));
+	Vertex* tempVerts = models->getVerts();
+	D3D11_BUFFER_DESC bufferDesc;
+	memset(&bufferDesc, 0, sizeof(bufferDesc));
 
-	//bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	//bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	//bufferDesc.ByteWidth = sizeof(tempVerts); //kan vara fel
+	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.ByteWidth = sizeof(tempVerts); //kan vara fel
 
-	//D3D11_SUBRESOURCE_DATA data;
-	//data.pSysMem = tempVerts;
-	//this->gDevice->CreateBuffer(&bufferDesc, &data, &gVertexBuffer);
-	//
-	newFunction();
+	D3D11_SUBRESOURCE_DATA data;
+	data.pSysMem = tempVerts;
+	this->gDevice->CreateBuffer(&bufferDesc, &data, &gVertexBuffer);
+	
+	
 	
 }
 
@@ -38,7 +38,7 @@ Engine::Engine(HWND* winHandle)
 
 Engine::~Engine()
 {
-	//delete models; //this needs to be an array delete <------------
+	delete models; //this needs to be an array delete <------------
 }
 
 void Engine::release()
@@ -141,7 +141,7 @@ void Engine::createShaders()
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] = 
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0},
-		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA,0}
+		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA,0}
 		//Normals and UV goes here
 
 	};
@@ -168,27 +168,27 @@ void Engine::createShaders()
 void Engine::newFunction()
 {
 
-	Vertex vertices[3]{
-		//First Tris
-		0.0f, 0.5f, 0.0f,	//v0 pos														
-		1.0f, 0.0f, 0.0f,
+	//Vertex vertices[3]{
+	//	//First Tris
+	//	0.0f, 0.5f, 0.0f, PAD,	//v0 pos														
+	//	1.0f, 0.0f, 0.0f, PAD,
 
-		0.5f, -0.5f, 0.0f,	//v1
-		0.0f, 1.0f, 0.0f,
+	//	0.5f, -0.5f, 0.0f,PAD,	//v1
+	//	0.0f,  1.0f, 0.0f,PAD,
 
-		-0.5f,-0.5f, 0.0f, //v2
-		0.0f, 0.0f, 1.0f,
-	};
-	D3D11_BUFFER_DESC bufferDesc;
-	memset(&bufferDesc, 0, sizeof(bufferDesc));
+	//   -0.5f, -0.5f, 0.0f,PAD, //v2
+	//	0.0f,  0.0f, 1.0f,PAD
+	//};
+	//D3D11_BUFFER_DESC bufferDesc;
+	//memset(&bufferDesc, 0, sizeof(bufferDesc));
 
-	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	bufferDesc.ByteWidth = sizeof(vertices); 
+	//bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	//bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	//bufferDesc.ByteWidth = sizeof(vertices); 
 
-	D3D11_SUBRESOURCE_DATA data;
-	data.pSysMem = vertices;
-	this->gDevice->CreateBuffer(&bufferDesc, &data, &gVertexBuffer);
+	//D3D11_SUBRESOURCE_DATA data;
+	//data.pSysMem = vertices;
+	//this->gDevice->CreateBuffer(&bufferDesc, &data, &gVertexBuffer);
 }
 void Engine::run()
 {
