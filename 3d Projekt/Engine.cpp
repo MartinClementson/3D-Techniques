@@ -18,7 +18,7 @@ Engine::Engine(HWND* winHandle)
 	this->models = new Model(); //this will be an array 
 
 	//temporary, to be moved
-	newFunction();
+	loadVertices();
 
 	
 	
@@ -157,7 +157,7 @@ void Engine::createShaders()
 	pPs->Release();
 }
 
-void Engine::newFunction()
+void Engine::loadVertices()
 {
 
 	Vertex* tempVerts = models->getVerts();
