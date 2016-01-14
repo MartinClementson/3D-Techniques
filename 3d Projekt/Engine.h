@@ -5,6 +5,7 @@ class Engine
 {
 
 private:
+	Model* models;
 
 	HRESULT hr;
 	ID3D11Device *gDevice = nullptr;
@@ -23,7 +24,6 @@ private:
 	//ID3D11GeometryShader* gGeometryShader = nullptr;
 	ID3D11PixelShader* gPixelShader = nullptr;
 
-	Model* models;
 
 	HRESULT CreateDirect3DContext(HWND* wndHandle);
 	void setViewPort();

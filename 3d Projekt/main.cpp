@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 #include "Linker.h"
+#include "Engine.h"
 #include "windowInit.h"
 //#define _CRTDBG_MAP_ALLOC
 HWND InitWindow(HINSTANCE hInstance);

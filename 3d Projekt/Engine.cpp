@@ -2,6 +2,7 @@
 
 
 
+
 Engine::Engine()
 {
 }
@@ -14,21 +15,12 @@ Engine::Engine(HWND* winHandle)
 
 	createShaders();
 
-	models = new Model(); //this will be an array 
+	this->models = new Model(); //this will be an array 
 
 	//temporary, to be moved
+	newFunction();
 
-	Vertex* tempVerts = models->getVerts();
-	D3D11_BUFFER_DESC bufferDesc;
-	memset(&bufferDesc, 0, sizeof(bufferDesc));
-
-	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	bufferDesc.ByteWidth = sizeof(tempVerts); //kan vara fel
-
-	D3D11_SUBRESOURCE_DATA data;
-	data.pSysMem = tempVerts;
-	this->gDevice->CreateBuffer(&bufferDesc, &data, &gVertexBuffer);
+	
 	
 	
 	
@@ -168,27 +160,19 @@ void Engine::createShaders()
 void Engine::newFunction()
 {
 
-	//Vertex vertices[3]{
-	//	//First Tris
-	//	0.0f, 0.5f, 0.0f, PAD,	//v0 pos														
-	//	1.0f, 0.0f, 0.0f, PAD,
+	Vertex* tempVerts = models->getVerts();
+	D3D11_BUFFER_DESC bufferDesc;
+	memset(&bufferDesc, 0, sizeof(bufferDesc));
+	Vertex test[3] = { tempVerts[0],tempVerts[1],tempVerts[2] };
+	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.ByteWidth = sizeof(test); //kan vara fel
 
-	//	0.5f, -0.5f, 0.0f,PAD,	//v1
-	//	0.0f,  1.0f, 0.0f,PAD,
+	D3D11_SUBRESOURCE_DATA data;
+	data.pSysMem = test;
+	this->gDevice->CreateBuffer(&bufferDesc, &data, &gVertexBuffer);
 
-	//   -0.5f, -0.5f, 0.0f,PAD, //v2
-	//	0.0f,  0.0f, 1.0f,PAD
-	//};
-	//D3D11_BUFFER_DESC bufferDesc;
-	//memset(&bufferDesc, 0, sizeof(bufferDesc));
-
-	//bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	//bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	//bufferDesc.ByteWidth = sizeof(vertices); 
-
-	//D3D11_SUBRESOURCE_DATA data;
-	//data.pSysMem = vertices;
-	//this->gDevice->CreateBuffer(&bufferDesc, &data, &gVertexBuffer);
+	
 }
 void Engine::run()
 {
