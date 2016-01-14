@@ -18,7 +18,7 @@ Engine::Engine(HWND* winHandle)
 	createShaders();
 
 	//Load the models and get their vertices
-	this->models = new std::vector<Model>; //this will be an array 
+	this->models = new std::vector<Model*>; //this will be an array 
 	
 	this->verticesToRender = new std::vector<Vertex>;
 	loadModels();
@@ -34,7 +34,12 @@ Engine::Engine(HWND* winHandle)
 
 Engine::~Engine()
 {
-	delete models; 
+	for (int i = 0; i < models->size(); i++)
+	{
+		delete models->at(i); 
+
+	}
+	delete models;
 	delete verticesToRender;
 }
 
@@ -165,7 +170,7 @@ void Engine::createShaders()
 void Engine::loadModels()
 {
 	
-	this->models->push_back(Model());
+	this->models->push_back(new Plane());
 
 	this->modelAmount += 1;
 	
@@ -177,7 +182,7 @@ void Engine::loadVertices()
 	for (int j = 0; j < modelAmount; j++)
 	{	
 		//Get the vertices of that model
-		std::vector<Vertex>* tempVerts = models->at(j).getVerts();
+		std::vector<Vertex>* tempVerts = models->at(j)->getVerts();
 
 			
 			int modelVerts = tempVerts->size(); //using "modelVerts" to avoid doing function call every loop
@@ -269,21 +274,21 @@ void Engine::addModel(Primitives type)
 	{
 		case CUBE:
 		{
-			this->models->push_back(Cube());
+			this->models->push_back(new Cube());
 			this->modelAmount += 1;
 			break;
 		}
 
 		case PLANE:
 		{
-			this->models->push_back(Plane());
+			this->models->push_back(new Plane());
 			this->modelAmount += 1;
 			break;
 		}
 
 		case PYRAMID:
 		{
-			this->models->push_back(Pyramid());
+			this->models->push_back(new Pyramid());
 			this->modelAmount += 1;
 			break;
 		}

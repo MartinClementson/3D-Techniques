@@ -14,7 +14,7 @@ protected:
 
 	std::vector<Vertex> *vertices;
 
-
+	virtual void createVertices();
 
 public:
 	Model();//Default constuctor
@@ -26,7 +26,7 @@ public:
 	void setPivotPoint(XMFLOAT3 newPosition);
 
 	//Getters
-	std::vector<Vertex>* getVerts();
+	virtual std::vector<Vertex>* getVerts();
 	XMFLOAT3 getPivotPoint();
 
 };
