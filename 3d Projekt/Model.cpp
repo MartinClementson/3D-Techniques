@@ -27,6 +27,21 @@ Model::Model()
 
 }
 
+
+void Model::setPivotPoint(XMFLOAT3 newPosition)
+{
+
+	this->pivotPoint = newPosition;
+
+}
+
+XMFLOAT3 Model::getPivotPoint()
+{
+	return this->pivotPoint;
+
+}
+
+
 Vertex* Model::getVerts()
 {
 
