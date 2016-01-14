@@ -1,4 +1,10 @@
-
+struct worldViewProjection //temporary, going to be moved into the GS
+{
+	matrix world;
+	matrix projection;
+	matrix view;
+	// normalworld?
+};
 //creating structs to simplify the handling
 struct VS_IN
 {
