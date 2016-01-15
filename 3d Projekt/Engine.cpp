@@ -17,6 +17,8 @@ Engine::Engine(HWND* winHandle)
 
 	createShaders();
 
+	createConstantBuffers();
+
 	//Load the models and get their vertices
 	this->models = new std::vector<Model*>; //this will be an array 
 	
@@ -55,6 +57,25 @@ void Engine::release()
 	gSwapChain->Release();
 	gDevice->Release();
 	gDeviceContext->Release();
+}
+
+void Engine::createConstantBuffers()
+{
+	//Creating the matrix constant buffer
+	CD3D11_BUFFER_DESC bufferDesc;
+	ZeroMemory(&bufferDesc, sizeof(bufferDesc));
+	bufferDesc.ByteWidth = sizeof(worldViewProjection);
+	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bufferDesc.MiscFlags = 0;
+	bufferDesc.StructureByteStride = 0;
+
+	hr = this->gDevice->CreateBuffer(&bufferDesc, nullptr, &matrixBuffer);
+	if (SUCCEEDED(hr))
+		this->gDeviceContext->VSSetConstantBuffers(0, 1, &matrixBuffer); //change into geometry shader later
+
+
 }
 
 HRESULT Engine::CreateDirect3DContext(HWND* wndHandle) 
@@ -232,8 +253,28 @@ void Engine::run()
 
 void Engine::update()
 {
+	//updatera matrixBuffer här
+	float static angle = 0; //<----- just temporary to test rotation
+	angle += 1;
+	DirectX::XMStoreFloat4x4(&matrixStruct.world, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationY(angle)));
+	//DirectX::XMStoreFloat4x4(&matrixStruct.world, DirectX::XMMatrixIdentity());
+	matrixStruct.view = cam.getView();
+	matrixStruct.projection = cam.getProjection();
 
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	ZeroMemory(&mappedResource, sizeof(mappedResource));
 
+	//mapping to the matrixbuffer
+	this->gDeviceContext->Map(matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+
+	worldViewProjection* temporary = (worldViewProjection*)mappedResource.pData;
+
+	*temporary = matrixStruct;
+
+	this->gDeviceContext->Unmap(matrixBuffer, 0);
+
+	this->gDeviceContext->VSSetConstantBuffers(0, 1, &matrixBuffer); //change to geometry shader later
+	
 }
 
 void Engine::render()

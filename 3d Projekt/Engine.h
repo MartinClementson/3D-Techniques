@@ -4,10 +4,12 @@
 #include "Cube.h"
 #include "Pyramid.h"
 #include "Plane.h"
+#include "Camera.h"
 class Engine
 {
 
 private:
+	Camera cam; 
 	int vertexAmount;
 	int modelAmount;
 	std::vector<Model*>* models;
@@ -31,10 +33,15 @@ private:
 	ID3D11PixelShader* gPixelShader = nullptr;
 
 
+	//Constant buffer
+	ID3D11Buffer* matrixBuffer = nullptr;
+	worldViewProjection matrixStruct;
+
 	HRESULT CreateDirect3DContext(HWND* wndHandle);
 	void setViewPort();
 	void createShaders();
 
+	void createConstantBuffers();
 public:
 	Engine();
 	Engine(HWND* winHandle);
