@@ -10,7 +10,7 @@ class Engine
 private:
 	int vertexAmount;
 	int modelAmount;
-	std::vector<Model>* models;
+	std::vector<Model*>* models;
 	std::vector<Vertex>* verticesToRender;
 
 	HRESULT hr;
@@ -34,6 +34,7 @@ private:
 	HRESULT CreateDirect3DContext(HWND* wndHandle);
 	void setViewPort();
 	void createShaders();
+
 public:
 	Engine();
 	Engine(HWND* winHandle);

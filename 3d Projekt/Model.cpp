@@ -2,32 +2,36 @@
 
 
 
+
 Model::Model()
 {
 
-	this->vertices = new std::vector<Vertex>;
+	//this->vertices = new std::vector<Vertex>;
 
-	vertices->push_back(Vertex {
-	
-		//First Tris
-		0.0f, 0.5f, 0.0f, PAD,	//v0 pos														
-		1.0f, 0.0f, 0.0f, PAD });
+	//vertices->push_back(Vertex {
+	//
+	//	//First Vert
+	//	0.0f, 0.5f, 0.0f, PAD,	//v0 pos														
+	//	1.0f, 0.0f, 0.0f, PAD });
 
-	vertices->push_back(Vertex{
-		//second Tris
-		0.5f, -0.5f, 0.0f,PAD,	//v1
-		0.0f,  1.0f, 0.0f,PAD });
+	//vertices->push_back(Vertex{
+	//	//second Vert
+	//	0.5f, -0.5f, 0.0f,PAD,	//v1
+	//	0.0f,  1.0f, 0.0f,PAD });
 
-	vertices->push_back(Vertex{
-		//Third Tris
+	//vertices->push_back(Vertex{
+	//	//Third Vert
 
-	   -0.5f, -0.5f, 0.0f,PAD, //v2
-		0.0f,  0.0f, 1.0f,PAD });
-	
+	//   -0.5f, -0.5f, 0.0f,PAD, //v2
+	//	0.0f,  0.0f, 1.0f,PAD });
+	//
 
 
 }
 
+void Model::createVertices()
+{
+}
 Model::Model(const Model &obj) //Copy Constructor
 {
 	this->pivotPoint = obj.pivotPoint;

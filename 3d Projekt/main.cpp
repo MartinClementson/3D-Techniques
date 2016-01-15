@@ -36,7 +36,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			}
 		}
 		engine.release();
-		engine.~Engine();
+		
 		DestroyWindow(wndHandle);
 	}
 	_CrtDumpMemoryLeaks();
