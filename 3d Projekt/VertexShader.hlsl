@@ -28,9 +28,9 @@ VS_OUT VS_main( VS_IN input )
 
 	//setting the attributes
 	output.pos = float4(input.pos, 1.0f);
-	/*output.pos = mul(output.pos, world);
+	output.pos = mul(output.pos, world);
 	output.pos = mul(output.pos, view);
-	output.pos = mul(output.pos, projection);*/
+	output.pos = mul(output.pos, projection);
 	output.color = input.color;
 
 	return output;
