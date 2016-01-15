@@ -14,25 +14,25 @@ Plane::Plane()
 
 void Plane::createVertices()
 {
-
+	//First tris
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		-0.5f, 0.0f , -0.5f, PAD,
+		-0.5f, 0.0f , 0.0f, PAD,
 		1.0f, 0.0f, 0.0f, PAD
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		0.5f, -0.2f , 1.0f, PAD,
+		0.5f, -0.2f , 0.0f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		-0.5f, -0.2f , 1.0f, PAD,
+		-0.5f, -0.2f , 0.0f, PAD,
 		0.0f, 0.0f,   1.0f, PAD
 	});
 
