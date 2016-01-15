@@ -24,12 +24,14 @@ private:
 	ID3D11RenderTargetView* gBackbufferRTV = nullptr;
 
 	ID3D11DepthStencilView* depthStencilView = nullptr;
+	ID3D11Texture2D *depthBuffer = nullptr;
+	
 
 	ID3D11InputLayout* gVertexLayout = nullptr;
 
 	//Shaders
 	ID3D11VertexShader* gVertexShader = nullptr;
-	//ID3D11GeometryShader* gGeometryShader = nullptr;
+	ID3D11GeometryShader* gGeometryShader = nullptr;
 	ID3D11PixelShader* gPixelShader = nullptr;
 
 

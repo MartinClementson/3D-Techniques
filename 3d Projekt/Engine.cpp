@@ -52,7 +52,7 @@ void Engine::release()
 	gVertexLayout->Release();
 	gVertexShader->Release();
 	gPixelShader->Release();
-	//gGeometryShader->Release()  Geometry shader not in use yet
+	gGeometryShader->Release();
 	gBackbufferRTV->Release();
 	gSwapChain->Release();
 	gDevice->Release();
@@ -107,6 +107,8 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 	
 
 	//Here goes depth buffer
+//	D3D11_TEXTURE2D_DESC desc;
+
 
 
 	if (SUCCEEDED(hr))
@@ -158,7 +160,7 @@ void Engine::createShaders()
 		&pVS,
 		nullptr);
 
-	this->gDevice->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &gVertexShader);
+	hr = this->gDevice->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &gVertexShader);
 
 	//Create input layout (every vertex)
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] = 
@@ -172,6 +174,7 @@ void Engine::createShaders()
 	this->gDevice->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &gVertexLayout);
 	pVS->Release();
 
+
 	ID3DBlob *pPs = nullptr;
 	D3DCompileFromFile(
 		L"PixelShader.hlsl",
@@ -184,14 +187,32 @@ void Engine::createShaders()
 		&pPs,
 		nullptr);
 
-	this->gDevice->CreatePixelShader(pPs->GetBufferPointer(), pPs->GetBufferSize(), nullptr, &gPixelShader);
+	hr = this->gDevice->CreatePixelShader(pPs->GetBufferPointer(), pPs->GetBufferSize(), nullptr, &gPixelShader);
 	pPs->Release();
+
+	//Geometry shader
+	ID3DBlob* pGS = nullptr;
+	D3DCompileFromFile(
+		L"GeometryShader.hlsl",
+		nullptr,
+		nullptr,
+		"GS_main",
+		"gs_4_0",
+		0,
+		0,
+		&pGS,
+		nullptr);
+
+	hr = this->gDevice->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &gGeometryShader);
+	pGS->Release();
+
+
 }
 
 void Engine::loadModels()
 {
 	
-	this->models->push_back(new Plane());
+	this->models->push_back(new Pyramid());
 
 	this->modelAmount += 1;
 	
@@ -255,7 +276,7 @@ void Engine::update()
 {
 	//updatera matrixBuffer här
 	float static angle = 0; //<----- just temporary to test rotation
-	angle += 1;
+	angle += 0.0001;
 	DirectX::XMStoreFloat4x4(&matrixStruct.world, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationY(angle)));
 	//DirectX::XMStoreFloat4x4(&matrixStruct.world, DirectX::XMMatrixIdentity());
 	matrixStruct.view = cam.getView();
@@ -287,7 +308,7 @@ void Engine::render()
 	this->gDeviceContext->VSSetShader(gVertexShader, nullptr, 0);
 	this->gDeviceContext->HSSetShader(nullptr, nullptr, 0);
 	this->gDeviceContext->DSSetShader(nullptr, nullptr, 0);
-	this->gDeviceContext->GSSetShader(nullptr, nullptr, 0);
+	this->gDeviceContext->GSSetShader(gGeometryShader, nullptr, 0);
 	this->gDeviceContext->PSSetShader(gPixelShader, nullptr, 0);
 	//this->gDeviceContext->PSGetShaderResources(0, 1, 0);
 
