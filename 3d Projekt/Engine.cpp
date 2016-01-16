@@ -22,9 +22,8 @@ Engine::Engine(HWND* winHandle)
 	//Load the models and get their vertices
 	this->models = new std::vector<Model*>; //this will be an array 
 	
-	this->verticesToRender = new std::vector<Vertex>;
 	loadModels();
-	loadVertices();
+	
 
 	
 	
@@ -42,13 +41,13 @@ Engine::~Engine()
 
 	}
 	delete models;
-	delete verticesToRender;
+	
 }
 
 void Engine::release()
 {
 	
-	gVertexBuffer->Release();
+	
 	gVertexLayout->Release();
 	gVertexShader->Release();
 	gPixelShader->Release();
@@ -57,6 +56,8 @@ void Engine::release()
 	gSwapChain->Release();
 	gDevice->Release();
 	gDeviceContext->Release();
+	depthBuffer->Release();
+	depthStencilView->Release();
 }
 
 void Engine::createConstantBuffers()
@@ -107,7 +108,23 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 	
 
 	//Here goes depth buffer
-//	D3D11_TEXTURE2D_DESC desc;
+	D3D11_TEXTURE2D_DESC desc;
+
+	desc.Width = WINDOW_WIDTH;
+	desc.Height = WINDOW_HEIGHT;
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.Format = DXGI_FORMAT_D32_FLOAT;
+	desc.SampleDesc.Count = 4;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.BindFlags = D3D10_BIND_DEPTH_STENCIL;
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = 0;
+
+	hr = gDevice->CreateTexture2D(&desc, 0, &depthBuffer);
+
+	hr = gDevice->CreateDepthStencilView(depthBuffer, 0, &depthStencilView);
 
 
 
@@ -119,7 +136,7 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 		this->gDevice->CreateRenderTargetView(pBackBuffer, NULL, &this->gBackbufferRTV);
 		pBackBuffer->Release();
 
-		this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, NULL); //NULL switches to depthstencilView later
+		this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, depthStencilView); 
 
 
 	}
@@ -212,53 +229,11 @@ void Engine::createShaders()
 void Engine::loadModels()
 {
 	
-	this->models->push_back(new Pyramid());
-
-	this->modelAmount += 1;
 	
+	this->addModel(PYRAMID);
+	this->addModel(PLANE);
 }
 
-void Engine::loadVertices()
-{
-	//Loop through every model we have loaded
-	for (int j = 0; j < modelAmount; j++)
-	{	
-		//Get the vertices of that model
-		std::vector<Vertex>* tempVerts = models->at(j)->getVerts();
-
-			
-			int modelVerts = tempVerts->size(); //using "modelVerts" to avoid doing function call every loop
-			
-			this->vertexAmount += modelVerts; //At the verts to the global vertCounter
-			
-			//For every model, loop through the vertices
-			for (int i = 0; i < modelVerts; i++)
-			{
-				//Put each vertex into the dynamic array	
-				this->verticesToRender->push_back(tempVerts->at(i));
-
-			}
-	}
-
-
-
-
-	D3D11_BUFFER_DESC bufferDesc;
-	memset(&bufferDesc, 0, sizeof(bufferDesc));
-	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	bufferDesc.ByteWidth = sizeof(Vertex)* vertexAmount; 
-	
-
-	D3D11_SUBRESOURCE_DATA data;
-	//Send the array of vertices in to pSysMem
-	data.pSysMem = verticesToRender->data() ;
-	// data() "Returns a direct pointer to the memory array used internally by the vector to store its owned elements."
-	
-	this->gDevice->CreateBuffer(&bufferDesc, &data, &gVertexBuffer);
-
-	
-}
 
 void Engine::run()
 {
@@ -304,6 +279,7 @@ void Engine::render()
 
 
 	this->gDeviceContext->ClearRenderTargetView(gBackbufferRTV, clearColor);
+	this->gDeviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
 
 	this->gDeviceContext->VSSetShader(gVertexShader, nullptr, 0);
 	this->gDeviceContext->HSSetShader(nullptr, nullptr, 0);
@@ -312,16 +288,21 @@ void Engine::render()
 	this->gDeviceContext->PSSetShader(gPixelShader, nullptr, 0);
 	//this->gDeviceContext->PSGetShaderResources(0, 1, 0);
 
-	UINT32 vertexSize = sizeof(Vertex);
-	UINT32 offset = 0;
+	
 
-	this->gDeviceContext->IASetVertexBuffers(0, 1, &gVertexBuffer, &vertexSize, &offset);
-
-	this->gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	this->gDeviceContext->IASetInputLayout(gVertexLayout);
 
-	this->gDeviceContext->Draw(vertexAmount, 0); //This will be dynamic,
 
+	//Render all the models
+	for (int i = 0; i < this->modelAmount; i++)
+	{
+
+
+		this->models->at(i)->render();
+
+
+	}
+	
 
 
 }
@@ -343,14 +324,14 @@ void Engine::addModel(Primitives type)
 
 		case PLANE:
 		{
-			this->models->push_back(new Plane());
+			this->models->push_back(new Plane(this->gDevice, this->gDeviceContext));
 			this->modelAmount += 1;
 			break;
 		}
 
 		case PYRAMID:
 		{
-			this->models->push_back(new Pyramid());
+			this->models->push_back(new Pyramid(this->gDevice,this->gDeviceContext));
 			this->modelAmount += 1;
 			break;
 		}

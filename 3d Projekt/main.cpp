@@ -17,7 +17,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 {
 	MSG msg = { 0 };
 	HWND wndHandle = InitWindow(hInstance); 
-	Engine engine(&wndHandle);
+	Engine* engine = new Engine(&wndHandle);
 
 	if (wndHandle)
 	{
@@ -32,13 +32,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			}
 			else
 			{
-				engine.run();
+				engine->run();
 			}
 		}
-		engine.release();
-		
+		engine->release();
 		DestroyWindow(wndHandle);
 	}
+	delete engine;
 	_CrtDumpMemoryLeaks();
 	return (int)msg.wParam;
 }

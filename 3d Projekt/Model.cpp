@@ -29,7 +29,7 @@ Model::Model()
 
 }
 
-void Model::createVertices()
+void Model::createVertices(ID3D11Device* gDevice)
 {
 }
 Model::Model(const Model &obj) //Copy Constructor
@@ -75,6 +75,15 @@ Model::~Model()
 {
 
 	delete vertices;
+	this->vertexBuffer->Release();
+}
+
+void Model::update()
+{
+}
+
+void Model::render()
+{
 }
 
 
