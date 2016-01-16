@@ -57,6 +57,8 @@ void Engine::release()
 	gSwapChain->Release();
 	gDevice->Release();
 	gDeviceContext->Release();
+	depthBuffer->Release();
+	depthStencilView->Release();
 }
 
 void Engine::createConstantBuffers()
@@ -107,7 +109,23 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 	
 
 	//Here goes depth buffer
-//	D3D11_TEXTURE2D_DESC desc;
+	D3D11_TEXTURE2D_DESC desc;
+
+	desc.Width = WINDOW_WIDTH;
+	desc.Height = WINDOW_HEIGHT;
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.Format = DXGI_FORMAT_D32_FLOAT;
+	desc.SampleDesc.Count = 4;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.BindFlags = D3D10_BIND_DEPTH_STENCIL;
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = 0;
+
+	hr = gDevice->CreateTexture2D(&desc, 0, &depthBuffer);
+
+	hr = gDevice->CreateDepthStencilView(depthBuffer, 0, &depthStencilView);
 
 
 
@@ -119,7 +137,7 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 		this->gDevice->CreateRenderTargetView(pBackBuffer, NULL, &this->gBackbufferRTV);
 		pBackBuffer->Release();
 
-		this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, NULL); //NULL switches to depthstencilView later
+		this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, depthStencilView); 
 
 
 	}
@@ -212,10 +230,9 @@ void Engine::createShaders()
 void Engine::loadModels()
 {
 	
-	this->models->push_back(new Pyramid());
-
-	this->modelAmount += 1;
 	
+	this->addModel(PYRAMID);
+	this->addModel(PLANE);
 }
 
 void Engine::loadVertices()
@@ -304,6 +321,7 @@ void Engine::render()
 
 
 	this->gDeviceContext->ClearRenderTargetView(gBackbufferRTV, clearColor);
+	this->gDeviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
 
 	this->gDeviceContext->VSSetShader(gVertexShader, nullptr, 0);
 	this->gDeviceContext->HSSetShader(nullptr, nullptr, 0);

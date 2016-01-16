@@ -9,88 +9,88 @@ void Pyramid::createVertices()
 	{
 		//first Vert
 		0.0f, 0.5f , 0.0f, PAD,
-		1.0f, 0.0f, 0.0f, PAD
+		1.0f, 1.0f, 1.0f, PAD
 	});
 
 	this->vertices->push_back(Vertex
 	{
-		//Second Vert
+		
+		-0.5f, -0.5f , 0.5f, PAD,
+		0.0f, 0.0f,   1.0f, PAD
+	});
+	this->vertices->push_back(Vertex
+	{
+		
 		0.5f, -0.5f , 0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
 
-	this->vertices->push_back(Vertex
-	{
-		//Third Vert
-		-0.5f, -0.5f , 0.5f, PAD,
-		0.0f, 0.0f,   1.0f, PAD
-	});
 
 	//second tris
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
 		0.0f, 0.5f , 0.0f, PAD,
-		1.0f, 0.0f, 0.0f, PAD
+		1.0f, 1.0f, 1.0f, PAD
 	});
 
 	this->vertices->push_back(Vertex
 	{
-		//Second Vert
-		0.5f, -0.5f , -0.5f, PAD,
+		
+		0.5f, -0.5f , 0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
-
 	this->vertices->push_back(Vertex
 	{
-		//Third Vert
-		0.5f, -0.5f , 0.5f, PAD,
-		0.0f, 0.0f,   1.0f, PAD
+		
+		0.5f, -0.5f , -0.5f, PAD,
+		1.0f, 0.0f,   0.0f, PAD
 	});
+
 
 	//third tris
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
 		0.0f, 0.5f , 0.0f, PAD,
-		1.0f, 0.0f, 0.0f, PAD
-	});
-
-	this->vertices->push_back(Vertex
-	{
-		//Second Vert
-		-0.5f, -0.5f , -0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		1.0f, 1.0f, 1.0f, PAD
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
 		0.5f, -0.5f , -0.5f, PAD,
-		0.0f, 0.0f,   1.0f, PAD
+		1.0f, 0.0f,   0.0f, PAD
 	});
+	this->vertices->push_back(Vertex
+	{
+		//Second Vert
+		-0.5f, -0.5f , -0.5f, PAD,
+		0.0f, 1.0f,   1.0f, PAD
+	});
+
 
 	//fourth tris
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
 		0.0f, 0.5f , 0.0f, PAD,
-		1.0f, 0.0f, 0.0f, PAD
+		1.0f, 1.0f, 1.0f, PAD
 	});
 
 	this->vertices->push_back(Vertex
 	{
-		//Second Vert
-		-0.5f, -0.5f , 0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
-	});
-
-	this->vertices->push_back(Vertex
-	{
-		//Third Vert
+		// Vert
 		-0.5f, -0.5f , -0.5f, PAD,
+		0.0f, 1.0f,   1.0f, PAD
+	});
+	this->vertices->push_back(Vertex
+	{
+		// Vert
+		-0.5f, -0.5f , 0.5f, PAD,
 		0.0f, 0.0f,   1.0f, PAD
 	});
+
 
 	//Bottom quad
 
@@ -100,7 +100,7 @@ void Pyramid::createVertices()
 	{
 		//first Vert
 		-0.5f, -0.5f , 0.5f, PAD,
-		1.0f, 0.0f, 0.0f, PAD
+		1.0f, 1.0f, 1.0f, PAD
 	});
 
 	this->vertices->push_back(Vertex
