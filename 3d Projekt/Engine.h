@@ -13,7 +13,7 @@ private:
 	int vertexAmount;
 	int modelAmount;
 	std::vector<Model*>* models;
-	std::vector<Vertex>* verticesToRender;
+
 
 	HRESULT hr;
 	ID3D11Device *gDevice = nullptr;
