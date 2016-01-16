@@ -22,20 +22,20 @@ void Cube::createVertices()
 		-0.5f, 0.5f , 0.5f, PAD,
 		1.0f, 0.0f, 0.0f, PAD
 	});
-
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		0.5f, -0.5f , 0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		-0.5f, -0.5f , 0.5f, PAD,
+		0.0f, 0.0f,   1.0f, PAD
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		-0.5f, -0.5f , 0.5f, PAD,
-		0.0f, 0.0f,   1.0f, PAD
+		0.5f, -0.5f , 0.5f, PAD,
+		0.0f, 1.0f,   0.0f, PAD
 	});
+
 
 
 	//Second Tris
@@ -46,20 +46,20 @@ void Cube::createVertices()
 		-0.5f, 0.5f , 0.5f, PAD,
 		1.0f, 0.0f, 0.0f, PAD
 	});
-
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		0.5f, 0.5f , 0.5f, PAD,
+		0.5f, -0.5f , 0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		0.5f, -0.5f , 0.5f, PAD,
+		0.5f, 0.5f , 0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
+
 
 	//Third Tris
 
@@ -69,20 +69,20 @@ void Cube::createVertices()
 		0.5f, 0.5f , 0.5f, PAD,
 		1.0f, 0.0f, 0.0f, PAD
 	});
-
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		0.5f, -0.5f , -0.5f, PAD,
+		0.5f, -0.5f , 0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		0.5f, -0.5f , 0.5f, PAD,
+		0.5f, -0.5f , -0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
+
 
 	//Fourth Tris
 
@@ -92,20 +92,20 @@ void Cube::createVertices()
 		0.5f, 0.5f , 0.5f, PAD,
 		1.0f, 0.0f, 0.0f, PAD
 	});
-
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		0.5f, 0.5f , -0.5f, PAD,
+		0.5f, -0.5f , -0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		0.5f, -0.5f , -0.5f, PAD,
+		0.5f, 0.5f , -0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
+
 
 	//Fifth Tris
 
@@ -119,16 +119,16 @@ void Cube::createVertices()
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
+		0.5f, -0.5f , -0.5f, PAD,
+		0.0f, 1.0f,   0.0f, PAD
+	});
+	this->vertices->push_back(Vertex
+	{
+		//Third Vert
 		-0.5f, -0.5f , -0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
 
-	this->vertices->push_back(Vertex
-	{
-		//Third Vert
-		0.5f, -0.5f , -0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
-	});
 
 	//Sixth Tris
 
@@ -138,20 +138,20 @@ void Cube::createVertices()
 		0.5f, 0.5f , -0.5f, PAD,
 		1.0f, 0.0f, 0.0f, PAD
 	});
-
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		-0.5f, 0.5f , -0.5f, PAD,
+		-0.5f, -0.5f , -0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		-0.5f, -0.5f , -0.5f, PAD,
+		-0.5f, 0.5f , -0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
+
 
 	//Seventh Tris
 
@@ -161,20 +161,20 @@ void Cube::createVertices()
 		-0.5f, 0.5f , -0.5f, PAD,
 		1.0f, 0.0f, 0.0f, PAD
 	});
-
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		-0.5f, -0.5f , 0.5f, PAD,
+		-0.5f, -0.5f , -0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		-0.5f, -0.5f , -0.5f, PAD,
+		-0.5f, -0.5f , 0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
+
 
 	//Eighth Tris
 
@@ -184,20 +184,20 @@ void Cube::createVertices()
 		-0.5f, 0.5f , -0.5f, PAD,
 		1.0f, 0.0f, 0.0f, PAD
 	});
-
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		-0.5f, 0.5f , 0.5f, PAD,
+		-0.5f, -0.5f , 0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		-0.5f, -0.5f , 0.5f, PAD,
+		-0.5f, 0.5f , 0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
+
 
 	//Ninth Tris
 
@@ -207,20 +207,20 @@ void Cube::createVertices()
 		-0.5f, 0.5f , 0.5f, PAD,
 		1.0f, 0.0f, 0.0f, PAD
 	});
-
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		0.5f, 0.5f , -0.5f, PAD,
+		0.5f, 0.5f , 0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		0.5f, 0.5f , 0.5f, PAD,
+		0.5f, 0.5f , -0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
+
 
 	//Tenth Tris
 
@@ -230,20 +230,20 @@ void Cube::createVertices()
 		-0.5f, 0.5f , 0.5f, PAD,
 		1.0f, 0.0f, 0.0f, PAD
 	});
-
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		-0.5f, 0.5f , -0.5f, PAD,
+		0.5f, 0.5f , -0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		0.5f, 0.5f , -0.5f, PAD,
+		-0.5f, 0.5f , -0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
+
 
 	//Eleventh Tris
 
