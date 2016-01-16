@@ -10,10 +10,11 @@ Plane::Plane()
 
 }
 
-Plane::Plane(ID3D11Device * gDevice, ID3D11DeviceContext* gDeviceContext)
+Plane::Plane(ID3D11Device* gDevice, ID3D11DeviceContext* gDeviceContext, ID3D11Buffer* worldBuffer, worldConstantBuffer* worldStruct)
+	: Model(gDeviceContext, worldBuffer, worldStruct)
 {
-	this->gDeviceContext = gDeviceContext;
-	this->vertices = new std::vector<Vertex>;
+	
+	
 	this->createVertices(gDevice);
 	
 }
@@ -89,13 +90,17 @@ Plane::~Plane()
 	
 }
 
-std::vector<Vertex>* Plane::getVerts()
-{
-	return this->vertices;
-}
+
 
 void Plane::update()
 {
+
+	float static angleX = 0; //<----- just temporary to test rotation
+	angleX += 0.0001;
+	DirectX::XMStoreFloat4x4(&this->worldMatrix, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationX(angleX)));
+
+
+	return Model::update();
 }
 
 void Plane::render()
@@ -116,6 +121,9 @@ Plane::Plane(const Plane & obj) //Copy constructor
 	this->translation = obj.translation;
 	this->rotation = obj.rotation;
 	this->scale = obj.scale;
+	this->gDeviceContext = obj.gDeviceContext;
+	
+	//More might need to be added later!
 
 	this->vertices = new std::vector<Vertex>;
 	for (size_t i = 0; i < obj.vertices->size(); i++)

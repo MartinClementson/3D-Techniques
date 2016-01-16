@@ -12,27 +12,45 @@ protected:
 	XMFLOAT3 rotation;
 	XMFLOAT3 scale;
 
+	XMFLOAT4X4 worldMatrix;
+
 	std::vector<Vertex> *vertices;
 	//This is a pointer to a deviceContext, we will store the adress to the main device here.
 	//since we use it alot, we shall avoid putting it in all the functions.
 	ID3D11DeviceContext* gDeviceContext;
 	ID3D11Buffer* vertexBuffer = nullptr;
+
+	worldConstantBuffer* worldStruct = nullptr;
+	ID3D11Buffer* worldBuffer = nullptr;
+
 	virtual void createVertices(ID3D11Device* gDevice);
 
-public:
 	Model();//Default constuctor
+public:
+
+	Model(ID3D11DeviceContext* gDeviceContext, ID3D11Buffer* worldBuffer, worldConstantBuffer* worldStruct);
 	Model(const Model &obj); //copy constructor
 	virtual ~Model();
 	
 	virtual void update();
 	virtual void render();
 
+	virtual void updateWorldMatrix();
+
 	//Setters
 	void setPivotPoint(XMFLOAT3 newPosition);
 
+	void setTranslation(XMFLOAT3 newTranslation);
+	void setRotation(XMFLOAT3 degrees);
+	void setScale(XMFLOAT3 newScale);
+	
 	//Getters
-	virtual std::vector<Vertex>* getVerts();
+	
 	XMFLOAT3 getPivotPoint();
+
+	XMFLOAT3 getTranslation();
+	XMFLOAT3 getRotation();
+	XMFLOAT3 getScale;
 
 };
 

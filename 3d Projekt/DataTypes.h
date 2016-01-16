@@ -8,9 +8,15 @@ struct Vertex {
 	
 };
 
-struct worldViewProjection
+struct worldConstantBuffer
 {
 	DirectX::XMFLOAT4X4 world;
+	
+};
+
+struct cameraConstantBuffer
+{
+	
 	DirectX::XMFLOAT4X4 view;
 	DirectX::XMFLOAT4X4 projection;
 };

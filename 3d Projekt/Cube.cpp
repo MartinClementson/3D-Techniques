@@ -5,7 +5,19 @@
 Cube::Cube()
 {
 	this->vertices = new std::vector<Vertex>;
-	createVertices();
+	//createVertices();
+}
+
+Cube::Cube(ID3D11Device* gDevice, ID3D11DeviceContext* gDeviceContext, ID3D11Buffer* worldBuffer, worldConstantBuffer* worldStruct)
+	: Model(gDeviceContext, worldBuffer, worldStruct)
+{
+	
+
+	this->createVertices(gDevice);
+}
+
+Cube::Cube(const Cube & obj)
+{
 }
 
 
@@ -13,7 +25,7 @@ Cube::~Cube()
 {
 }
 
-void Cube::createVertices()
+void Cube::createVertices(ID3D11Device* gDevice)
 {
 	//First tris
 	this->vertices->push_back(Vertex
@@ -290,9 +302,40 @@ void Cube::createVertices()
 		0.5f, -0.5f , -0.5f, PAD,
 		0.0f, 1.0f,   0.0f, PAD
 	});
+	D3D11_BUFFER_DESC bufferDesc;
+	memset(&bufferDesc, 0, sizeof(bufferDesc));
+	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.ByteWidth = sizeof(Vertex)* vertices->size();
+
+
+	D3D11_SUBRESOURCE_DATA data;
+	//Send the array of vertices in to pSysMem
+	data.pSysMem = vertices->data();
+	// data() "Returns a direct pointer to the memory array used internally by the vector to store its owned elements."
+
+	gDevice->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
 }
 
 std::vector<Vertex>* Cube::getVerts()
 {
 	return this->vertices;
+}
+
+void Cube::update()
+{
+
+	return Model::update();
+}
+
+void Cube::render()
+{
+
+	UINT32 vertexSize = sizeof(Vertex);
+	UINT32 offset = 0;
+	this->gDeviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
+
+	this->gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	this->gDeviceContext->Draw(this->vertices->size(), 0); //This will be dynamic,
 }

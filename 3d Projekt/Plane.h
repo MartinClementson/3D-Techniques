@@ -7,10 +7,10 @@ private:
 	Plane();
 public:
 	Plane(const Plane &obj); //copy constructor
-	Plane(ID3D11Device* gDevice, ID3D11DeviceContext* gDeviceContext);
-	virtual ~Plane();
+	Plane(ID3D11Device* gDevice, ID3D11DeviceContext* gDeviceContext, ID3D11Buffer* worldBuffer, worldConstantBuffer* worldStruct);
+	~Plane();
 
-	std::vector<Vertex>* getVerts();
+
 
 
 	void update();

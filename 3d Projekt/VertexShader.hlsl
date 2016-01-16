@@ -1,6 +1,14 @@
-cbuffer worldViewProjection //temporary, going to be moved into the GS
+cbuffer worldConstantBuffer : register(b0) //temporary, going to be moved into the GS
 {
 	matrix world;
+	
+	// normalworld?
+};
+
+
+cbuffer cameraConstantBuffer  : register(b1)//temporary, going to be moved into the GS
+{
+	
 	matrix projection;
 	matrix view;
 	// normalworld?

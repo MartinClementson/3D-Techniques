@@ -62,19 +62,36 @@ void Engine::release()
 
 void Engine::createConstantBuffers()
 {
-	//Creating the matrix constant buffer
+	//Creating the Camera constant buffer
 	CD3D11_BUFFER_DESC bufferDesc;
 	ZeroMemory(&bufferDesc, sizeof(bufferDesc));
-	bufferDesc.ByteWidth = sizeof(worldViewProjection);
+	bufferDesc.ByteWidth = sizeof(cameraConstantBuffer);
 	bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bufferDesc.MiscFlags = 0;
 	bufferDesc.StructureByteStride = 0;
 
-	hr = this->gDevice->CreateBuffer(&bufferDesc, nullptr, &matrixBuffer);
+	hr = this->gDevice->CreateBuffer(&bufferDesc, nullptr, &camBuffer);
 	if (SUCCEEDED(hr))
-		this->gDeviceContext->VSSetConstantBuffers(0, 1, &matrixBuffer); //change into geometry shader later
+		this->gDeviceContext->VSSetConstantBuffers(0, 1, &camBuffer); //change into geometry shader later
+
+
+	//Creating world constant buffer																 
+	CD3D11_BUFFER_DESC bufferDescWorld;
+	ZeroMemory(&bufferDescWorld, sizeof(bufferDescWorld));
+	bufferDescWorld.ByteWidth = sizeof(worldConstantBuffer);
+	bufferDescWorld.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDescWorld.Usage = D3D11_USAGE_DYNAMIC;
+	bufferDescWorld.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bufferDescWorld.MiscFlags = 0;
+	bufferDescWorld.StructureByteStride = 0;
+
+	hr = this->gDevice->CreateBuffer(&bufferDescWorld, nullptr, &worldBuffer);
+	if (SUCCEEDED(hr))
+		this->gDeviceContext->VSSetConstantBuffers(0, 1, &worldBuffer); //change into geometry shader later
+
+
 
 
 }
@@ -231,6 +248,10 @@ void Engine::loadModels()
 	
 	
 	this->addModel(PYRAMID);
+	this->models->at(0)->setScale(XMFLOAT3(0.3f,0.3f,0.3f));
+	
+	//this->models->at(0)->setTranslation(XMFLOAT3(0.1f, 0.0f, 0.0f)); //DET ÄR FEL PÅ DENNA
+
 	this->addModel(PLANE);
 }
 
@@ -238,7 +259,7 @@ void Engine::loadModels()
 void Engine::run()
 {
 
-	this->update();
+	//this->update();
 
 	this->render();
 
@@ -250,26 +271,40 @@ void Engine::run()
 void Engine::update()
 {
 	//updatera matrixBuffer här
-	float static angle = 0; //<----- just temporary to test rotation
-	angle += 0.0001;
-	DirectX::XMStoreFloat4x4(&matrixStruct.world, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationY(angle)));
+	
+	//DirectX::XMStoreFloat4x4(&worldStruct.world, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationY(angle)));
 	//DirectX::XMStoreFloat4x4(&matrixStruct.world, DirectX::XMMatrixIdentity());
-	matrixStruct.view = cam.getView();
-	matrixStruct.projection = cam.getProjection();
+	camStruct.view = cam.getView();
+	camStruct.projection = cam.getProjection();
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	ZeroMemory(&mappedResource, sizeof(mappedResource));
 
 	//mapping to the matrixbuffer
-	this->gDeviceContext->Map(matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	this->gDeviceContext->Map(camBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
-	worldViewProjection* temporary = (worldViewProjection*)mappedResource.pData;
+	cameraConstantBuffer* temporary = (cameraConstantBuffer*)mappedResource.pData;
 
-	*temporary = matrixStruct;
+	*temporary = camStruct;
 
-	this->gDeviceContext->Unmap(matrixBuffer, 0);
+	this->gDeviceContext->Unmap(camBuffer, 0);
 
-	this->gDeviceContext->VSSetConstantBuffers(0, 1, &matrixBuffer); //change to geometry shader later
+	this->gDeviceContext->VSSetConstantBuffers(1, 1, &camBuffer); //change to geometry shader later
+
+	////update worldMatrix (THIS IS TO BE MOVED LATER, INTO OBJECTS UPDATE)
+	//D3D11_MAPPED_SUBRESOURCE mappedResourceWorld;
+	//ZeroMemory(&mappedResource, sizeof(mappedResourceWorld));
+
+	////mapping to the matrixbuffer
+	//this->gDeviceContext->Map(worldBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResourceWorld);
+
+	//worldConstantBuffer* temporaryWorld = (worldConstantBuffer*)mappedResourceWorld.pData;
+
+	//*temporaryWorld = worldStruct;
+
+	//this->gDeviceContext->Unmap(worldBuffer, 0);
+
+	//this->gDeviceContext->VSSetConstantBuffers(0, 1, &worldBuffer); //change to geometry shader later
 	
 }
 
@@ -294,10 +329,13 @@ void Engine::render()
 
 
 	//Render all the models
+	this->update();
+	
 	for (int i = 0; i < this->modelAmount; i++)
 	{
 
-
+	
+		this->models->at(i)->update();
 		this->models->at(i)->render();
 
 
@@ -317,21 +355,21 @@ void Engine::addModel(Primitives type)
 	{
 		case CUBE:
 		{
-			this->models->push_back(new Cube());
+			this->models->push_back(new Cube(this->gDevice, this->gDeviceContext, this->worldBuffer, &this->worldStruct));
 			this->modelAmount += 1;
 			break;
 		}
 
 		case PLANE:
 		{
-			this->models->push_back(new Plane(this->gDevice, this->gDeviceContext));
+			this->models->push_back(new Plane(this->gDevice, this->gDeviceContext, this->worldBuffer, &this->worldStruct));
 			this->modelAmount += 1;
 			break;
 		}
 
 		case PYRAMID:
 		{
-			this->models->push_back(new Pyramid(this->gDevice,this->gDeviceContext));
+			this->models->push_back(new Pyramid(this->gDevice,this->gDeviceContext,this->worldBuffer,&this->worldStruct));
 			this->modelAmount += 1;
 			break;
 		}
