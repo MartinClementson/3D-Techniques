@@ -35,9 +35,12 @@ private:
 	ID3D11PixelShader* gPixelShader = nullptr;
 
 
-	//Constant buffer
-	ID3D11Buffer* matrixBuffer = nullptr;
-	worldViewProjection matrixStruct;
+	//Constant buffers
+	worldConstantBuffer worldStruct;
+	ID3D11Buffer* worldBuffer = nullptr;
+
+	cameraConstantBuffer camStruct;
+	ID3D11Buffer* camBuffer = nullptr;
 
 	HRESULT CreateDirect3DContext(HWND* wndHandle);
 	void setViewPort();
@@ -58,7 +61,7 @@ public:
 	void update();
 	void render();
 	void loadModels();
-	void loadVertices();
+	
 
 
 

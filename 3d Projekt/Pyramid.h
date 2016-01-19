@@ -9,7 +9,7 @@ private:
 	void createVertices(ID3D11Device* gDevice);
 	Pyramid();
 public:
-	Pyramid(ID3D11Device * gDevice, ID3D11DeviceContext* gDeviceContext);
+	Pyramid(ID3D11Device* gDevice,ID3D11DeviceContext* gDeviceContext, ID3D11Buffer* worldBuffer, worldConstantBuffer* worldStruct);
 	Pyramid(const Pyramid &obj);
 	virtual ~Pyramid();
 

@@ -105,17 +105,17 @@ void Pyramid::createVertices(ID3D11Device* gDevice)
 
 	this->vertices->push_back(Vertex
 	{
-		//Second Vert
+		
+		-0.5f, -0.5f , -0.5f, PAD,
+		1.0f, 1.0f,   1.0f, PAD
+	});
+	this->vertices->push_back(Vertex
+	{
+		
 		0.5f, -0.5f , -0.5f, PAD,
 		1.0f, 1.0f,   1.0f, PAD
 	});
 
-	this->vertices->push_back(Vertex
-	{
-		//Third Vert
-		-0.5f, -0.5f , -0.5f, PAD,
-		1.0f, 1.0f,   1.0f, PAD
-	});
 
 	//Second tris
 
@@ -128,15 +128,14 @@ void Pyramid::createVertices(ID3D11Device* gDevice)
 
 	this->vertices->push_back(Vertex
 	{
-		//Second Vert
-		0.5f, -0.5f , -0.5f, PAD,
+		-0.5f, -0.5f , 0.5f, PAD,
 		1.0f, 1.0f,   1.0f, PAD
 	});
 
 	this->vertices->push_back(Vertex
 	{
-		//Third Vert
-		-0.5f, -0.5f , 0.5f, PAD,
+		
+		0.5f, -0.5f , -0.5f, PAD,
 		1.0f, 1.0f,   1.0f, PAD
 	});
 
@@ -164,11 +163,12 @@ Pyramid::Pyramid()
 	//this->createVertices();
 }
 
-Pyramid::Pyramid(ID3D11Device * gDevice, ID3D11DeviceContext* gDeviceContext)
+Pyramid::Pyramid(ID3D11Device* gDevice,ID3D11DeviceContext* gDeviceContext, ID3D11Buffer* worldBuffer, worldConstantBuffer* worldStruct)
+	: Model(gDeviceContext, worldBuffer, worldStruct)
 {
-	this->gDeviceContext = gDeviceContext;
 
-	this->vertices = new std::vector<Vertex>;
+
+	
 	this->createVertices(gDevice);
 }
 
@@ -196,22 +196,20 @@ Pyramid::~Pyramid()
 
 void Pyramid::update()
 {
+	
+	
+	float static angle = 0; //<----- just temporary to test rotation
+	angle += 0.01f;
+	this->setRotation(XMFLOAT3(0, angle, 0));
+	//DirectX::XMStoreFloat4x4(&this->worldMatrix, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationY(angle)));
+	
+	return Model::update();
+	
 }
 
 void Pyramid::render()
 {
-	UINT32 vertexSize = sizeof(Vertex);
-	UINT32 offset = 0;
-	this->gDeviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
-
-	this->gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	this->gDeviceContext->Draw(this->vertices->size() , 0); //This will be dynamic,
-
+	return Model::render();
 
 }
 
-std::vector<Vertex>* Pyramid::getVerts()
-{
-	return this->vertices;
-}

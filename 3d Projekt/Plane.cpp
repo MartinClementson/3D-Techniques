@@ -10,10 +10,11 @@ Plane::Plane()
 
 }
 
-Plane::Plane(ID3D11Device * gDevice, ID3D11DeviceContext* gDeviceContext)
+Plane::Plane(ID3D11Device* gDevice, ID3D11DeviceContext* gDeviceContext, ID3D11Buffer* worldBuffer, worldConstantBuffer* worldStruct)
+	: Model(gDeviceContext, worldBuffer, worldStruct)
 {
-	this->gDeviceContext = gDeviceContext;
-	this->vertices = new std::vector<Vertex>;
+	
+	
 	this->createVertices(gDevice);
 	
 }
@@ -89,25 +90,23 @@ Plane::~Plane()
 	
 }
 
-std::vector<Vertex>* Plane::getVerts()
-{
-	return this->vertices;
-}
+
 
 void Plane::update()
 {
+
+	float static angleX = 0; //<----- just temporary to test rotation
+	angleX += 0.0001;
+	//this->setRotation(XMFLOAT3(angleX, 0, 0));
+	
+
+
+	return Model::update();
 }
 
 void Plane::render()
 {
-	UINT32 vertexSize = sizeof(Vertex);
-	UINT32 offset = 0;
-	this->gDeviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
-
-	this->gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	this->gDeviceContext->Draw(this->vertices->size(), 0); //This will be dynamic,
-
+	return Model::render();
 }
 
 Plane::Plane(const Plane & obj) //Copy constructor
@@ -116,6 +115,9 @@ Plane::Plane(const Plane & obj) //Copy constructor
 	this->translation = obj.translation;
 	this->rotation = obj.rotation;
 	this->scale = obj.scale;
+	this->gDeviceContext = obj.gDeviceContext;
+	
+	//More might need to be added later!
 
 	this->vertices = new std::vector<Vertex>;
 	for (size_t i = 0; i < obj.vertices->size(); i++)
