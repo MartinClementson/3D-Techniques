@@ -8,3 +8,4 @@
 #define toRadian(degrees) ((degrees)* (PI/180.0f))
 
 enum Primitives{ PLANE , CUBE , PYRAMID};
+enum lightTypes{ POINTLIGHT }; //add more light types here later
