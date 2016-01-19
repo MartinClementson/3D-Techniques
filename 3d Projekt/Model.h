@@ -13,6 +13,7 @@ protected:
 	XMFLOAT3 scale;
 
 	XMFLOAT4X4 worldMatrix;
+	XMFLOAT4X4 normalWorld;
 
 	std::vector<Vertex> *vertices;
 	//This is a pointer to a deviceContext, we will store the adress to the main device here.

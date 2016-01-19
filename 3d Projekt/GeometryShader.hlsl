@@ -1,8 +1,7 @@
 cbuffer worldConstantBuffer : register(b0) 
 {
 	matrix world;
-
-	// normalworld?
+	matrix normalWorld;
 };
 
 
@@ -53,7 +52,9 @@ void GS_main(
 		element.wPos = mul(element.pos, world);
 		element.camPos = camPos;
 		element.color = input[i].color;
-		element.normal = faceNormal;
+
+
+		element.normal = mul(faceNormal, normalWorld);
 		output.Append(element);
 	}
 }
