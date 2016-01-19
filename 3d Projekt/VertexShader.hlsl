@@ -32,15 +32,15 @@ struct VS_OUT
 
 VS_OUT VS_main( VS_IN input )
 {
-	VS_OUT output = (VS_OUT)0; //perhaps its supposed to say VS_OUT output = (VS_OUT)0;
+	VS_OUT output; //perhaps its supposed to say VS_OUT output = (VS_OUT)0;
+
+	//Multiplying the matrices for simpler use
+	matrix combinedMatrix = mul(world, mul(projection, view)); //This order works, but it should´be view before projection, i think
 
 	//setting the attributes
 	output.pos = float4(input.pos, 1.0f);
-	output.pos = mul(output.pos, world);
+	output.pos = mul(output.pos, combinedMatrix);
 
-	//This order works, but it should´be view before projection, i think
-	output.pos = mul(output.pos, projection);
-	output.pos = mul(output.pos, view);
 	output.color = input.color;
 
 	return output;
