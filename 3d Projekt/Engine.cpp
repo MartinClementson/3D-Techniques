@@ -74,7 +74,7 @@ void Engine::createConstantBuffers()
 
 	hr = this->gDevice->CreateBuffer(&bufferDesc, nullptr, &camBuffer);
 	if (SUCCEEDED(hr))
-		this->gDeviceContext->VSSetConstantBuffers(0, 1, &camBuffer); //change into geometry shader later
+		this->gDeviceContext->GSSetConstantBuffers(0, 1, &camBuffer); //change into geometry shader later
 
 
 	//Creating world constant buffer																 
@@ -89,7 +89,7 @@ void Engine::createConstantBuffers()
 
 	hr = this->gDevice->CreateBuffer(&bufferDescWorld, nullptr, &worldBuffer);
 	if (SUCCEEDED(hr))
-		this->gDeviceContext->VSSetConstantBuffers(0, 1, &worldBuffer); //change into geometry shader later
+		this->gDeviceContext->GSSetConstantBuffers(0, 1, &worldBuffer); //change into geometry shader later
 
 
 
@@ -316,7 +316,7 @@ void Engine::update()
 
 	this->gDeviceContext->Unmap(camBuffer, 0);
 
-	this->gDeviceContext->VSSetConstantBuffers(1, 1, &camBuffer); //change to geometry shader later
+	this->gDeviceContext->GSSetConstantBuffers(1, 1, &camBuffer); //change to geometry shader later
 
 }
 
