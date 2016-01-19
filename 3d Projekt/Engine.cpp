@@ -7,8 +7,17 @@ Engine::Engine()
 {
 }
 
-Engine::Engine(HWND* winHandle)
+Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 {
+	
+	this->cam = new Camera();
+	this->input = input;
+	input->initialize(hInstance, winHandle,this->cam);
+	if (!input)
+	{
+		MessageBox(*winHandle, L"Cannot find input device", L"Error", MB_OK);
+		
+	}
 	this->vertexAmount = 0;
 	this->modelAmount = 0;
 	this->lightAmount = 0;
@@ -45,6 +54,7 @@ Engine::~Engine()
 	}
 	delete models;
 	delete lights;
+	delete cam;
 	
 }
 
@@ -309,7 +319,7 @@ void Engine::loadLights()
 void Engine::run()
 {
 
-	//this->update();
+	this->update();
 
 	this->render();
 
@@ -322,11 +332,10 @@ void Engine::update()
 {
 	//updatera matrixBuffer här
 	
-	//DirectX::XMStoreFloat4x4(&worldStruct.world, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationY(angle)));
-	//DirectX::XMStoreFloat4x4(&matrixStruct.world, DirectX::XMMatrixIdentity());
-	camStruct.view = cam.getView();
-	camStruct.projection = cam.getProjection();
-	camStruct.camPos = cam.getCamPos();
+	input->frame();
+	camStruct.view = cam->getView();
+	camStruct.projection = cam->getProjection();
+	camStruct.camPos = cam->getCamPos();
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	ZeroMemory(&mappedResource, sizeof(mappedResource));
@@ -342,6 +351,7 @@ void Engine::update()
 
 	this->gDeviceContext->GSSetConstantBuffers(1, 1, &camBuffer); //change to geometry shader later
 
+	this->updateLight();
 
 }
 void Engine::updateLight()
@@ -388,8 +398,7 @@ void Engine::render()
 
 
 	//Render all the models
-	this->update();
-	this->updateLight();
+	
 	
 	for (int i = 0; i < this->modelAmount; i++)
 	{

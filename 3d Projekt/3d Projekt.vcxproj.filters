@@ -92,6 +92,7 @@
     <ClInclude Include="Plane.h">
       <Filter>Classes\Model\Plane</Filter>
     </ClInclude>
+    <ClInclude Include="Input.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Classes">
