@@ -13,7 +13,9 @@ private:
 	Camera cam; 
 	int vertexAmount;
 	int modelAmount;
+	int lightAmount;
 	std::vector<Model*>* models;
+	std::vector<Light>* lights;
 
 
 	HRESULT hr;
@@ -43,6 +45,9 @@ private:
 	cameraConstantBuffer camStruct;
 	ID3D11Buffer* camBuffer = nullptr;
 
+	lightConstantBuffer lightStruct;
+	ID3D11Buffer* lightBuffer = nullptr;
+
 	HRESULT CreateDirect3DContext(HWND* wndHandle);
 	void setViewPort();
 	void createShaders();
@@ -55,13 +60,18 @@ public:
 
 	virtual ~Engine();
 
-	void addModel(Primitives type);
 
 	void release();
 	void run();
 	void update();
 	void render();
+
 	void loadModels();
+	void addModel(Primitives type);
+
+	void updateLight();
+	void loadLights();
+	void addLight(lightTypes type);
 	
 
 

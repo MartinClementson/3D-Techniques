@@ -11,6 +11,7 @@ Engine::Engine(HWND* winHandle)
 {
 	this->vertexAmount = 0;
 	this->modelAmount = 0;
+	this->lightAmount = 0;
 	hr = CreateDirect3DContext(winHandle);
 
 	setViewPort();
@@ -21,8 +22,10 @@ Engine::Engine(HWND* winHandle)
 
 	//Load the models and get their vertices
 	this->models = new std::vector<Model*>; //this will be an array 
+	this->lights = new std::vector<Light>;
 	
 	loadModels();
+	loadLights();
 	
 
 	
@@ -58,6 +61,10 @@ void Engine::release()
 	gDeviceContext->Release();
 	depthBuffer->Release();
 	depthStencilView->Release();
+	worldBuffer->Release();
+	camBuffer->Release();
+	lightBuffer->Release();
+
 }
 
 void Engine::createConstantBuffers()
@@ -74,7 +81,7 @@ void Engine::createConstantBuffers()
 
 	hr = this->gDevice->CreateBuffer(&bufferDesc, nullptr, &camBuffer);
 	if (SUCCEEDED(hr))
-		this->gDeviceContext->GSSetConstantBuffers(0, 1, &camBuffer); //change into geometry shader later
+		this->gDeviceContext->GSSetConstantBuffers(1, 1, &camBuffer); //change into geometry shader later <------------------------
 
 
 	//Creating world constant buffer																 
@@ -91,7 +98,18 @@ void Engine::createConstantBuffers()
 	if (SUCCEEDED(hr))
 		this->gDeviceContext->GSSetConstantBuffers(0, 1, &worldBuffer); //change into geometry shader later
 
+	CD3D11_BUFFER_DESC bufferDescLight;
+	ZeroMemory(&bufferDescLight, sizeof(bufferDescLight));
+	bufferDescLight.ByteWidth = sizeof(lightConstantBuffer);
+	bufferDescLight.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDescLight.Usage = D3D11_USAGE_DYNAMIC;
+	bufferDescLight.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bufferDescLight.MiscFlags = 0;
+	bufferDescLight.StructureByteStride = 0;
 
+	hr = this->gDevice->CreateBuffer(&bufferDescLight, nullptr, &lightBuffer);
+	if (SUCCEEDED(hr))
+		this->gDeviceContext->PSSetConstantBuffers(0, 1, &lightBuffer);
 
 
 }
@@ -282,6 +300,10 @@ void Engine::loadModels()
 	this->models->at(5)->setTranslation(XMFLOAT3(0.5f, 0.5f, 0.0f));
 }
 
+void Engine::loadLights()
+{
+	this->addLight(POINTLIGHT);
+}
 
 void Engine::run()
 {
@@ -319,6 +341,29 @@ void Engine::update()
 
 	this->gDeviceContext->GSSetConstantBuffers(1, 1, &camBuffer); //change to geometry shader later
 
+
+}
+void Engine::updateLight()
+{
+	//updating the lightConstantBuffer
+	for (int i = 0; i < this->lightAmount; i++) //fix later so that the lights will not overwrite eachother if there are more lights than one
+	{
+		lightStruct.lightPosition = lights->at(i).getLightPosition();
+		lightStruct.lightColor = lights->at(i).getLightColor();
+		lightStruct.intensity = lights->at(i).getIntensity();
+
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		ZeroMemory(&mappedResource, sizeof(mappedResource));
+
+		this->gDeviceContext->Map(lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+
+		lightConstantBuffer* temporaryLight = (lightConstantBuffer*)mappedResource.pData;
+		*temporaryLight = lightStruct;
+
+		this->gDeviceContext->Unmap(lightBuffer, 0);
+
+		this->gDeviceContext->PSSetConstantBuffers(1, 1, &lightBuffer);
+	}
 }
 
 void Engine::render()
@@ -343,6 +388,7 @@ void Engine::render()
 
 	//Render all the models
 	this->update();
+	this->updateLight();
 	
 	for (int i = 0; i < this->modelAmount; i++)
 	{
@@ -390,4 +436,18 @@ void Engine::addModel(Primitives type)
 	}
 
 
+}
+
+void Engine::addLight(lightTypes type)
+{
+	//following the same format as model
+	switch (type)
+	{
+		case POINTLIGHT:
+		{
+			this->lights->push_back(Light());  //Fix later so that you can reach the custom constructor
+			this->lightAmount += 1;
+			break;
+		}
+	}
 }
