@@ -44,6 +44,7 @@ Engine::~Engine()
 
 	}
 	delete models;
+	delete lights;
 	
 }
 
