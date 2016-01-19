@@ -95,6 +95,8 @@ Model::~Model()
 void Model::update()
 {
 	this->worldStruct->world = this->worldMatrix;
+	this->worldStruct->normalWorld = this->normalWorld;
+
 	D3D11_MAPPED_SUBRESOURCE mappedResourceWorld;
 	ZeroMemory(&mappedResourceWorld, sizeof(mappedResourceWorld));
 
@@ -107,7 +109,7 @@ void Model::update()
 
 	this->gDeviceContext->Unmap(worldBuffer, 0);
 
-	this->gDeviceContext->VSSetConstantBuffers(0, 1, &worldBuffer); //change to geometry shader later
+	this->gDeviceContext->GSSetConstantBuffers(0, 1, &worldBuffer); //change to geometry shader later
 
 
 
@@ -149,7 +151,12 @@ void Model::updateWorldMatrix()
 
 	DirectX::XMMATRIX world = DirectX::XMMatrixMultiply(rotationMatrix, scaleMatrix);
 	world = DirectX::XMMatrixMultiply(world, translationMatrix);
+	XMVECTOR worldDet = XMMatrixDeterminant(world);
+	XMStoreFloat4x4(&normalWorld, XMMatrixInverse(&worldDet, world));
+	
+	
 	world =XMMatrixTranspose(world);
+
 
 	XMStoreFloat4x4(&this->worldMatrix, world);
 }
