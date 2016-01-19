@@ -23,6 +23,8 @@ public:
 	//Getting
 	DirectX::XMFLOAT4X4 getView();
 	DirectX::XMFLOAT4X4 getProjection();
+	DirectX::XMFLOAT3 getCamPos();
+	
 
 };
 

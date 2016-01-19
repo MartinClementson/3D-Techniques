@@ -303,6 +303,7 @@ void Engine::update()
 	//DirectX::XMStoreFloat4x4(&matrixStruct.world, DirectX::XMMatrixIdentity());
 	camStruct.view = cam.getView();
 	camStruct.projection = cam.getProjection();
+	camStruct.camPos = cam.getCamPos();
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	ZeroMemory(&mappedResource, sizeof(mappedResource));

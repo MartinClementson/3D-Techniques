@@ -19,5 +19,7 @@ struct cameraConstantBuffer
 	
 	DirectX::XMFLOAT4X4 view;
 	DirectX::XMFLOAT4X4 projection;
+	DirectX::XMFLOAT3 camPos;
+	float pad;
 };
 
