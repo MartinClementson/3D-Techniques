@@ -19,6 +19,9 @@ Model::Model(ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, w
 	XMStoreFloat4x4(&this->worldMatrix, XMMatrixIdentity());
 	this->worldBuffer = worldBuffer;
 	this->worldStruct = worldStruct;
+	this->scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	this->translation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	this->rotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
 }
 Model::Model(const Model &obj) //Copy Constructor
 {
@@ -116,16 +119,26 @@ void Model::update()
 
 void Model::render()
 {
+	UINT32 vertexSize = sizeof(Vertex);
+	UINT32 offset = 0;
+	this->gDeviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
+
+	this->gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	this->gDeviceContext->Draw(this->vertices->size(), 0); //This will be dynamic,
+
+
 }
 
 void Model::updateWorldMatrix()
 {
 
 	DirectX::XMMATRIX scaleMatrix = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
-
-	DirectX::XMMATRIX rotationMatrixX = DirectX::XMMatrixRotationX(rotation.x);
-	DirectX::XMMATRIX rotationMatrixY = DirectX::XMMatrixRotationY(rotation.y);
-	DirectX::XMMATRIX rotationMatrixZ = DirectX::XMMatrixRotationZ(rotation.z);
+	
+	//We convert from degrees to radians here. Before this point we work in degrees to make it easier for the programmer and user
+	DirectX::XMMATRIX rotationMatrixX = DirectX::XMMatrixRotationX(toRadian(rotation.x));
+	DirectX::XMMATRIX rotationMatrixY = DirectX::XMMatrixRotationY(toRadian(rotation.y));
+	DirectX::XMMATRIX rotationMatrixZ = DirectX::XMMatrixRotationZ(toRadian(rotation.z));
 
 	DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixMultiply(rotationMatrixZ, rotationMatrixX);
 	rotationMatrix = DirectX::XMMatrixMultiply(rotationMatrix, rotationMatrixY);
@@ -133,9 +146,10 @@ void Model::updateWorldMatrix()
 
 	DirectX::XMMATRIX translationMatrix = DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z);
 
-	DirectX::XMMATRIX world = DirectX::XMMatrixMultiply(scaleMatrix, rotationMatrix);
+
+	DirectX::XMMATRIX world = DirectX::XMMatrixMultiply(rotationMatrix, scaleMatrix);
 	world = DirectX::XMMatrixMultiply(world, translationMatrix);
-	XMMatrixTranspose(world);
+	world =XMMatrixTranspose(world);
 
 	XMStoreFloat4x4(&this->worldMatrix, world);
 }

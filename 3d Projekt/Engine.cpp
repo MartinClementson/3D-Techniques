@@ -250,9 +250,36 @@ void Engine::loadModels()
 	this->addModel(PYRAMID);
 	this->models->at(0)->setScale(XMFLOAT3(0.3f,0.3f,0.3f));
 	
-	//this->models->at(0)->setTranslation(XMFLOAT3(0.1f, 0.0f, 0.0f)); //DET ÄR FEL PÅ DENNA
+	this->models->at(0)->setTranslation(XMFLOAT3(0.5f, 0.0f, 0.0f)); 
+
+
+
+	this->addModel(PYRAMID);
+	this->models->at(1)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
+
+	this->models->at(1)->setTranslation(XMFLOAT3(-0.5f, 0.0f, 0.0f)); 
+
+
+	this->addModel(PYRAMID);
+	this->models->at(2)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
+
+	this->models->at(2)->setTranslation(XMFLOAT3(0.0f, 0.5f, 0.0f));
+
+
+	this->addModel(PYRAMID);
+	this->models->at(3)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
+
+	this->models->at(3)->setTranslation(XMFLOAT3(0.0f, -0.5f, 0.0f));
 
 	this->addModel(PLANE);
+	this->models->at(4)->setTranslation(XMFLOAT3(0.0f, -1.5f, 0.0f));
+	this->models->at(4)->setRotation(XMFLOAT3(90.0f, 180.0f, 0.0f));
+	this->models->at(4)->setScale(XMFLOAT3(50.0f, 50.0f, 50.0f));
+
+	
+	this->addModel(CUBE);
+	this->models->at(5)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
+	this->models->at(5)->setTranslation(XMFLOAT3(0.5f, 0.5f, 0.0f));
 }
 
 
@@ -291,21 +318,6 @@ void Engine::update()
 
 	this->gDeviceContext->VSSetConstantBuffers(1, 1, &camBuffer); //change to geometry shader later
 
-	////update worldMatrix (THIS IS TO BE MOVED LATER, INTO OBJECTS UPDATE)
-	//D3D11_MAPPED_SUBRESOURCE mappedResourceWorld;
-	//ZeroMemory(&mappedResource, sizeof(mappedResourceWorld));
-
-	////mapping to the matrixbuffer
-	//this->gDeviceContext->Map(worldBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResourceWorld);
-
-	//worldConstantBuffer* temporaryWorld = (worldConstantBuffer*)mappedResourceWorld.pData;
-
-	//*temporaryWorld = worldStruct;
-
-	//this->gDeviceContext->Unmap(worldBuffer, 0);
-
-	//this->gDeviceContext->VSSetConstantBuffers(0, 1, &worldBuffer); //change to geometry shader later
-	
 }
 
 void Engine::render()

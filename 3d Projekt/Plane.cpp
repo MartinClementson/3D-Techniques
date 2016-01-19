@@ -97,7 +97,8 @@ void Plane::update()
 
 	float static angleX = 0; //<----- just temporary to test rotation
 	angleX += 0.0001;
-	DirectX::XMStoreFloat4x4(&this->worldMatrix, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationX(angleX)));
+	//this->setRotation(XMFLOAT3(angleX, 0, 0));
+	
 
 
 	return Model::update();
@@ -105,14 +106,7 @@ void Plane::update()
 
 void Plane::render()
 {
-	UINT32 vertexSize = sizeof(Vertex);
-	UINT32 offset = 0;
-	this->gDeviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
-
-	this->gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	this->gDeviceContext->Draw(this->vertices->size(), 0); //This will be dynamic,
-
+	return Model::render();
 }
 
 Plane::Plane(const Plane & obj) //Copy constructor

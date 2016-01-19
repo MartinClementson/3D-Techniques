@@ -331,11 +331,5 @@ void Cube::update()
 void Cube::render()
 {
 
-	UINT32 vertexSize = sizeof(Vertex);
-	UINT32 offset = 0;
-	this->gDeviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
-
-	this->gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	this->gDeviceContext->Draw(this->vertices->size(), 0); //This will be dynamic,
+	return Model::render();
 }
