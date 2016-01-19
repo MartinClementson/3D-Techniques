@@ -54,3 +54,10 @@ DirectX::XMFLOAT4X4 Camera::getProjection()
 {
 	return projection;
 }
+
+DirectX::XMFLOAT3 Camera::getCamPos()
+{
+	
+		return DirectX::XMFLOAT3(this->viewPosition.m128_f32[0], this->viewPosition.m128_f32[1], this->viewPosition.m128_f32[2]);
+	
+}

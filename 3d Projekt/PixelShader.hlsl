@@ -1,3 +1,10 @@
+cbuffer lightBuffer
+{
+
+
+
+};
+
 
 
 
@@ -6,6 +13,8 @@ struct PS_IN
 	float4 pos : SV_POSITION;
 	float3 color : COLOR;
 	float3 normal : NORMAL;
+	float4 wPos: WORLDPOS;
+	float3 camPos : CAMERAPOS;
 
 };
 
