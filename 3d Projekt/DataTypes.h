@@ -11,7 +11,7 @@ struct Vertex {
 struct worldConstantBuffer
 {
 	DirectX::XMFLOAT4X4 world;
-	
+	DirectX::XMFLOAT4X4 normalWorld;
 };
 
 struct cameraConstantBuffer
