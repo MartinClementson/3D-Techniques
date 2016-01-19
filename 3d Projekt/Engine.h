@@ -5,6 +5,7 @@
 #include "Pyramid.h"
 #include "Plane.h"
 #include "Camera.h"
+#include "Light.h"
 class Engine
 {
 
