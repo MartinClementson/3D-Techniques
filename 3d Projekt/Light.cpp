@@ -5,7 +5,7 @@ using namespace DirectX;
 Light::Light()
 {
 	lightColor = XMFLOAT4(1, 1, 1, 1);
-	lightPosition = XMFLOAT4(0, 0, 4, 1);
+	lightPosition = XMFLOAT4(0, 0, 2, 1);
 	intensity = 1.0f;
 }
 
