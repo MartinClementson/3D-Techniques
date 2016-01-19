@@ -11,6 +11,7 @@ cbuffer cameraConstantBuffer  : register(b1)
 
 	matrix projection;
 	matrix view;
+	float3 camPos;
 	// normalworld?
 };
 
@@ -27,6 +28,8 @@ struct GSOutput
 	float4 pos : SV_POSITION;
 	float3 color : COLOR;
 	float3 normal : NORMAL;
+	float4 wPos : WORLDPOS;
+	float3 camPos: CAMERAPOS;
 };
 
 [maxvertexcount(3)]
@@ -47,6 +50,8 @@ void GS_main(
 		GSOutput element;
 		element.pos = input[i].pos;
 		element.pos = mul(element.pos, combinedMatrix);
+		element.wPos = mul(element.pos, world);
+		element.camPos = camPos;
 		element.color = input[i].color;
 		element.normal = faceNormal;
 		output.Append(element);
