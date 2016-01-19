@@ -23,3 +23,10 @@ struct cameraConstantBuffer
 	float pad;
 };
 
+struct lightConstantBuffer
+{
+	DirectX::XMFLOAT4 lightPosition;
+	DirectX::XMFLOAT4 lightColor;
+	float intensity;
+	DirectX::XMFLOAT3 pad;
+};

@@ -1,6 +1,8 @@
 cbuffer lightBuffer
 {
-
+	float4 lightPosition;
+	float4 lightColor;
+	float intensity;
 
 
 };
