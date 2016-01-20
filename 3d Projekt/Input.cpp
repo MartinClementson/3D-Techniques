@@ -194,14 +194,42 @@ void Input::ProcessInput()
 	// Update the location of the mouse cursor based on the change of the mouse location during the frame.
 	mouseX = (mouseState.lX - (WINDOW_WIDTH/2));
 	mouseY = (mouseState.lY - (WINDOW_HEIGHT/2));
+
+	
+	if (keyboardState[DIK_W])
+	{
+
+		camera->move(FORWARD);
+	}
+	if (keyboardState[DIK_S])
+	{
+
+		camera->move(BACKWARD);
+	}
+	if (keyboardState[DIK_D])
+	{
+
+		camera->move(RIGHT);
+	}
+	if (keyboardState[DIK_A])
+	{
+
+		camera->move(LEFT);
+	}
+	if (keyboardState[DIK_UP])
+	{
+		camera->rotatePitch(0.000001f);
+	}
+
+
 	//mouseState.lX = WINDOW_WIDTH / 2;
 	//mouseState.lY = WINDOW_WIDTH / 2;
 	//Makesure it stays inside the screen
-	//if (mouseX < 0) { mouseX = 0; };
-	//if (mouseY < 0) { mouseY = 0; };
+	if (mouseX < 0) { mouseX = 0; };
+	if (mouseY < 0) { mouseY = 0; };
 
-	//if (mouseX > WINDOW_WIDTH) { mouseX = WINDOW_WIDTH; };
-	//if (mouseY > WINDOW_WIDTH) { mouseY = WINDOW_HEIGHT; };
+	if (mouseX > WINDOW_WIDTH) { mouseX = WINDOW_WIDTH; };
+	if (mouseY > WINDOW_WIDTH) { mouseY = WINDOW_HEIGHT; };
 
 	DirectX::XMFLOAT3 test = { mouseX,mouseY,0.0f };
 	//camera->setViewLookAt(test);

@@ -1,5 +1,7 @@
 #pragma once
 #include "Linker.h"
+using std::max;
+using std::min;
 class Camera
 {
 private:
@@ -28,6 +30,9 @@ public:
 	DirectX::XMFLOAT4X4 getView();
 	DirectX::XMFLOAT4X4 getProjection();
 	DirectX::XMFLOAT3 getCamPos();
+
+	void move(moveDirection direction);
+	
 	
 
 };
