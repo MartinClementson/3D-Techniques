@@ -44,6 +44,7 @@ void GS_main(
 	//combining the matrices for simpler use, also more efficient
 	matrix combinedMatrix = mul(world, mul(projection, view));
 
+
 	for (uint i = 0; i < 3; i++)
 	{
 		GSOutput element;

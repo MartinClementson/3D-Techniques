@@ -7,7 +7,7 @@
 bool Input::ReadKeyboard()
 {
 	HRESULT result;
-
+	//GetAsyncKeyState()
 	result = keyboard->GetDeviceState(sizeof(keyboardState), (LPVOID)&keyboardState);
 	if (FAILED(result))
 	{

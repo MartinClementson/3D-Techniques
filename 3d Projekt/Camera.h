@@ -2,6 +2,7 @@
 #include "Linker.h"
 using std::max;
 using std::min;
+using namespace DirectX;
 class Camera
 {
 private:
@@ -11,10 +12,10 @@ private:
 	float pitch; //Rotation around x axis
 
 	//view Matrix parameters
-	DirectX::XMVECTOR viewUpDirection;
-	DirectX::XMVECTOR viewRightDirection;
-	DirectX::XMVECTOR viewPosition;
-	DirectX::XMVECTOR viewLookAt;
+	DirectX::XMFLOAT3 viewUpDirection;
+	DirectX::XMFLOAT3 viewRightDirection;
+	DirectX::XMFLOAT3 viewPosition;
+	DirectX::XMFLOAT3 viewLookAt;
 
 public:
 	Camera();
