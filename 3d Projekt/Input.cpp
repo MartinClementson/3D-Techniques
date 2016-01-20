@@ -199,22 +199,22 @@ void Input::ProcessInput()
 	if (keyboardState[DIK_W])
 	{
 
-		camera->move(FORWARD);
+		camera->walk(-CAMERA_SPEED);
 	}
 	if (keyboardState[DIK_S])
 	{
 
-		camera->move(BACKWARD);
+		camera->walk(CAMERA_SPEED);
 	}
 	if (keyboardState[DIK_D])
 	{
 
-		camera->move(RIGHT);
+		camera->strafe(CAMERA_SPEED);
 	}
 	if (keyboardState[DIK_A])
 	{
 
-		camera->move(LEFT);
+		camera->strafe(-CAMERA_SPEED);
 	}
 	if (keyboardState[DIK_UP])
 	{

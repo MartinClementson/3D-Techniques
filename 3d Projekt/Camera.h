@@ -8,6 +8,7 @@ class Camera
 private:
 	//projection Matrix
 	DirectX::XMFLOAT4X4 projection;
+	DirectX::XMFLOAT4X4 view;
 	float yaw; //rotation around y axis
 	float pitch; //Rotation around x axis
 
@@ -16,8 +17,11 @@ private:
 	DirectX::XMFLOAT3 viewRightDirection;
 	DirectX::XMFLOAT3 viewPosition;
 	DirectX::XMFLOAT3 viewLookAt;
+	
 
 public:
+	void walk(float d);
+	void strafe(float d);
 	Camera();
 	virtual ~Camera();
 
@@ -33,6 +37,8 @@ public:
 	DirectX::XMFLOAT3 getCamPos();
 
 	void move(moveDirection direction);
+
+	void updateView();
 	
 	
 
