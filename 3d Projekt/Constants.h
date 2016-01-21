@@ -5,7 +5,7 @@
 #define PAD 0.0f
 #define PI 3.14159265359f
 #define SENSITIVITY 2
-#define CAMERA_SPEED 0.005f
+#define CAMERA_SPEED 0.0005f
 
 #define toRadian(degrees) ((degrees)* (PI/180.0f))
 
