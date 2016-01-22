@@ -228,8 +228,8 @@ void Camera::walk(float d)
 
 
 
-	//XMVECTOR normLook = XMVector3NormalizeEst(l);
 	XMVECTOR normLook = XMVectorSubtract(l, p);
+	normLook = XMVector3NormalizeEst(normLook);
 
 	XMVECTOR translate = XMVectorMultiply(s, normLook);
 	XMMATRIX test = XMMatrixTranslationFromVector(translate);
