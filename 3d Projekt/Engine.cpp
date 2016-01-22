@@ -275,8 +275,7 @@ void Engine::createShaders()
 void Engine::loadModels()
 {
 	
-	
-	this->addModel(PYRAMID);
+	/*this->addModel(PYRAMID);
 	this->models->at(0)->setScale(XMFLOAT3(0.3f,0.3f,0.3f));
 	
 	this->models->at(0)->setTranslation(XMFLOAT3(0.5f, 0.0f, 0.0f)); 
@@ -309,6 +308,8 @@ void Engine::loadModels()
 	this->addModel(CUBE);
 	this->models->at(5)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
 	this->models->at(5)->setTranslation(XMFLOAT3(0.5f, 0.5f, 0.0f));
+*/
+	this->addModel(OBJ);
 }
 
 void Engine::loadLights()
@@ -445,7 +446,7 @@ void Engine::addModel(Primitives type)
 
 		case OBJ :
 		{
-			this->models->push_back(new Model(std::string("PATHNAME"),this->gDevice, this->gDeviceContext, this->worldBuffer, &this->worldStruct));
+			this->models->push_back(new Model(std::string("test.obj"),this->gDevice, this->gDeviceContext, this->worldBuffer, &this->worldStruct));
 			this->modelAmount += 1;
 			break;
 
