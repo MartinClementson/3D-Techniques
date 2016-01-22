@@ -1,5 +1,6 @@
 #pragma once
 #include "Linker.h"
+#include "ObjHandler.h"
 using namespace DirectX;
 
 class Model
@@ -16,6 +17,7 @@ protected:
 	XMFLOAT4X4 normalWorld;
 
 	std::vector<Vertex> *vertices;
+
 	//This is a pointer to a deviceContext, we will store the adress to the main device here.
 	//since we use it alot, we shall avoid putting it in all the functions.
 	ID3D11DeviceContext* gDeviceContext;
@@ -31,6 +33,9 @@ public:
 
 	Model(ID3D11DeviceContext* gDeviceContext, ID3D11Buffer* worldBuffer, worldConstantBuffer* worldStruct);
 	Model(const Model &obj); //copy constructor
+
+	//This is a constructor for a OBJ file. this has a filePath string as a parameter
+	Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext* gDeviceContext, ID3D11Buffer* worldBuffer, worldConstantBuffer* worldStruct);
 	virtual ~Model();
 	
 	virtual void update();

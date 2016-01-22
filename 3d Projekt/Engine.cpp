@@ -443,6 +443,14 @@ void Engine::addModel(Primitives type)
 			break;
 		}
 
+		case OBJ :
+		{
+			this->models->push_back(new Model(std::string("PATHNAME"),this->gDevice, this->gDeviceContext, this->worldBuffer, &this->worldStruct));
+			this->modelAmount += 1;
+			break;
+
+		}
+
 	}
 
 

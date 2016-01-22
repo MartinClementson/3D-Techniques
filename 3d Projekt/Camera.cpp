@@ -226,8 +226,12 @@ void Camera::walk(float d)
 	DirectX::XMVECTOR l = XMLoadFloat3(&viewLookAt); // look at
 	DirectX::XMVECTOR p = XMLoadFloat3(&viewPosition); // position
 
-	XMVECTOR fuck = XMVector3NormalizeEst(l);
-	XMVECTOR translate = XMVectorMultiply(s, fuck);
+
+
+	//XMVECTOR normLook = XMVector3NormalizeEst(l);
+	XMVECTOR normLook = XMVectorSubtract(l, p);
+
+	XMVECTOR translate = XMVectorMultiply(s, normLook);
 	XMMATRIX test = XMMatrixTranslationFromVector(translate);
 
 	//XMStoreFloat3(&viewPosition, XMVectorMultiplyAdd(s, l, p));

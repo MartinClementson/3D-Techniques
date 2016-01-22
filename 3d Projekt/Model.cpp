@@ -8,9 +8,43 @@ Model::Model()
 	
 }
 
-void Model::createVertices(ID3D11Device* gDevice)
+
+//This is the constructor for OBJ import
+Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct)
 {
+
+	this->vertices = new std::vector<Vertex>;
+	this->gDeviceContext = gDeviceContext;
+	XMStoreFloat4x4(&this->worldMatrix, XMMatrixIdentity());
+	this->worldBuffer = worldBuffer;
+	this->worldStruct = worldStruct;
+	this->scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	this->translation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	this->rotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+	ObjHandler* importer = new ObjHandler(filePath,vertices);
+
+	//Make import here!
+
+	delete importer; // delete when done;
+
+	D3D11_BUFFER_DESC bufferDesc;
+	memset(&bufferDesc, 0, sizeof(bufferDesc));
+	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.ByteWidth = sizeof(Vertex)* vertices->size();
+
+
+	D3D11_SUBRESOURCE_DATA data;
+	//Send the array of vertices in to pSysMem
+	data.pSysMem = vertices->data();
+	// data() "Returns a direct pointer to the memory array used internally by the vector to store its owned elements."
+
+	gDevice->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
+
 }
+
+//This is the constructor for Primitives
 Model::Model(ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer* worldStruct)
 {
 
@@ -22,6 +56,8 @@ Model::Model(ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, w
 	this->scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	this->translation = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	this->rotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+
 }
 Model::Model(const Model &obj) //Copy Constructor
 {
@@ -40,6 +76,9 @@ Model::Model(const Model &obj) //Copy Constructor
 
 }
 
+void Model::createVertices(ID3D11Device* gDevice)
+{
+}
 
 void Model::setPivotPoint(XMFLOAT3 newPosition)
 {

@@ -2,6 +2,7 @@
 #define DIRECTINPUT_VERSION 0x0800
 
 #include <windows.h>
+#include <stdlib.h>
 #include <algorithm>
 #include <d3d11.h>
 #include <d3dcompiler.h>
