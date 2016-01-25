@@ -86,52 +86,48 @@ void Camera::setViewLookAt(DirectX::XMFLOAT3& nViewLookAt)
 
 void Camera::rotateYaw(float angle)
 {
-	yaw += toRadian(angle);
 	
-	DirectX::XMMATRIX yawMatrix;
-	yaw = min(yaw, PI* 0.49); // Almost fully up
-	yaw = max(yaw, PI * -0.49); // Almost fully down
-	//The D3DXMatrixRotationAxis function takes a vector and an angle and produces a matrix that will provide that requested rotation.
-	yawMatrix = DirectX::XMMatrixRotationY(yaw);
-	//DirectX::XMMatrixRotationRollPitchYaw()
+	XMMATRIX yawMatrix = XMMatrixRotationY(toRadian(angle));
 
-	//this->viewLookAt = DirectX::XMVector3TransformCoord(this->viewLookAt, yawMatrix);
+	XMStoreFloat3(&viewRightDirection, XMVector3TransformNormal(XMLoadFloat3(&viewRightDirection), yawMatrix));
 
-	/*if (angle > 360)
-	{
-		angle = 0;
+	XMStoreFloat3(&viewUpDirection, XMVector3TransformNormal(XMLoadFloat3(&viewUpDirection), yawMatrix));
 
-	}
-	else if (angle < -360)
-	{
-		angle = 0;
-	}*/
-
-
-
+	XMStoreFloat3(&viewLookAt, XMVector3TransformNormal(XMLoadFloat3(&viewLookAt), yawMatrix));
+	this->updateView();
 }
+
 
 void Camera::rotatePitch(float angle)
 {
-	pitch += toRadian(angle);
-	pitch = fmod(pitch, 2 * PI); // Keep in valid circular range
-	pitch = min(pitch, PI* 0.49); // Almost fully up
-	pitch = max(pitch, PI * -0.49); // Almost fully down
-	//if (pitch > 0.523598776)
-	//{
-	//	pitch = 0.523598776;
-	//}
-	//if (pitch < -0.523598776)
-	//{
-	//	pitch = -0.523598776;
-	//}
+	float tempPitch = toRadian(angle);
+	//pitch += tempPitch;
+	//tempPitch = fmod(tempPitch, 2 * PI); // Keep in valid circular range
+	//tempPitch = min(tempPitch, PI* 0.49); // Almost fully up
+	//tempPitch = max(tempPitch, PI * -0.49); // Almost fully down
+	/*if (pitch > 0.02)
+	{
+		
+		pitch = 0.02;
+		return;
+	}
+	if (pitch < -0.02)
+	{
+		pitch = -0.02;
+		return;
+	}*/
 
 	//storing the view matrix variables in a new matrix
 
-	DirectX::XMMATRIX pitchMatrix;
-	//pitchMatrix = DirectX::XMMatrixRotationX(pitch);
-	pitchMatrix=DirectX::XMMatrixRotationRollPitchYaw(pitch, 0.0f, 0.0f);
+	
+	XMMATRIX pitchMatrix = XMMatrixRotationAxis(XMLoadFloat3(&viewRightDirection), angle);
+
+	XMStoreFloat3(&viewLookAt, XMVector3TransformCoord(XMLoadFloat3(&viewLookAt), pitchMatrix));
+
+
+	//XMStoreFloat3(&this->viewUpDirection, XMVector3TransformCoord(XMLoadFloat3(&viewUpDirection), pitchMatrix));
 	//this->viewLookAt = { 0.0f,0.0f,-1.0f };
+	this->updateView();
 	
 
 }
@@ -155,111 +151,38 @@ DirectX::XMFLOAT3 Camera::getCamPos()
 	
 }
 
-void Camera::move(moveDirection direction)
-{
-	
-	//switch (direction)
-	//{
-	//case FORWARD:
-	//{
-	//	viewPosition -=  (viewLookAt * -CAMERA_SPEED);
-	//	//Replicates a floating-point value into all four components of a vector.
-	//	DirectX::XMVECTOR s = DirectX::XMVectorReplicate(-CAMERA_SPEED); //speed
-	//	DirectX::XMVECTOR l = XMLoadFloat3(&viewLookAt); // look at
-	//	DirectX::XMVECTOR p = XMLoadFloat3(&viewPosition); // position
-	//	XMStoreFloat3(&viewPosition, XMVectorMultiplyAdd(s, l, p));
-
-	//	break;
-	//}
-	//case BACKWARD:
-	//{
-	//	viewPosition += (viewLookAt * CAMERA_SPEED);
-	//	//Replicates a floating-point value into all four components of a vector.
-	//	DirectX::XMVECTOR s = DirectX::XMVectorReplicate(CAMERA_SPEED); //speed
-	//	DirectX::XMVECTOR l = XMLoadFloat3(&viewLookAt); // look at
-	//	DirectX::XMVECTOR p = XMLoadFloat3(&viewPosition); // position
-	//	XMStoreFloat3(&viewPosition, XMVectorMultiplyAdd(s, l, p));
-
-	//	
-	//	break;
-	//}
-	//case RIGHT:
-	//{
-	//	viewPosition -= (viewRightDirection * -CAMERA_SPEED);
-	//	XMVECTOR s = XMVectorReplicate(CAMERA_SPEED);
-	//	XMVECTOR r = XMLoadFloat3(&viewRightDirection);
-	//	XMVECTOR p = XMLoadFloat3(&viewPosition);
-	//	XMMATRIX translatematrix = XMMatrixTranslation(viewRightDirection.x * CAMERA_SPEED,
-	//		viewRightDirection.y * CAMERA_SPEED,
-	//		viewRightDirection.z * CAMERA_SPEED);
-	//	
-	//	XMStoreFloat3(&viewPosition, XMVector3TransformCoord(p, translatematrix));
-	//	//XMStoreFloat3(&viewPosition, XMVectorMultiplyAdd(s, r, p));
-	//	break;
-
-	//}
-	//case LEFT:
-	//{
-
-	//	viewPosition -= (viewRightDirection * CAMERA_SPEED);
-	//	XMVECTOR s = XMVectorReplicate(CAMERA_SPEED);
-	//	XMVECTOR r = XMLoadFloat3(&viewRightDirection);
-	//	XMVECTOR p = XMLoadFloat3(&viewPosition);
-	//	XMStoreFloat3(&viewPosition, XMVectorMultiplyAdd(s, r, p));
-	//	break;
-	//	
-	//	
-	//
-	//}
-	//}
-
-	//updateView();
-
-}
-
 void Camera::walk(float d)
 {
-	//this->viewPosition += (this->viewPosition,(viewLookAt * d));
-	//this->viewLookAt += (this->viewLookAt, (viewLookAt * d));
 
 	DirectX::XMVECTOR s = DirectX::XMVectorReplicate(d); //speed
 	DirectX::XMVECTOR l = XMLoadFloat3(&viewLookAt); // look at
 	DirectX::XMVECTOR p = XMLoadFloat3(&viewPosition); // position
 
 
+											
+	XMVECTOR normLook = XMVectorSubtract(l, p); //create a vector from the "look at" point ant the camera position
+	normLook = XMVector3NormalizeEst(normLook); //Normalize the vector to make it a direction vector
 
-	XMVECTOR normLook = XMVectorSubtract(l, p);
-	normLook = XMVector3NormalizeEst(normLook);
-
-	XMVECTOR translate = XMVectorMultiply(s, normLook);
-	XMMATRIX test = XMMatrixTranslationFromVector(translate);
-
-	//XMStoreFloat3(&viewPosition, XMVectorMultiplyAdd(s, l, p));
+	XMVECTOR translate = XMVectorMultiply(s, normLook); //multiply the speed vector with the direction vector
+	XMMATRIX translateMatrix = XMMatrixTranslationFromVector(translate); //use the translate vector to create a translation matrix
 
 
-	XMStoreFloat3(&viewPosition, XMVector3TransformCoord(p, test));
+
+	XMStoreFloat3(&viewPosition, XMVector3TransformCoord(p, translateMatrix)); //Multiply the camera position with the translation matrix and store it
 	
-	l = XMVector3TransformCoord(l, test);
+	l = XMVector3TransformCoord(l, translateMatrix); //Translate the look at point to follow the player position
 	
-	//l = XMVector3Normalize(l);
-	XMStoreFloat3(&viewLookAt, l);
-
-	//l = XMVectorMultiplyAdd(s, l, l);
-	//XMStoreFloat3(&viewLookAt, l);
 	
-	//XMStoreFloat3(&viewLookAt, XMVectorAdd(l, XMLoadFloat3(&viewPosition)));
-	
+	XMStoreFloat3(&viewLookAt, l); //store the "look at"
 
 
-
-	updateView();
+	updateView(); //Update view matrix
 }
 
 void Camera::strafe(float d)
 {
-	//this->viewPosition += (this->viewPosition, (viewLookAt * d));
-	//this->viewLookAt += (this->viewLookAt, (viewPosition + viewLookAt));
-
+	
+	//Strafing uses the same theory as walking. But we make use of a vector that keeps control of where our right side is.
 
 	XMVECTOR s = XMVectorReplicate(d);
 	XMVECTOR r = XMLoadFloat3(&viewRightDirection);
@@ -267,38 +190,17 @@ void Camera::strafe(float d)
 	
 	DirectX::XMVECTOR l = XMLoadFloat3(&viewLookAt); // look at
 	
-	XMVECTOR translate = XMVectorMultiply(s, r);
-	//XMStoreFloat3(&viewLookAt, XMVectorMultiplyAdd(s, r, l));
-	XMMATRIX test = XMMatrixTranslationFromVector(translate);
-
-	XMStoreFloat3(&viewPosition, XMVector3TransformCoord(p, test));
-	//l = XMVectorAdd(XMLoadFloat3(&viewPosition), l);
-	l = XMVector3TransformCoord(l, test);
-	//l = XMVectorMultiplyAdd(s, r, l);
-	//l = DirectX::XMVectorSubtract(l, XMLoadFloat3(&viewPosition));
-	//l = XMVector3Normalize(l);
+	XMVECTOR translate = XMVectorMultiply(s, r); //create a translate vector of the speed multiplied with the "right hand" vector 
 	
-	//l = XMVector3Normalize(l);
-	XMStoreFloat3(&viewLookAt, l);
+	XMMATRIX translateMatrix = XMMatrixTranslationFromVector(translate); //Create a translation matrix from the vector
 
-	/*DirectX::XMVECTOR tempDir = DirectX::XMVectorSubtract(l, p);
-	tempDir = XMVector3Normalize(tempDir);
-	tempDir = XMVectorAdd(XMLoadFloat3(&viewPosition), tempDir);
-	tempDir = XMVector3Normalize(tempDir);
-	XMStoreFloat3(&viewLookAt, tempDir);
-
-	DirectX::XMVECTOR R = XMVector3Cross( XMLoadFloat3(&viewUpDirection), tempDir);
-	R = XMVector3Normalize(R);*/
-
-	/*DirectX::XMVECTOR tempRight = DirectX::XMVectorSubtract(r, p);
-	tempRight = XMVector3Normalize(tempRight);
-	tempRight = XMVectorAdd(XMLoadFloat3(&viewPosition), tempRight);
-	tempRight = XMVector3Normalize(tempRight);*/
-//	XMStoreFloat3(&viewRightDirection, R);
-
-
+	XMStoreFloat3(&viewPosition, XMVector3TransformCoord(p, translateMatrix)); //Translate the viewposition
 	
-	//viewLookAt = (viewLookAt + viewPosition);
+	l = XMVector3TransformCoord(l, translateMatrix); //translate the Look at to follow the camera
+	
+	XMStoreFloat3(&viewLookAt, l); //store the new "Look at"
+
+
 	updateView();
 
 
@@ -308,33 +210,6 @@ void Camera::updateView()
 {
 
 
-	XMVECTOR R = XMLoadFloat3(&viewRightDirection);
-	XMVECTOR U = XMLoadFloat3(&viewUpDirection);
-	XMVECTOR L = XMLoadFloat3(&viewLookAt);
-	XMVECTOR P = XMLoadFloat3(&viewPosition);
-
-	////L = P + L;
-	//L = XMVector3Normalize(L);
-	////Normalize the L vector
-
-	////Compute a new corrected "up" vector and normalize it!
-	////Using cross product of Look and Right vectors
-	////U = XMVector3Normalize(XMVector3Cross(L, R));
-
-	////Compute a new corrected "Right" vector
-	////U and L are already ortho-normal, so no need to normalize it;
-	//P.m128_f32[1] = 1.0f;
-	//P = XMVector3Normalize(P);
-	//R = XMVector3Cross(P, L);
-	//R = XMVector3Normalize(R);
-	////R = (R + P);
-
-	XMStoreFloat3(&viewRightDirection, R);
-	//XMStoreFloat3(&viewUpDirection, U);
-	//XMStoreFloat3(&viewLookAt, L);
-
-	
-
 	DirectX::XMMATRIX viewMatrix = DirectX::XMMatrixLookAtLH
 		(
 			DirectX::XMLoadFloat3(&viewPosition),
@@ -342,7 +217,7 @@ void Camera::updateView()
 			DirectX::XMLoadFloat3(&viewUpDirection)
 			);
 
-	//this->viewLookAt = { 0.0f,0.0f,1.0f };
+
 
 	//converting the view matrix into an XMFLOAT4X4, for simpler use
 	viewMatrix = DirectX::XMMatrixTranspose(viewMatrix);

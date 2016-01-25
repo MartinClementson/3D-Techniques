@@ -59,6 +59,14 @@ Input::Input()
 	mouseX = 0.0f;
 	mouseY = 0.0f;
 
+	
+
+	this->lastMouseX = mouseState.lX;
+	this->lastMouseY = mouseState.lY;
+
+
+	
+
 }
 
 bool Input::initialize(HINSTANCE* hinstance, HWND* hwnd,Camera* camera)
@@ -124,19 +132,23 @@ bool Input::initialize(HINSTANCE* hinstance, HWND* hwnd,Camera* camera)
 	{
 		return false;
 	}
+
+
+
+	DIPROPDWORD dipdw;
+	
+	dipdw.diph.dwSize = sizeof(DIPROPDWORD);
+	dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+	dipdw.diph.dwObj = 0;
+	dipdw.diph.dwHow = DIPH_DEVICE;
+	dipdw.dwData = 10;
+	hr = keyboard->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
+
+
+	hr = mouse->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
+
+	
 	return true;
-
-	//DIPROPDWORD dipdw;
-	//
-	//dipdw.diph.dwSize = sizeof(DIPROPDWORD);
-	//dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-	//dipdw.diph.dwObj = 0;
-	//dipdw.diph.dwHow = DIPH_DEVICE;
-	//dipdw.dwData = 10;
-	//hr = keyboard->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
-
-
-	//hr = mouse->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
 
 	////check https://msdn.microsoft.com/en-us/library/windows/desktop/ee416850(v=vs.85).aspx
 
@@ -192,10 +204,23 @@ void Input::Shutdown()
 void Input::ProcessInput()
 {
 	// Update the location of the mouse cursor based on the change of the mouse location during the frame.
-	mouseX = (mouseState.lX - (WINDOW_WIDTH/2));
-	mouseY = (mouseState.lY - (WINDOW_HEIGHT/2));
+	mouseX = (mouseState.lX);
+	mouseY = (mouseState.lY);
+	
+	//Makesure it stays inside the screen
+	/*if (mouseX < 0) { mouseX = 0; };
+	if (mouseY < 0) { mouseY = 0; };*/
+
+	//if (mouseX > WINDOW_WIDTH) { mouseX = WINDOW_WIDTH; };
+	//if (mouseY > WINDOW_WIDTH) { mouseY = WINDOW_HEIGHT; };
+
+	//float dy = toRadian(0.25f* (mouseY - lastMouseY));
+	//float dx = toRadian(0.25f* (mouseX - lastMouseX));
 
 	
+	float dy = XMConvertToRadians(0.25f* static_cast <float>(mouseY - lastMouseY));
+	float dx = XMConvertToRadians(0.25f* static_cast <float>(mouseX - lastMouseX));
+
 	if (keyboardState[DIK_W])
 	{
 
@@ -218,24 +243,22 @@ void Input::ProcessInput()
 	}
 	if (keyboardState[DIK_UP])
 	{
-		camera->rotatePitch(0.000001f);
+		camera->rotatePitch(-SENSITIVITY);
+	}
+	if (keyboardState[DIK_DOWN])
+	{
+		camera->rotatePitch(SENSITIVITY);
 	}
 
 
-	//mouseState.lX = WINDOW_WIDTH / 2;
-	//mouseState.lY = WINDOW_WIDTH / 2;
-	//Makesure it stays inside the screen
-	if (mouseX < 0) { mouseX = 0; };
-	if (mouseY < 0) { mouseY = 0; };
 
-	if (mouseX > WINDOW_WIDTH) { mouseX = WINDOW_WIDTH; };
-	if (mouseY > WINDOW_WIDTH) { mouseY = WINDOW_HEIGHT; };
-
-	DirectX::XMFLOAT3 test = { mouseX,mouseY,0.0f };
-	//camera->setViewLookAt(test);
-	//camera->rotateYaw(mouseX);
-	//camera->rotatePitch(mouseY);
+	
+	
+	camera->rotateYaw(dx);
+	camera->rotatePitch(dy);
 	//return;
+	/*lastMouseY = mouseY;
+	lastMouseX = mouseX;*/
 
 
 }

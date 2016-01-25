@@ -275,7 +275,7 @@ void Engine::createShaders()
 void Engine::loadModels()
 {
 	
-	/*this->addModel(PYRAMID);
+	this->addModel(PYRAMID);
 	this->models->at(0)->setScale(XMFLOAT3(0.3f,0.3f,0.3f));
 	
 	this->models->at(0)->setTranslation(XMFLOAT3(0.5f, 0.0f, 0.0f)); 
@@ -308,8 +308,9 @@ void Engine::loadModels()
 	this->addModel(CUBE);
 	this->models->at(5)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
 	this->models->at(5)->setTranslation(XMFLOAT3(0.5f, 0.5f, 0.0f));
-*/
+
 	this->addModel(OBJ);
+	this->models->at(6)->setTranslation(XMFLOAT3(5.0f, 0.0f, 0.0f));
 }
 
 void Engine::loadLights()

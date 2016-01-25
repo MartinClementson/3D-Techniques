@@ -13,6 +13,7 @@ private:
 	unsigned char keyboardState[256];
 	DIMOUSESTATE mouseState;
 	float mouseX, mouseY;
+	float lastMouseX, lastMouseY;
 	void ProcessInput();
 	bool ReadKeyboard();
 	bool ReadMouse();

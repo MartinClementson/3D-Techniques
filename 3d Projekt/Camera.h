@@ -36,7 +36,7 @@ public:
 	DirectX::XMFLOAT4X4 getProjection();
 	DirectX::XMFLOAT3 getCamPos();
 
-	void move(moveDirection direction);
+
 
 	void updateView();
 	
