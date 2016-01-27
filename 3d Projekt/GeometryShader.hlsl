@@ -42,8 +42,10 @@ void GS_main(
 	float3 faceNormal = normalize(cross(faceEdgeA, faceEdgeB));
 
 	//combining the matrices for simpler use, also more efficient
-	matrix combinedMatrix = mul(world, mul(projection, view));
+	matrix combinedMatrix = mul(world, mul(projection,view));
 
+	//matrix combinedMatrix = mul(world, view);
+	//combinedMatrix = mul(combinedMatrix, projection);
 	for (uint i = 0; i < 3; i++)
 	{
 		GSOutput element;

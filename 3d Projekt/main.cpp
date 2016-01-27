@@ -4,8 +4,9 @@
 #include <crtdbg.h>
 #include "Linker.h"
 #include "Engine.h"
+#include "Input.h"
 #include "windowInit.h"
-//#define _CRTDBG_MAP_ALLOC
+#define _CRTDBG_MAP_ALLOC
 HWND InitWindow(HINSTANCE hInstance);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
@@ -17,7 +18,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 {
 	MSG msg = { 0 };
 	HWND wndHandle = InitWindow(hInstance); 
-	Engine* engine = new Engine(&wndHandle);
+	Input* input = new Input();
+	Engine* engine = new Engine(&hInstance,&wndHandle,input);
+
+	
 
 	if (wndHandle)
 	{
@@ -36,9 +40,11 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			}
 		}
 		engine->release();
+		input->Shutdown();
 		DestroyWindow(wndHandle);
 	}
 	delete engine;
+	delete input;
 	_CrtDumpMemoryLeaks();
 	return (int)msg.wParam;
 }

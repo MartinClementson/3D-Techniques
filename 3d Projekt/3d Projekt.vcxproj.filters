@@ -21,9 +21,6 @@
     <ClCompile Include="Game.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
-    <ClCompile Include="Input.cpp">
-      <Filter>Resource</Filter>
-    </ClCompile>
     <ClCompile Include="Logic.cpp">
       <Filter>Resource</Filter>
     </ClCompile>
@@ -53,6 +50,12 @@
     </ClCompile>
     <ClCompile Include="Plane.cpp">
       <Filter>Classes\Model\Plane</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjHandler.cpp">
+      <Filter>Classes\ObjHandler</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Classes\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -92,6 +95,12 @@
     <ClInclude Include="Plane.h">
       <Filter>Classes\Model\Plane</Filter>
     </ClInclude>
+    <ClInclude Include="ObjHandler.h">
+      <Filter>Classes\ObjHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Classes\Input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Classes">
@@ -129,6 +138,12 @@
     </Filter>
     <Filter Include="Classes\Model\Plane">
       <UniqueIdentifier>{28827010-3dc8-4a00-a165-1cee1a79734e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\ObjHandler">
+      <UniqueIdentifier>{77851373-3d58-4b6d-b1b4-6e514c363fc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Input">
+      <UniqueIdentifier>{fdad4170-4393-4b07-bd65-069c842b3910}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

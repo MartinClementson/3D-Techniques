@@ -6,16 +6,19 @@
 #include "Plane.h"
 #include "Camera.h"
 #include "Light.h"
+#include "Input.h"
 class Engine
 {
 
 private:
-	Camera cam; 
+	Camera* cam; 
 	int vertexAmount;
 	int modelAmount;
 	int lightAmount;
 	std::vector<Model*>* models;
 	std::vector<Light>* lights;
+	
+	Input* input;
 
 
 	HRESULT hr;
@@ -55,7 +58,7 @@ private:
 	void createConstantBuffers();
 public:
 	Engine();
-	Engine(HWND* winHandle);
+	Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input);
 	
 
 	virtual ~Engine();
