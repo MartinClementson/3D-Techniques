@@ -9,9 +9,7 @@ private:
 	//projection Matrix
 	DirectX::XMFLOAT4X4 projection;
 	DirectX::XMFLOAT4X4 view;
-	float yaw; //rotation around y axis
-	float pitch; //Rotation around x axis
-
+	
 	//view Matrix parameters
 	DirectX::XMFLOAT3 viewUpDirection;
 	DirectX::XMFLOAT3 viewRightDirection;
