@@ -56,10 +56,9 @@ Camera::Camera()
 	viewPosition = { 0.0f, 0.0f, -3.0f };
 	viewLookAt = { 0.0f, 0.0f, 1.0f };
 	viewRightDirection = viewPosition + XMFLOAT3{ 1.0f, 0.0f, 0 };
-	viewUpDirection = /*viewPosition + */XMFLOAT3{ 0, 1.0f, 0 };
+	viewUpDirection = XMFLOAT3{ 0, 1.0f, 0 };
 	updateView();
-	yaw = 0;
-	pitch = 0;
+	
 	//creating the projection matrix
 	DirectX::XMMATRIX tempProjection;
 	tempProjection = DirectX::XMMatrixPerspectiveFovLH((DirectX::XM_PI*0.45f), (WINDOW_WIDTH / WINDOW_HEIGHT), 1.0f, 10000.0f);
@@ -146,7 +145,7 @@ void Camera::rotatePitch(float angle)
 	XMVECTOR angleDiffNeg = XMVector3AngleBetweenVectors(l, -u);
 
 	//test their Y values (The up vector will always be 0,1,0. atleast for now. Changes might be done in the future )
-	if (angleDiff.m128_f32[1] <= 0.2)
+	if (angleDiff.m128_f32[1] <= 0.2) 
 		return;
 	if (angleDiffNeg.m128_f32[1] <= 0.2)
 		return;

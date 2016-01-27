@@ -208,15 +208,13 @@ void Input::ProcessInput()
 	mouseY = (mouseState.lY);
 	
 	//Makesure it stays inside the screen
-	/*if (mouseX < 0) { mouseX = 0; };
-	if (mouseY < 0) { mouseY = 0; };*/
+	/*if (mouseX < -WINDOW_WIDTH) { mouseX = -WINDOW_WIDTH; };
+	if (mouseY < -WINDOW_HEIGHT) { mouseY = -WINDOW_HEIGHT; };
 
-	//if (mouseX > WINDOW_WIDTH) { mouseX = WINDOW_WIDTH; };
-	//if (mouseY > WINDOW_WIDTH) { mouseY = WINDOW_HEIGHT; };
-
-	//float dy = toRadian(0.25f* (mouseY - lastMouseY));
-	//float dx = toRadian(0.25f* (mouseX - lastMouseX));
-
+	if (mouseX > WINDOW_WIDTH) { mouseX = WINDOW_WIDTH; };
+	if (mouseY > WINDOW_HEIGHT) { mouseY = WINDOW_HEIGHT; };
+*/
+	
 	
 	float dy = XMConvertToRadians(0.25f* static_cast <float>(mouseY - lastMouseY));
 	float dx = XMConvertToRadians(0.25f* static_cast <float>(mouseX - lastMouseX));
@@ -264,9 +262,6 @@ void Input::ProcessInput()
 	
 	camera->rotateYaw(dx*10);
 	camera->rotatePitch(dy*10); //THe *10 MUST BE removed once the problem of the mouse  not only being in the window is fixed
-	//return;
-	/*lastMouseY = mouseY;
-	lastMouseX = mouseX;*/
 
 
 }
