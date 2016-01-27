@@ -86,11 +86,6 @@ void Camera::setViewLookAt(DirectX::XMFLOAT3& nViewLookAt)
 
 void Camera::rotateYaw(float angle)
 {
-	//Yaw is the rotation from left to right 
-	// To get the axis in which we are to rotate. we will take the cross product of the direction vector and the right hand vector
-
-
-	
 	DirectX::XMVECTOR l = XMLoadFloat3(&viewLookAt); // look at
 	DirectX::XMVECTOR p = XMLoadFloat3(&viewPosition); // position
 	DirectX::XMVECTOR r = XMLoadFloat3(&viewRightDirection); // right direction
