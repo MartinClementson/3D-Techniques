@@ -90,70 +90,78 @@ void Camera::rotateYaw(float angle)
 	// To get the axis in which we are to rotate. we will take the cross product of the direction vector and the right hand vector
 
 
-	//DirectX::XMVECTOR s = DirectX::XMVectorReplicate(d); //speed
+	
 	DirectX::XMVECTOR l = XMLoadFloat3(&viewLookAt); // look at
 	DirectX::XMVECTOR p = XMLoadFloat3(&viewPosition); // position
-	DirectX::XMVECTOR r = XMLoadFloat3(&viewRightDirection);
+	DirectX::XMVECTOR r = XMLoadFloat3(&viewRightDirection); // right direction
 
 	XMVECTOR normLook = XMVectorSubtract(l, p); //create a vector from the "look at" point ant the camera position
-	//normLook = XMVector3NormalizeEst(normLook); //Normalize the vector to make it a direction vector
+
 	XMVECTOR normRight = XMVectorSubtract(r, p); //create a vector from the "Right direction" point and the camera position
 	
-	XMVECTOR axis = XMVector3Cross(normLook, normRight);
-
-	axis = XMVectorAdd(p, axis);
-
-	if (XMVector3Equal(axis, XMVectorZero()))
-		return;
-	//axis = XMVector3Normalize(axis);
-	//XMMATRIX yawMatrix = XMMatrixRotationRollPitchYaw(0.0f,XMConvertToRadians(angle),0.0f);
-	//XMMATRIX yawMatrix = XMMatrixRotationAxis(axis,XMConvertToRadians(angle));
+	//Create the rotation matrix, Up will always be +Y, so we will always rotate around it
 	XMMATRIX yawMatrix = XMMatrixRotationY(XMConvertToRadians(angle));
 
-	XMVECTOR right = XMVector3Transform(normRight, yawMatrix);
-	//right = XMVector3Normalize(right);
 
+	///////
+	//Rotate the Right Direction vector and move it to the player position
+	XMVECTOR right = XMVector3Transform(normRight, yawMatrix); 
 	right = XMVectorAdd(p ,right);
 	XMStoreFloat3(&viewRightDirection,right);
+	///////
 
-	//XMStoreFloat3(&viewUpDirection, XMVector3TransformNormal(XMLoadFloat3(&viewUpDirection), yawMatrix));
+
+	//////
+	//Rotate the "lookAt" direction vector and move it to the player position
 	l = XMVector3Transform(normLook, yawMatrix);
-	
 	l = XMVectorAdd(p, l);
 	XMStoreFloat3(&viewLookAt, l);
+	/////
+	
+
 	this->updateView();
+
 }
 
 
 void Camera::rotatePitch(float angle)
 {
-	float tempPitch = toRadian(angle);
-	//pitch += tempPitch;
-	//tempPitch = fmod(tempPitch, 2 * PI); // Keep in valid circular range
-	//tempPitch = min(tempPitch, PI* 0.49); // Almost fully up
-	//tempPitch = max(tempPitch, PI * -0.49); // Almost fully down
-	/*if (pitch > 0.02)
-	{
-		
-		pitch = 0.02;
-		return;
-	}
-	if (pitch < -0.02)
-	{
-		pitch = -0.02;
-		return;
-	}*/
+	DirectX::XMVECTOR l = XMLoadFloat3(&viewLookAt); // look at
+	DirectX::XMVECTOR p = XMLoadFloat3(&viewPosition); // position
+	DirectX::XMVECTOR r = XMLoadFloat3(&viewRightDirection); // right direction
+	DirectX::XMVECTOR u = XMLoadFloat3(&viewUpDirection); // right direction
 
-	//storing the view matrix variables in a new matrix
 
+
+	XMVECTOR normLook = XMVectorSubtract(l, p); //create a vector from the "look at" point ant the camera position
+
+	XMVECTOR normRight = XMVectorSubtract(r, p); //create a vector from the "Right direction" point and the camera position
+
+	XMMATRIX pitchMatrix = XMMatrixRotationAxis(normRight, XMConvertToRadians(angle));
+
+	//////
+	//Rotate the "lookAt" direction vector and move it to the player position
+	l = XMVector3Transform(normLook, pitchMatrix);
+
+	//Here we do a test to make sure we don't go to far up or down
+	//Note: a optimization is needed
 	
-	XMMATRIX pitchMatrix = XMMatrixRotationAxis(XMLoadFloat3(&viewRightDirection), angle);
+	//Get the angle between the look at vector and the up and negative up vector
+	XMVECTOR angleDiff = XMVector3AngleBetweenVectors(l, u);
+	XMVECTOR angleDiffNeg = XMVector3AngleBetweenVectors(l, -u);
 
-	XMStoreFloat3(&viewLookAt, XMVector3Transform(XMLoadFloat3(&viewLookAt), pitchMatrix));
+	//test their Y values (The up vector will always be 0,1,0. atleast for now. Changes might be done in the future )
+	if (angleDiff.m128_f32[1] <= 0.2)
+		return;
+	if (angleDiffNeg.m128_f32[1] <= 0.2)
+		return;
+
+	l = XMVectorAdd(p, l);
+	XMStoreFloat3(&viewLookAt,l );
+	/////
 
 
-	//XMStoreFloat3(&this->viewUpDirection, XMVector3TransformCoord(XMLoadFloat3(&viewUpDirection), pitchMatrix));
-	//this->viewLookAt = { 0.0f,0.0f,-1.0f };
+
 	this->updateView();
 	
 

@@ -262,8 +262,8 @@ void Input::ProcessInput()
 
 	
 	
-	//camera->rotateYaw(dx);
-	//camera->rotatePitch(dy);
+	camera->rotateYaw(dx*10);
+	camera->rotatePitch(dy*10); //THe *10 MUST BE removed once the problem of the mouse  not only being in the window is fixed
 	//return;
 	/*lastMouseY = mouseY;
 	lastMouseX = mouseX;*/
