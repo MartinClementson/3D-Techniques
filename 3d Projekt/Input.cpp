@@ -249,13 +249,21 @@ void Input::ProcessInput()
 	{
 		camera->rotatePitch(SENSITIVITY);
 	}
+	if (keyboardState[DIK_RIGHT])
+	{
+		camera->rotateYaw(SENSITIVITY);
+	}
+	if (keyboardState[DIK_LEFT])
+	{
+		camera->rotateYaw(-SENSITIVITY);
+	}
 
 
 
 	
 	
-	camera->rotateYaw(dx);
-	camera->rotatePitch(dy);
+	//camera->rotateYaw(dx);
+	//camera->rotatePitch(dy);
 	//return;
 	/*lastMouseY = mouseY;
 	lastMouseX = mouseX;*/
