@@ -15,7 +15,8 @@ private:
 	int vertexAmount;
 	int modelAmount;
 	int lightAmount;
-	std::vector<Model*>* models;
+	std::vector<Model*>* modelsColor;
+	std::vector<Model*>* modelsTexture;
 	std::vector<Light>* lights;
 	
 	Input* input;
@@ -33,12 +34,18 @@ private:
 	ID3D11Texture2D *depthBuffer = nullptr;
 	
 
-	ID3D11InputLayout* gVertexLayout = nullptr;
 
-	//Shaders
-	ID3D11VertexShader* gVertexShader = nullptr;
-	ID3D11GeometryShader* gGeometryShader = nullptr;
-	ID3D11PixelShader* gPixelShader = nullptr;
+	//Shaders for color
+	ID3D11VertexShader* gVertexShaderColor = nullptr;
+	ID3D11GeometryShader* gGeometryShaderColor = nullptr;
+	ID3D11PixelShader* gPixelShaderColor = nullptr;
+	ID3D11InputLayout* gVertexLayoutColor = nullptr;
+
+	//Shaders for Texture
+	ID3D11VertexShader* gVertexShaderTexture = nullptr;
+	ID3D11GeometryShader* gGeometryShaderTexture = nullptr;
+	ID3D11PixelShader* gPixelShaderTexture = nullptr;
+	ID3D11InputLayout* gVertexLayoutTexture = nullptr;
 
 
 	//Constant buffers
@@ -54,6 +61,8 @@ private:
 	HRESULT CreateDirect3DContext(HWND* wndHandle);
 	void setViewPort();
 	void createShaders();
+	void createTextureShaders();
+	void createColorShaders();
 
 	void createConstantBuffers();
 public:
