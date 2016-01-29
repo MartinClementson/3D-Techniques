@@ -148,13 +148,7 @@ void Model::update()
 
 	this->gDeviceContext->Unmap(worldBuffer, 0);
 
-	this->gDeviceContext->GSSetConstantBuffers(0, 1, &worldBuffer); //change to geometry shader later
-
-
-
-
-	//
-
+	this->gDeviceContext->GSSetConstantBuffers(0, 1, &worldBuffer); 
 
 }
 
