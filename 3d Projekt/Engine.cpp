@@ -30,7 +30,8 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	createConstantBuffers();
 
 	//Load the models and get their vertices
-	this->models = new std::vector<Model*>; //this will be an array 
+	this->modelsColor = new std::vector<Model*>; //this will be an array 
+	this->modelsTexture = new std::vector<Model*>;
 	this->lights = new std::vector<Light>;
 	
 	loadModels();
@@ -47,12 +48,18 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 
 Engine::~Engine()
 {
-	for (int i = 0; i < models->size(); i++)
+	for (int i = 0; i < modelsColor->size(); i++)
 	{
-		delete models->at(i); 
+		delete modelsColor->at(i); 
 
 	}
-	delete models;
+	for (int i = 0; i < modelsTexture->size(); i++)
+	{
+		delete modelsTexture->at(i);
+
+	}
+	delete modelsTexture;
+	delete modelsColor;
 	delete lights;
 	delete cam;
 	
@@ -61,11 +68,18 @@ Engine::~Engine()
 void Engine::release()
 {
 	
-	
-	gVertexLayout->Release();
-	gVertexShader->Release();
-	gPixelShader->Release();
-	gGeometryShader->Release();
+	//Release Color shaders
+	gVertexLayoutColor->Release();
+	gVertexShaderColor->Release();
+	gPixelShaderColor->Release();
+	gGeometryShaderColor->Release();
+
+	//Release Texture shaders
+	gVertexLayoutTexture->Release();
+	gVertexShaderTexture->Release();
+	gPixelShaderTexture->Release();
+	gGeometryShaderTexture->Release();
+
 	gBackbufferRTV->Release();
 	gSwapChain->Release();
 	gDevice->Release();
@@ -208,12 +222,20 @@ void Engine::setViewPort()
 void Engine::createShaders()
 {
 
-	//create vertex shader
+	createColorShaders();
+	createTextureShaders();
+	
 
+
+
+}
+
+void Engine::createTextureShaders()
+{
 	ID3DBlob* pVS = nullptr;
 
 	D3DCompileFromFile(
-		L"VertexShader.hlsl",
+		L"VertexShaderTexture.hlsl",
 		nullptr,
 		nullptr,
 		"VS_main",
@@ -223,24 +245,24 @@ void Engine::createShaders()
 		&pVS,
 		nullptr);
 
-	hr = this->gDevice->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &gVertexShader);
+	hr = this->gDevice->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &gVertexShaderTexture);
 
 	//Create input layout (every vertex)
-	D3D11_INPUT_ELEMENT_DESC inputDesc[] = 
+	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
 	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0},
-		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA,0}
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA,0 }
 		//Normals and UV goes here
 
 	};
 
-	this->gDevice->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &gVertexLayout);
+	this->gDevice->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &gVertexLayoutTexture);
 	pVS->Release();
 
 
 	ID3DBlob *pPs = nullptr;
 	D3DCompileFromFile(
-		L"PixelShader.hlsl",
+		L"PixelShaderTexture.hlsl",
 		nullptr,
 		nullptr,
 		"PS_main",
@@ -250,13 +272,13 @@ void Engine::createShaders()
 		&pPs,
 		nullptr);
 
-	hr = this->gDevice->CreatePixelShader(pPs->GetBufferPointer(), pPs->GetBufferSize(), nullptr, &gPixelShader);
+	hr = this->gDevice->CreatePixelShader(pPs->GetBufferPointer(), pPs->GetBufferSize(), nullptr, &gPixelShaderTexture);
 	pPs->Release();
 
 	//Geometry shader
 	ID3DBlob* pGS = nullptr;
 	D3DCompileFromFile(
-		L"GeometryShader.hlsl",
+		L"GeometryShaderTexture.hlsl",
 		nullptr,
 		nullptr,
 		"GS_main",
@@ -266,9 +288,74 @@ void Engine::createShaders()
 		&pGS,
 		nullptr);
 
-	hr = this->gDevice->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &gGeometryShader);
+	hr = this->gDevice->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &gGeometryShaderTexture);
 	pGS->Release();
 
+
+
+}
+
+void Engine::createColorShaders()
+{
+
+	ID3DBlob* pVS = nullptr;
+
+	D3DCompileFromFile(
+		L"VertexShaderColor.hlsl",
+		nullptr,
+		nullptr,
+		"VS_main",
+		"vs_4_0",
+		0,
+		0,
+		&pVS,
+		nullptr);
+
+	hr = this->gDevice->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &gVertexShaderColor);
+
+	//Create input layout (every vertex)
+	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA,0 }
+		//Normals and UV goes here
+
+	};
+
+	this->gDevice->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &gVertexLayoutColor);
+	pVS->Release();
+
+
+	ID3DBlob *pPs = nullptr;
+	D3DCompileFromFile(
+		L"PixelShaderColor.hlsl",
+		nullptr,
+		nullptr,
+		"PS_main",
+		"ps_4_0",
+		0,
+		0,
+		&pPs,
+		nullptr);
+
+	hr = this->gDevice->CreatePixelShader(pPs->GetBufferPointer(), pPs->GetBufferSize(), nullptr, &gPixelShaderColor);
+	pPs->Release();
+
+	//Geometry shader
+	ID3DBlob* pGS = nullptr;
+	D3DCompileFromFile(
+		L"GeometryShaderColor.hlsl",
+		nullptr,
+		nullptr,
+		"GS_main",
+		"gs_4_0",
+		0,
+		0,
+		&pGS,
+		nullptr);
+
+	hr = this->gDevice->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &gGeometryShaderColor);
+	pGS->Release();
 
 }
 
@@ -276,41 +363,41 @@ void Engine::loadModels()
 {
 	
 	this->addModel(PYRAMID);
-	this->models->at(0)->setScale(XMFLOAT3(0.3f,0.3f,0.3f));
+	this->modelsColor->at(0)->setScale(XMFLOAT3(0.3f,0.3f,0.3f));
 	
-	this->models->at(0)->setTranslation(XMFLOAT3(0.5f, 0.0f, 0.0f)); 
+	this->modelsColor->at(0)->setTranslation(XMFLOAT3(0.5f, 0.0f, 0.0f)); 
 
 
 
 	this->addModel(PYRAMID);
-	this->models->at(1)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
+	this->modelsColor->at(1)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
 
-	this->models->at(1)->setTranslation(XMFLOAT3(-0.5f, 0.0f, 0.0f)); 
-
-
-	this->addModel(PYRAMID);
-	this->models->at(2)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
-
-	this->models->at(2)->setTranslation(XMFLOAT3(0.0f, 0.5f, 0.0f));
+	this->modelsColor->at(1)->setTranslation(XMFLOAT3(-0.5f, 0.0f, 0.0f)); 
 
 
 	this->addModel(PYRAMID);
-	this->models->at(3)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
+	this->modelsColor->at(2)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
 
-	this->models->at(3)->setTranslation(XMFLOAT3(0.0f, -0.5f, 0.0f));
+	this->modelsColor->at(2)->setTranslation(XMFLOAT3(0.0f, 0.5f, 0.0f));
+
+
+	this->addModel(PYRAMID);
+	this->modelsColor->at(3)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
+
+	this->modelsColor->at(3)->setTranslation(XMFLOAT3(0.0f, -0.5f, 0.0f));
 
 	this->addModel(PLANE);
-	this->models->at(4)->setTranslation(XMFLOAT3(0.0f, -1.5f, 0.0f));
-	this->models->at(4)->setRotation(XMFLOAT3(90.0f, 180.0f, 0.0f));
-	this->models->at(4)->setScale(XMFLOAT3(50.0f, 50.0f, 50.0f));
+	this->modelsColor->at(4)->setTranslation(XMFLOAT3(0.0f, -1.5f, 0.0f));
+	this->modelsColor->at(4)->setRotation(XMFLOAT3(90.0f, 180.0f, 0.0f));
+	this->modelsColor->at(4)->setScale(XMFLOAT3(50.0f, 50.0f, 50.0f));
 
 	
 	this->addModel(CUBE);
-	this->models->at(5)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
-	this->models->at(5)->setTranslation(XMFLOAT3(0.5f, 0.5f, 0.0f));
+	this->modelsColor->at(5)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
+	this->modelsColor->at(5)->setTranslation(XMFLOAT3(0.5f, 0.5f, 0.0f));
 
 	this->addModel(OBJ);
-	this->models->at(6)->setTranslation(XMFLOAT3(5.0f, 0.0f, 0.0f));
+	this->modelsTexture->at(0)->setTranslation(XMFLOAT3(5.0f, 0.0f, 0.0f));
 }
 
 void Engine::loadLights()
@@ -387,30 +474,56 @@ void Engine::render()
 	this->gDeviceContext->ClearRenderTargetView(gBackbufferRTV, clearColor);
 	this->gDeviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
 
-	this->gDeviceContext->VSSetShader(gVertexShader, nullptr, 0);
+	////////////////////////////////////////////
+	//Render The objects that use the COLOR shaders
+	this->gDeviceContext->VSSetShader(gVertexShaderColor, nullptr, 0);
 	this->gDeviceContext->HSSetShader(nullptr, nullptr, 0);
 	this->gDeviceContext->DSSetShader(nullptr, nullptr, 0);
-	this->gDeviceContext->GSSetShader(gGeometryShader, nullptr, 0);
-	this->gDeviceContext->PSSetShader(gPixelShader, nullptr, 0);
-	//this->gDeviceContext->PSGetShaderResources(0, 1, 0);
+	this->gDeviceContext->GSSetShader(gGeometryShaderColor, nullptr, 0);
+	this->gDeviceContext->PSSetShader(gPixelShaderColor, nullptr, 0);
+	this->gDeviceContext->IASetInputLayout(gVertexLayoutColor);
+	
+	for (int i = 0; i < this->modelsColor->size(); i++)
+	{
 
 	
+		this->modelsColor->at(i)->update();
+		this->modelsColor->at(i)->render();
 
-	this->gDeviceContext->IASetInputLayout(gVertexLayout);
+
+	}
+	////////////////////////////////////////////
+
+
+
+	////////////////////////////////////////////
+	//Render The objects that use the Texture shaders
+	//
+	this->gDeviceContext->VSSetShader(gVertexShaderTexture, nullptr, 0);
+	this->gDeviceContext->HSSetShader(nullptr, nullptr, 0);
+	this->gDeviceContext->DSSetShader(nullptr, nullptr, 0);
+	this->gDeviceContext->GSSetShader(gGeometryShaderTexture, nullptr, 0);
+	this->gDeviceContext->PSSetShader(gPixelShaderTexture, nullptr, 0);
+	this->gDeviceContext->IASetInputLayout(gVertexLayoutTexture);
+	//this->gDeviceContext->PSSetShaderResources(0, 1, 0); //This might be going into the model classes. (Might only be needed once?)
+	for (int i = 0; i < this->modelsTexture->size(); i++)
+	{
+
+
+		this->modelsTexture->at(i)->update();
+		this->modelsTexture->at(i)->render();
+
+
+	}
+
+
+	//
+	////////////////////////////////////////////
 
 
 	//Render all the models
 	
 	
-	for (int i = 0; i < this->modelAmount; i++)
-	{
-
-	
-		this->models->at(i)->update();
-		this->models->at(i)->render();
-
-
-	}
 	
 
 
@@ -426,28 +539,28 @@ void Engine::addModel(Primitives type)
 	{
 		case CUBE:
 		{
-			this->models->push_back(new Cube(this->gDevice, this->gDeviceContext, this->worldBuffer, &this->worldStruct));
+			this->modelsColor->push_back(new Cube(this->gDevice, this->gDeviceContext, this->worldBuffer, &this->worldStruct));
 			this->modelAmount += 1;
 			break;
 		}
 
 		case PLANE:
 		{
-			this->models->push_back(new Plane(this->gDevice, this->gDeviceContext, this->worldBuffer, &this->worldStruct));
+			this->modelsColor->push_back(new Plane(this->gDevice, this->gDeviceContext, this->worldBuffer, &this->worldStruct));
 			this->modelAmount += 1;
 			break;
 		}
 
 		case PYRAMID:
 		{
-			this->models->push_back(new Pyramid(this->gDevice,this->gDeviceContext,this->worldBuffer,&this->worldStruct));
+			this->modelsColor->push_back(new Pyramid(this->gDevice,this->gDeviceContext,this->worldBuffer,&this->worldStruct));
 			this->modelAmount += 1;
 			break;
 		}
 
 		case OBJ :
 		{
-			this->models->push_back(new Model(std::string("test.obj"),this->gDevice, this->gDeviceContext, this->worldBuffer, &this->worldStruct));
+			this->modelsTexture->push_back(new Model(std::string("char.obj"),this->gDevice, this->gDeviceContext, this->worldBuffer, &this->worldStruct));
 			this->modelAmount += 1;
 			break;
 
