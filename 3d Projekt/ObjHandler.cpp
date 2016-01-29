@@ -113,7 +113,11 @@ ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts)
 	{
 		modelVerts->push_back(vCoord[(testIn[i].x - 1)]);
 	}
+
+	
 }
+
+
 
 
 ObjHandler::~ObjHandler()

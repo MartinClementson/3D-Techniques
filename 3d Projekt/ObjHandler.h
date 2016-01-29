@@ -12,6 +12,7 @@ public:
 	ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts);
 
 
+
 	~ObjHandler();
 };
 

@@ -170,7 +170,7 @@ bool Input::frame()
 	}
 	ProcessInput();
 	return true;
-
+	
 	//Might have to change this one later, It feels like it will quit if not BOTH are used at the same time
 
 
