@@ -77,7 +77,10 @@ void Engine::release()
 	gGeometryShaderColor->Release();
 
 	//Release Texture shaders
-	gVertexLayoutTexture->Release();
+	if(gVertexLayoutTexture != NULL)
+		gVertexLayoutTexture->Release(); //If this crashes on shut down, is because there is no layout for texture yet
+	
+		
 	gVertexShaderTexture->Release();
 	gPixelShaderTexture->Release();
 	gGeometryShaderTexture->Release();
@@ -253,8 +256,9 @@ void Engine::createTextureShaders()
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA,0 }
-		//Normals and UV goes here
+		/*{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA,0 }*/ //not in use
+		{ "TEXCOORD0",0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA,0} //We wont use Color here, that's why the offset is 32. were still using the same struct
+		//Normals?
 
 	};
 
@@ -522,7 +526,7 @@ void Engine::render()
 	////////////////////////////////////////////
 
 
-	//Render all the models
+	
 	
 	
 	
@@ -561,7 +565,7 @@ void Engine::addModel(Primitives type)
 
 		case OBJ :
 		{
-			this->modelsTexture->push_back(new Model(std::string("char.obj"),this->gDevice, this->gDeviceContext, this->worldBuffer, &this->worldStruct));
+			this->modelsTexture->push_back(new Model(std::string("test.obj"),this->gDevice, this->gDeviceContext, this->worldBuffer, &this->worldStruct));
 			this->modelAmount += 1;
 			break;
 

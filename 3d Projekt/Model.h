@@ -28,6 +28,9 @@ protected:
 
 	virtual void createVertices(ID3D11Device* gDevice);
 
+	//Texture
+	ID3D11ShaderResourceView* texture = nullptr; //If multitextures are to be supported. this will be an array
+
 	Model();//Default constuctor
 public:
 

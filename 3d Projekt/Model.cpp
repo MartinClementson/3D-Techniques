@@ -24,7 +24,7 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 
 	ObjHandler* importer = new ObjHandler(filePath,vertices);
 
-	//Make import here!
+	//Make import
 
 	delete importer; // delete when done;
 
@@ -42,6 +42,10 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 
 	gDevice->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
 
+	//Create texture
+
+	HRESULT result;
+	
 }
 
 //This is the constructor for Primitives
@@ -157,8 +161,15 @@ void Model::render()
 	UINT32 vertexSize = sizeof(Vertex);
 	UINT32 offset = 0;
 	this->gDeviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
-
 	this->gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	//IF there is a texture. apply it to the pixel shader
+
+	if (texture != nullptr) {
+
+		this->gDeviceContext->PSSetShaderResources(0, 1, &this->texture);
+	}
+
 
 	this->gDeviceContext->Draw(this->vertices->size(), 0); //This will be dynamic,
 
