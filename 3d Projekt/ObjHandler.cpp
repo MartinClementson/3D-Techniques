@@ -17,10 +17,14 @@ ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts)
 	vector<DirectX::XMINT3> testIn;
 	DirectX::XMINT3 index;
 
-	vector<Vertex> vCoord, vNCoord;
-	//vector<UV> uvCoord;
-	Vertex vecIn, normIn;
-	//UV uvIn;
+	//big variable that everything goes into
+	Vertex Coordinates;
+
+
+	vector<Vertex> vNCoord;
+	vector<DirectX::XMFLOAT3> uvCoord, vCoord;
+	Vertex normIn;
+	DirectX::XMFLOAT3 uvIn, vecIn;
 
 	int count = 0;
 	//string fileName = "test.obj";
@@ -44,24 +48,25 @@ ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts)
 					loading >> vecIn.x;
 					loading >> vecIn.y;
 					loading >> vecIn.z;
+					//vecIn.pad = PAD;
 					
-					//temp
-					vecIn.r = 0.0f;
+					//temp <-----------------------------
+					/*vecIn.r = 0.0f;
 					vecIn.g = 1.0f;
 					vecIn.b = 0.0f;
-					vecIn.ColorPad = PAD;
+					vecIn.ColorPad = PAD;*/
 
-					vecIn.pad = PAD;
 					vCoord.push_back(vecIn);
 					count++;
 				}
-				/*if (line2 == "vt")
+				if (line2 == "vt")
 				{
-					loading >> uvIn.u;
-					loading >> uvIn.v;
+					loading >> uvIn.x;
+					loading >> uvIn.y;
+					uvIn.z = 1.0f;
 					uvCoord.push_back(uvIn);
 					count++;
-				}*/
+				}
 				/*if (line2 == "vn")
 				{
 					loading >> normIn.x;
@@ -111,7 +116,18 @@ ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts)
 	loading.close();
 	for (int i = 0; i < testIn.size(); i++)
 	{
-		modelVerts->push_back(vCoord[(testIn[i].x - 1)]);
+		Coordinates.x = vCoord[(testIn[i].x - 1)].x;
+		Coordinates.y = vCoord[(testIn[i].x - 1)].y;
+		Coordinates.z = vCoord[(testIn[i].x - 1)].z;
+		Coordinates.pad = PAD;
+
+		Coordinates.r = uvCoord[(testIn[i].x - 1)].x;
+		Coordinates.g = uvCoord[(testIn[i].x - 1)].y;
+		Coordinates.b = uvCoord[(testIn[i].x - 1)].z;
+		Coordinates.ColorPad = PAD;
+
+		//modelVerts->push_back(vCoord[(testIn[i].x - 1)]); //<---------------------
+		modelVerts->push_back(Coordinates);
 	}
 
 	
