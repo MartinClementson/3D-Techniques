@@ -5,6 +5,10 @@ struct Vertex {
 	float x, y, z, pad;
 	
 	float r, g, b, ColorPad; //change this to UV later
+
+	float u, v;
+	
+	float tPad, ttPad;
 	
 };
 

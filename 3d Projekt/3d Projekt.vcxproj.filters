@@ -1,14 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <FxCompile Include="PixelShader.hlsl">
-      <Filter>Shaders</Filter>
+    <FxCompile Include="GeometryShaderColor.hlsl">
+      <Filter>Shaders\ColorShaders</Filter>
     </FxCompile>
-    <FxCompile Include="VertexShader.hlsl">
-      <Filter>Shaders</Filter>
+    <FxCompile Include="PixelShaderColor.hlsl">
+      <Filter>Shaders\ColorShaders</Filter>
     </FxCompile>
-    <FxCompile Include="GeometryShader.hlsl">
-      <Filter>Shaders</Filter>
+    <FxCompile Include="VertexShaderColor.hlsl">
+      <Filter>Shaders\ColorShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexShaderTexture.hlsl">
+      <Filter>Shaders\TextureShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="GeometryShaderTexture.hlsl">
+      <Filter>Shaders\TextureShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelShaderTexture.hlsl">
+      <Filter>Shaders\TextureShaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
@@ -144,6 +153,12 @@
     </Filter>
     <Filter Include="Classes\Input">
       <UniqueIdentifier>{fdad4170-4393-4b07-bd65-069c842b3910}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\ColorShaders">
+      <UniqueIdentifier>{895d92c7-ced5-4e38-944e-242970adc954}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\TextureShaders">
+      <UniqueIdentifier>{ddb568a6-ca37-4440-9bbb-dc78daf7349c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

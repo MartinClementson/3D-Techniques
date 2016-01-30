@@ -61,7 +61,7 @@ Camera::Camera()
 	
 	//creating the projection matrix
 	DirectX::XMMATRIX tempProjection;
-	tempProjection = DirectX::XMMatrixPerspectiveFovLH((DirectX::XM_PI*0.45f), (WINDOW_WIDTH / WINDOW_HEIGHT), 1.0f, 10000.0f);
+	tempProjection = DirectX::XMMatrixPerspectiveFovLH((DirectX::XM_PI*0.45f), (WINDOW_WIDTH / WINDOW_HEIGHT), 0.1f, 10000.0f);
 	tempProjection = DirectX::XMMatrixTranspose(tempProjection);
 	DirectX::XMStoreFloat4x4(&projection, tempProjection);
 	
