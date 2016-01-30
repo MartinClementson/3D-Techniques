@@ -77,7 +77,9 @@ void Engine::release()
 	gGeometryShaderColor->Release();
 
 	//Release Texture shaders
-	gVertexLayoutTexture->Release();
+	
+	gVertexLayoutTexture->Release(); //If this crashes on shut down, is because there is no layout for texture yet
+		
 	gVertexShaderTexture->Release();
 	gPixelShaderTexture->Release();
 	gGeometryShaderTexture->Release();
@@ -254,7 +256,7 @@ void Engine::createTextureShaders()
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
 		/*{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA,0 }*/ //not in use
-		{ "TEXCOORD",0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA,0} //We wont use Color here, that's why the offset is 32. were still using the same struct
+		{ "TEXCOORD0",0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA,0} //We wont use Color here, that's why the offset is 32. were still using the same struct
 		//Normals?
 
 	};

@@ -165,7 +165,10 @@ void Model::render()
 
 	//IF there is a texture. apply it to the pixel shader
 
-	//this->gDeviceContext->PSSetShaderResources(0, 1, 0);
+	if (texture != nullptr) {
+
+		this->gDeviceContext->PSSetShaderResources(0, 1, &this->texture);
+	}
 
 
 	this->gDeviceContext->Draw(this->vertices->size(), 0); //This will be dynamic,

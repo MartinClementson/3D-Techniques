@@ -18,14 +18,14 @@ struct GSinput
 {
 
 	float4 pos : SV_POSITION;
-	float3 color : COLOR;
+	float2 Texture: TEXCOORD0;
 
 };
 
 struct GSOutput
 {
 	float4 pos : SV_POSITION;
-	float3 color : COLOR;
+	float2 Texture: TEXCOORD0;
 	float3 normal : NORMAL;
 	float4 wPos : WORLDPOS;
 	float3 camPos: CAMERAPOS;
@@ -53,7 +53,7 @@ void GS_main(
 		element.pos = mul(element.pos, combinedMatrix);
 		element.wPos = mul(element.pos, world);
 		element.camPos = camPos;
-		element.color = input[i].color;
+		element.Texture = input[i].Texture;
 
 
 		element.normal = mul(faceNormal, normalWorld);

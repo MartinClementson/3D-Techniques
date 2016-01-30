@@ -7,13 +7,14 @@ cbuffer lightBuffer
 
 };
 
-
+SamplerState SampleType; //modifies how the pixels are written to the polygon face when shaded
+Texture2D shaderTexture;
 
 
 struct PS_IN
 {
 	float4 pos : SV_POSITION;
-	float3 color : COLOR;
+	float2 Texture : TEXCOORD0;
 	float3 normal : NORMAL;
 	float4 wPos: WORLDPOS;
 	float3 camPos : CAMERAPOS;
@@ -45,7 +46,8 @@ float shinyPower = 20.0f;
 
 float3 specularLight = { lightColor.xyz * pow(max(dot(r,v),0.0),shinyPower) };
 
-float3 diffuse = input.color * fDot;
+float3 textureSample = shaderTexture.Sample(SampleType, input.Texture).xyz;
+float3 diffuse = textureSample * fDot;
 
 float3 ambient = { 0.1f, 0.1f, 0.1f };
 
