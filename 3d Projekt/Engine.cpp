@@ -77,8 +77,9 @@ void Engine::release()
 	gGeometryShaderColor->Release();
 
 	//Release Texture shaders
+	if(gVertexLayoutTexture != NULL)
+		gVertexLayoutTexture->Release(); //If this crashes on shut down, is because there is no layout for texture yet
 	
-	gVertexLayoutTexture->Release(); //If this crashes on shut down, is because there is no layout for texture yet
 		
 	gVertexShaderTexture->Release();
 	gPixelShaderTexture->Release();
