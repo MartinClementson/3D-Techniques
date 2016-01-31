@@ -255,9 +255,9 @@ void Engine::createTextureShaders()
 	//Create input layout (every vertex)
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
 		/*{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA,0 }*/ //not in use
-		{ "TEXCOORD0",0, DXGI_FORMAT_R32G32_FLOAT, 0,32, D3D11_INPUT_PER_VERTEX_DATA,0} //We wont use Color here, that's why the offset is 32. were still using the same struct
+		{ "TEXCOORD",0, DXGI_FORMAT_R32G32_FLOAT, 0,32, D3D11_INPUT_PER_VERTEX_DATA,0} //We wont use Color here, that's why the offset is 32. were still using the same struct
 		//Normals?
 
 	};
@@ -322,7 +322,7 @@ void Engine::createColorShaders()
 	//Create input layout (every vertex)
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA,0 }
 		
 	};

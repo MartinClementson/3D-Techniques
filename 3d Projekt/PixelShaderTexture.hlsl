@@ -54,18 +54,8 @@ float3 ambient = { 0.1f, 0.1f, 0.1f };
 ambient = (color *ambient);
 diffuse = diffuse * lightColor;
 
-float x = input.Texture.x;
-if (x < 0)
-{
-	x = x * -1;
-}
-float y = input.Texture.y;
 
-if (y < 0)
-{
-	y = y * -1;
-}
-float4 col = {x,y,0.1,1.0 }; //{ (ambient + diffuse + specularLight),1.0 };
+float4 col ={ (ambient + diffuse + specularLight),1.0 };
 
 return col;
 }
