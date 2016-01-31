@@ -2,13 +2,11 @@
 
 struct Vertex {
 
-	float x, y, z, pad;
+	float x, y, z;
 	
-	float r, g, b, ColorPad;
+	float r, g, b;
 
 	float u, v;
-	
-	float tPad, ttPad;
 	
 };
 
