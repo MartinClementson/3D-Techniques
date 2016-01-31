@@ -163,6 +163,7 @@
     <ClCompile Include="windowInit.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bth_image.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Cube.h" />

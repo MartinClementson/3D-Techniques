@@ -3,6 +3,7 @@ struct VS_IN
 {
 	float3 pos : POSITION;
 	float2 Texture: TEXCOORD0;
+
 	//normals?
 };
 

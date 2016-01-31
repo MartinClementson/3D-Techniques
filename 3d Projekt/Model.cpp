@@ -1,4 +1,5 @@
 #include "Model.h"
+#include "bth_image.h"
 
 
 
@@ -7,7 +8,44 @@ Model::Model()
 {
 	
 }
+void Model::loadTexture(ID3D11Device* gDevice)
+{
+	
+	D3D11_TEXTURE2D_DESC textDesc;
+	ZeroMemory(&textDesc, sizeof(textDesc));
 
+	textDesc.Width = BTH_IMAGE_WIDTH;
+	textDesc.Height = BTH_IMAGE_HEIGHT;
+	textDesc.MipLevels = textDesc.ArraySize = 1;
+	textDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	textDesc.SampleDesc.Count = 1;
+	textDesc.SampleDesc.Quality = 0;
+	textDesc.Usage = D3D11_USAGE_DEFAULT;
+	textDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	textDesc.MiscFlags = 0;
+	textDesc.CPUAccessFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA data;
+	ZeroMemory(&data, sizeof(data));
+
+	data.pSysMem = (void*)BTH_IMAGE_DATA;
+	data.SysMemPitch = BTH_IMAGE_WIDTH * 4 * sizeof(char);
+	HRESULT hr = gDevice->CreateTexture2D(&textDesc, &data, &pTexture);
+
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC resViewDesc;
+
+	ZeroMemory(&resViewDesc, sizeof(resViewDesc));
+	resViewDesc.Format = textDesc.Format;
+	resViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	resViewDesc.Texture2D.MipLevels = textDesc.MipLevels;
+	resViewDesc.Texture2D.MostDetailedMip = 0;
+	hr = gDevice->CreateShaderResourceView(pTexture, &resViewDesc, &texture);
+
+	pTexture->Release();
+
+
+}
 
 //This is the constructor for OBJ import
 Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct)
@@ -27,6 +65,7 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 	//Make import
 
 	delete importer; // delete when done;
+	loadTexture(gDevice);
 
 	D3D11_BUFFER_DESC bufferDesc;
 	memset(&bufferDesc, 0, sizeof(bufferDesc));

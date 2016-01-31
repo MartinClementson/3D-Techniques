@@ -121,10 +121,16 @@ ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts)
 		Coordinates.z = vCoord[(testIn[i].x - 1)].z;
 		Coordinates.pad = PAD;
 
-		Coordinates.r = uvCoord[(testIn[i].x - 1)].x;
-		Coordinates.g = uvCoord[(testIn[i].x - 1)].y;
-		Coordinates.b = uvCoord[(testIn[i].x - 1)].z;
+		Coordinates.r = PAD;
+		Coordinates.g = PAD;
+		Coordinates.b = PAD;
 		Coordinates.ColorPad = PAD;
+
+		Coordinates.u = uvCoord[(testIn[i].x - 1)].x;
+		Coordinates.v = uvCoord[(testIn[i].x - 1)].y;
+	
+		Coordinates.ttPad = PAD;
+		Coordinates.tPad = PAD;
 
 		//modelVerts->push_back(vCoord[(testIn[i].x - 1)]); //<---------------------
 		modelVerts->push_back(Coordinates);

@@ -110,6 +110,7 @@
     <ClInclude Include="Input.h">
       <Filter>Classes\Input</Filter>
     </ClInclude>
+    <ClInclude Include="bth_image.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Classes">

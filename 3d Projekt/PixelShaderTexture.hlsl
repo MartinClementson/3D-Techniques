@@ -54,7 +54,8 @@ float3 ambient = { 0.1f, 0.1f, 0.1f };
 ambient = (color *ambient);
 diffuse = diffuse * lightColor;
 
-float4 col = { (ambient + diffuse + specularLight),1.0 };
+
+float4 col ={ (ambient + diffuse + specularLight),1.0 };
 
 return col;
 }

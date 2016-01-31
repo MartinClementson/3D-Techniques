@@ -220,7 +220,7 @@ void Engine::setViewPort()
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
 	this->gDeviceContext->RSSetViewports(1, &vp);
-
+	
 
 }
 
@@ -255,9 +255,9 @@ void Engine::createTextureShaders()
 	//Create input layout (every vertex)
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
 		/*{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA,0 }*/ //not in use
-		{ "TEXCOORD0",0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA,0} //We wont use Color here, that's why the offset is 32. were still using the same struct
+		{ "TEXCOORD",0, DXGI_FORMAT_R32G32_FLOAT, 0,32, D3D11_INPUT_PER_VERTEX_DATA,0} //We wont use Color here, that's why the offset is 32. were still using the same struct
 		//Normals?
 
 	};
@@ -322,7 +322,7 @@ void Engine::createColorShaders()
 	//Create input layout (every vertex)
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
 	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA,0 }
 		
 	};
@@ -510,7 +510,7 @@ void Engine::render()
 	this->gDeviceContext->GSSetShader(gGeometryShaderTexture, nullptr, 0);
 	this->gDeviceContext->PSSetShader(gPixelShaderTexture, nullptr, 0);
 	this->gDeviceContext->IASetInputLayout(gVertexLayoutTexture);
-	//this->gDeviceContext->PSSetShaderResources(0, 1, 0); //This might be going into the model classes. (Might only be needed once?)
+	
 	for (int i = 0; i < this->modelsTexture->size(); i++)
 	{
 
