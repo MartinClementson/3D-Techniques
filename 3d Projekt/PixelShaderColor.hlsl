@@ -45,14 +45,32 @@ float shinyPower = 20.0f;
 
 float3 specularLight = { lightColor.xyz * pow(max(dot(r,v),0.0),shinyPower) };
 
-float3 diffuse = input.color * fDot;
 
 float3 ambient = { 0.1f, 0.1f, 0.1f };
 
-ambient = (color *ambient);
-diffuse = diffuse * lightColor;
 
-float4 col = { (ambient + diffuse + specularLight),1.0 };
+
+///////
+//Computing the final color with a "late add" of the specular light.
+//with late add the computation is modular, allowing for multiple lights
+//
+//late add is : texturecolor * (diffuse + ambient) + specular
+//
+// 3d game programming book. p.330
+///////
+
+
+float3 diffuse = lightColor * fDot;
+
+float3 finalCol = (diffuse + ambient);
+finalCol = input.color * finalCol; //(texture or color) * (diffuse + ambient)
+finalCol = finalCol + specularLight; // + specular
+
+float4 col = { finalCol,1.0 };
+
+
+
+//float4 col = { (ambient + diffuse + specularLight),1.0 }; // old calculation
 
 return col;
 }

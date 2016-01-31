@@ -80,6 +80,7 @@ public:
 
 	void loadModels();
 	void addModel(Primitives type);
+	void addModel(Primitives type, std::string filename); //overload, for OBJ
 
 	void updateLight();
 	void loadLights();

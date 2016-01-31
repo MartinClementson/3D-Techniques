@@ -7,6 +7,11 @@ class Model
 {
 
 protected:
+
+	//Rotation bool, So every object can set rotation on/off
+	bool rotate = false;
+
+
 	XMFLOAT3 pivotPoint;
 
 	XMFLOAT3 translation;
@@ -48,6 +53,8 @@ public:
 	virtual void updateWorldMatrix();
 
 	//Setters
+
+	void setRotateState(bool state);
 	void setPivotPoint(XMFLOAT3 newPosition);
 
 	void setTranslation(XMFLOAT3 newTranslation);

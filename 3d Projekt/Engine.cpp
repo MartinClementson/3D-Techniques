@@ -366,29 +366,29 @@ void Engine::createColorShaders()
 
 void Engine::loadModels()
 {
-	
+
 	this->addModel(PYRAMID);
-	this->modelsColor->at(0)->setScale(XMFLOAT3(0.3f,0.3f,0.3f));
-	
-	this->modelsColor->at(0)->setTranslation(XMFLOAT3(0.5f, 0.0f, 0.0f)); 
+	this->modelsColor->at(0)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
+	this->modelsColor->at(0)->setRotateState(true);
+	this->modelsColor->at(0)->setTranslation(XMFLOAT3(0.5f, 0.0f, 0.0f));
 
 
 
 	this->addModel(PYRAMID);
 	this->modelsColor->at(1)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
-
-	this->modelsColor->at(1)->setTranslation(XMFLOAT3(-0.5f, 0.0f, 0.0f)); 
+	this->modelsColor->at(1)->setRotateState(true);
+	this->modelsColor->at(1)->setTranslation(XMFLOAT3(-0.5f, 0.0f, 0.0f));
 
 
 	this->addModel(PYRAMID);
 	this->modelsColor->at(2)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
-
+	this->modelsColor->at(2)->setRotateState(true);
 	this->modelsColor->at(2)->setTranslation(XMFLOAT3(0.0f, 0.5f, 0.0f));
 
 
 	this->addModel(PYRAMID);
 	this->modelsColor->at(3)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
-
+	this->modelsColor->at(3)->setRotateState(true);
 	this->modelsColor->at(3)->setTranslation(XMFLOAT3(0.0f, -0.5f, 0.0f));
 
 	this->addModel(PLANE);
@@ -396,15 +396,18 @@ void Engine::loadModels()
 	this->modelsColor->at(4)->setRotation(XMFLOAT3(90.0f, 180.0f, 0.0f));
 	this->modelsColor->at(4)->setScale(XMFLOAT3(50.0f, 50.0f, 50.0f));
 
-	
+
 	this->addModel(CUBE);
 	this->modelsColor->at(5)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
 	this->modelsColor->at(5)->setTranslation(XMFLOAT3(0.5f, 0.5f, 0.0f));
 
 	this->addModel(OBJ);
 	this->modelsTexture->at(0)->setTranslation(XMFLOAT3(5.0f, 0.0f, 0.0f));
-}
 
+	this->addModel(OBJ, "BTHcube.obj");
+	this->modelsTexture->at(1)->setTranslation(XMFLOAT3(0.0f, 0.0f, 5.0f));
+	this->modelsTexture->at(1)->setRotateState(true);
+}
 void Engine::loadLights()
 {
 	this->addLight(POINTLIGHT);
@@ -571,6 +574,22 @@ void Engine::addModel(Primitives type)
 
 		}
 
+	}
+
+
+}
+
+void Engine::addModel(Primitives type, std::string filename)
+{
+	if (type == OBJ)
+	{
+		this->modelsTexture->push_back(new Model(filename, this->gDevice, this->gDeviceContext, this->worldBuffer, &this->worldStruct));
+		this->modelAmount += 1;
+
+	}
+	else {
+
+		this->addModel(type);
 	}
 
 
