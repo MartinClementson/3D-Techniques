@@ -8,21 +8,21 @@ void Pyramid::createVertices(ID3D11Device* gDevice)
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		0.0f, 0.5f , 0.0f, PAD,
-		1.0f, 1.0f, 1.0f, PAD
+		0.0f, 0.5f , 0.0f,
+		1.0f, 1.0f, 1.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		
-		-0.5f, -0.5f , 0.5f, PAD,
-		0.0f, 0.0f,   1.0f, PAD
+		-0.5f, -0.5f , 0.5f,
+		0.0f, 0.0f,   1.0f
 	});
 	this->vertices->push_back(Vertex
 	{
 		
-		0.5f, -0.5f , 0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		0.5f, -0.5f , 0.5f,
+		0.0f, 1.0f,   0.0f
 	});
 
 
@@ -30,21 +30,21 @@ void Pyramid::createVertices(ID3D11Device* gDevice)
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		0.0f, 0.5f , 0.0f, PAD,
-		1.0f, 1.0f, 1.0f, PAD
+		0.0f, 0.5f , 0.0f, 
+		1.0f, 1.0f, 1.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		
-		0.5f, -0.5f , 0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		0.5f, -0.5f , 0.5f, 
+		0.0f, 1.0f,   0.0f
 	});
 	this->vertices->push_back(Vertex
 	{
 		
-		0.5f, -0.5f , -0.5f, PAD,
-		1.0f, 0.0f,   0.0f, PAD
+		0.5f, -0.5f , -0.5f,
+		1.0f, 0.0f,   0.0f
 	});
 
 
@@ -52,21 +52,21 @@ void Pyramid::createVertices(ID3D11Device* gDevice)
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		0.0f, 0.5f , 0.0f, PAD,
-		1.0f, 1.0f, 1.0f, PAD
+		0.0f, 0.5f , 0.0f, 
+		1.0f, 1.0f, 1.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		0.5f, -0.5f , -0.5f, PAD,
-		1.0f, 0.0f,   0.0f, PAD
+		0.5f, -0.5f , -0.5f,
+		1.0f, 0.0f,   0.0f
 	});
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		-0.5f, -0.5f , -0.5f, PAD,
-		0.0f, 1.0f,   1.0f, PAD
+		-0.5f, -0.5f , -0.5f, 
+		0.0f, 1.0f,   1.0f
 	});
 
 
@@ -74,21 +74,21 @@ void Pyramid::createVertices(ID3D11Device* gDevice)
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		0.0f, 0.5f , 0.0f, PAD,
-		1.0f, 1.0f, 1.0f, PAD
+		0.0f, 0.5f , 0.0f,
+		1.0f, 1.0f, 1.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		// Vert
-		-0.5f, -0.5f , -0.5f, PAD,
-		0.0f, 1.0f,   1.0f, PAD
+		-0.5f, -0.5f , -0.5f, 
+		0.0f, 1.0f,   1.0f
 	});
 	this->vertices->push_back(Vertex
 	{
 		// Vert
-		-0.5f, -0.5f , 0.5f, PAD,
-		0.0f, 0.0f,   1.0f, PAD
+		-0.5f, -0.5f , 0.5f,
+		0.0f, 0.0f,   1.0f
 	});
 
 
@@ -99,21 +99,21 @@ void Pyramid::createVertices(ID3D11Device* gDevice)
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		-0.5f, -0.5f , 0.5f, PAD,
-		1.0f, 1.0f, 1.0f, PAD
+		-0.5f, -0.5f , 0.5f, 
+		1.0f, 1.0f, 1.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		
-		-0.5f, -0.5f , -0.5f, PAD,
-		1.0f, 1.0f,   1.0f, PAD
+		-0.5f, -0.5f , -0.5f,
+		1.0f, 1.0f,   1.0f
 	});
 	this->vertices->push_back(Vertex
 	{
 		
-		0.5f, -0.5f , -0.5f, PAD,
-		1.0f, 1.0f,   1.0f, PAD
+		0.5f, -0.5f , -0.5f, 
+		1.0f, 1.0f,   1.0f
 	});
 
 
@@ -122,21 +122,21 @@ void Pyramid::createVertices(ID3D11Device* gDevice)
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		0.5f, -0.5f , 0.5f, PAD,
-		1.0f, 0.0f, 0.0f, PAD
+		0.5f, -0.5f , 0.5f, 
+		1.0f, 0.0f, 0.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
-		-0.5f, -0.5f , 0.5f, PAD,
-		1.0f, 1.0f,   1.0f, PAD
+		-0.5f, -0.5f , 0.5f,
+		1.0f, 1.0f,   1.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		
-		0.5f, -0.5f , -0.5f, PAD,
-		1.0f, 1.0f,   1.0f, PAD
+		0.5f, -0.5f , -0.5f,
+		1.0f, 1.0f,   1.0f
 	});
 
 

@@ -31,21 +31,21 @@ void Cube::createVertices(ID3D11Device* gDevice)
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		-0.5f, 0.5f , 0.5f, PAD,
-		1.0f, 0.0f, 0.0f, PAD
+		-0.5f, 0.5f , 0.5f, 
+		1.0f, 0.0f, 0.0f
 	});
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		-0.5f, -0.5f , 0.5f, PAD,
-		0.0f, 0.0f,   1.0f, PAD
+		-0.5f, -0.5f , 0.5f, 
+		0.0f, 0.0f,   1.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		0.5f, -0.5f , 0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		0.5f, -0.5f , 0.5f, 
+		0.0f, 1.0f,   0.0f
 	});
 
 
@@ -55,21 +55,21 @@ void Cube::createVertices(ID3D11Device* gDevice)
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		-0.5f, 0.5f , 0.5f, PAD,
-		1.0f, 0.0f, 0.0f, PAD
+		-0.5f, 0.5f , 0.5f,
+		1.0f, 0.0f, 0.0f
 	});
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		0.5f, -0.5f , 0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		0.5f, -0.5f , 0.5f, 
+		0.0f, 1.0f,   0.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		0.5f, 0.5f , 0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		0.5f, 0.5f , 0.5f, 
+		0.0f, 1.0f,   0.0f
 	});
 
 
@@ -78,21 +78,21 @@ void Cube::createVertices(ID3D11Device* gDevice)
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		0.5f, 0.5f , 0.5f, PAD,
-		1.0f, 0.0f, 0.0f, PAD
+		0.5f, 0.5f , 0.5f,
+		1.0f, 0.0f, 0.0f
 	});
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		0.5f, -0.5f , 0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		0.5f, -0.5f , 0.5f, 
+		0.0f, 1.0f,   0.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		0.5f, -0.5f , -0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		0.5f, -0.5f , -0.5f,
+		0.0f, 1.0f,   0.0f
 	});
 
 
@@ -101,21 +101,21 @@ void Cube::createVertices(ID3D11Device* gDevice)
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		0.5f, 0.5f , 0.5f, PAD,
-		1.0f, 0.0f, 0.0f, PAD
+		0.5f, 0.5f , 0.5f,
+		1.0f, 0.0f, 0.0f
 	});
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		0.5f, -0.5f , -0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		0.5f, -0.5f , -0.5f, 
+		0.0f, 1.0f,   0.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		0.5f, 0.5f , -0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		0.5f, 0.5f , -0.5f, 
+		0.0f, 1.0f,   0.0f
 	});
 
 
@@ -124,21 +124,21 @@ void Cube::createVertices(ID3D11Device* gDevice)
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		0.5f, 0.5f , -0.5f, PAD,
-		1.0f, 0.0f, 0.0f, PAD
+		0.5f, 0.5f , -0.5f, 
+		1.0f, 0.0f, 0.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		0.5f, -0.5f , -0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		0.5f, -0.5f , -0.5f, 
+		0.0f, 1.0f,   0.0f
 	});
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		-0.5f, -0.5f , -0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		-0.5f, -0.5f , -0.5f, 
+		0.0f, 1.0f,   0.0f
 	});
 
 
@@ -147,21 +147,21 @@ void Cube::createVertices(ID3D11Device* gDevice)
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		0.5f, 0.5f , -0.5f, PAD,
-		1.0f, 0.0f, 0.0f, PAD
+		0.5f, 0.5f , -0.5f, 
+		1.0f, 0.0f, 0.0f
 	});
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		-0.5f, -0.5f , -0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		-0.5f, -0.5f , -0.5f,
+		0.0f, 1.0f,   0.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		-0.5f, 0.5f , -0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		-0.5f, 0.5f , -0.5f,
+		0.0f, 1.0f,   0.0f
 	});
 
 
@@ -170,21 +170,21 @@ void Cube::createVertices(ID3D11Device* gDevice)
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		-0.5f, 0.5f , -0.5f, PAD,
-		1.0f, 0.0f, 0.0f, PAD
+		-0.5f, 0.5f , -0.5f,
+		1.0f, 0.0f, 0.0f
 	});
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		-0.5f, -0.5f , -0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		-0.5f, -0.5f , -0.5f, 
+		0.0f, 1.0f,   0.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		-0.5f, -0.5f , 0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		-0.5f, -0.5f , 0.5f,
+		0.0f, 1.0f,   0.0f
 	});
 
 
@@ -193,21 +193,21 @@ void Cube::createVertices(ID3D11Device* gDevice)
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		-0.5f, 0.5f , -0.5f, PAD,
-		1.0f, 0.0f, 0.0f, PAD
+		-0.5f, 0.5f , -0.5f,
+		1.0f, 0.0f, 0.0f
 	});
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		-0.5f, -0.5f , 0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		-0.5f, -0.5f , 0.5f, 
+		0.0f, 1.0f,   0.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		-0.5f, 0.5f , 0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		-0.5f, 0.5f , 0.5f, 
+		0.0f, 1.0f,   0.0f
 	});
 
 
@@ -216,21 +216,21 @@ void Cube::createVertices(ID3D11Device* gDevice)
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		-0.5f, 0.5f , 0.5f, PAD,
-		1.0f, 0.0f, 0.0f, PAD
+		-0.5f, 0.5f , 0.5f,
+		1.0f, 0.0f, 0.0f
 	});
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		0.5f, 0.5f , 0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		0.5f, 0.5f , 0.5f, 
+		0.0f, 1.0f,   0.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		0.5f, 0.5f , -0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		0.5f, 0.5f , -0.5f, 
+		0.0f, 1.0f,   0.0f
 	});
 
 
@@ -239,21 +239,21 @@ void Cube::createVertices(ID3D11Device* gDevice)
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		-0.5f, 0.5f , 0.5f, PAD,
-		1.0f, 0.0f, 0.0f, PAD
+		-0.5f, 0.5f , 0.5f,
+		1.0f, 0.0f, 0.0f
 	});
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		0.5f, 0.5f , -0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		0.5f, 0.5f , -0.5f, 
+		0.0f, 1.0f,   0.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		-0.5f, 0.5f , -0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		-0.5f, 0.5f , -0.5f, 
+		0.0f, 1.0f,   0.0f
 	});
 
 
@@ -262,22 +262,22 @@ void Cube::createVertices(ID3D11Device* gDevice)
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		-0.5f, -0.5f , 0.5f, PAD,
-		1.0f, 0.0f, 0.0f, PAD
+		-0.5f, -0.5f , 0.5f, 
+		1.0f, 0.0f, 0.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		0.5f, -0.5f , -0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		0.5f, -0.5f , -0.5f, 
+		0.0f, 1.0f,   0.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		0.5f, -0.5f , 0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		0.5f, -0.5f , 0.5f,
+		0.0f, 1.0f,   0.0f
 	});
 
 	//Twelfth Tris
@@ -285,22 +285,22 @@ void Cube::createVertices(ID3D11Device* gDevice)
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		-0.5f, -0.5f , 0.5f, PAD,
-		1.0f, 0.0f, 0.0f, PAD
+		-0.5f, -0.5f , 0.5f, 
+		1.0f, 0.0f, 0.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		-0.5f, -0.5f , -0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		-0.5f, -0.5f , -0.5f, 
+		0.0f, 1.0f,   0.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		//Third Vert
-		0.5f, -0.5f , -0.5f, PAD,
-		0.0f, 1.0f,   0.0f, PAD
+		0.5f, -0.5f , -0.5f, 
+		0.0f, 1.0f,   0.0f
 	});
 	D3D11_BUFFER_DESC bufferDesc;
 	memset(&bufferDesc, 0, sizeof(bufferDesc));
