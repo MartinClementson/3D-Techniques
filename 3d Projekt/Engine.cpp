@@ -401,8 +401,11 @@ void Engine::loadModels()
 	this->modelsColor->at(5)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
 	this->modelsColor->at(5)->setTranslation(XMFLOAT3(0.5f, 0.5f, 0.0f));
 
-	this->addModel(OBJ);
-	this->modelsTexture->at(0)->setTranslation(XMFLOAT3(5.0f, 0.0f, 0.0f));
+	//this->addModel(OBJ);
+	//this->modelsTexture->at(0)->setTranslation(XMFLOAT3(5.0f, 0.0f, 0.0f));
+
+	this->addModel(OBJ, "BTHcube.obj");
+	//this->modelsTexture->at(1)->setTranslation(XMFLOAT3(0.0f, 0.0f, 5.0f));
 }
 
 void Engine::loadLights()
@@ -571,6 +574,22 @@ void Engine::addModel(Primitives type)
 
 		}
 
+	}
+
+
+}
+
+void Engine::addModel(Primitives type, std::string filename)
+{
+	if (type == OBJ)
+	{
+		this->modelsTexture->push_back(new Model(filename, this->gDevice, this->gDeviceContext, this->worldBuffer, &this->worldStruct));
+		this->modelAmount += 1;
+
+	}
+	else {
+
+		this->addModel(type);
 	}
 
 
