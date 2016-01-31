@@ -123,6 +123,11 @@ void Model::createVertices(ID3D11Device* gDevice)
 {
 }
 
+void Model::setRotateState(bool state)
+{
+	this->rotate = state;
+}
+
 void Model::setPivotPoint(XMFLOAT3 newPosition)
 {
 
@@ -176,6 +181,15 @@ Model::~Model()
 
 void Model::update()
 {
+
+	if (rotate)
+	{
+		float static angle = 0; //<----- just temporary to test rotation
+		angle += 0.01f;
+		this->setRotation(XMFLOAT3(0, angle, 0));
+
+
+	}
 	this->worldStruct->world = this->worldMatrix;
 	this->worldStruct->normalWorld = this->normalWorld;
 
