@@ -1,12 +1,13 @@
 #pragma once
 
 struct Vertex {
+	//sizeof(float) == 4 byte!!!
 
-	float x, y, z;
+	float x, y, z; // 0 byte offset
 	
-	float r, g, b;
+	float r, g, b; //12 byte offset
 
-	float u, v;
+	float u, v; // 24 byte offset
 	
 };
 

@@ -201,7 +201,6 @@ void Pyramid::update()
 	float static angle = 0; //<----- just temporary to test rotation
 	angle += 0.01f;
 	this->setRotation(XMFLOAT3(0, angle, 0));
-	//DirectX::XMStoreFloat4x4(&this->worldMatrix, DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationY(angle)));
 	
 	return Model::update();
 	
