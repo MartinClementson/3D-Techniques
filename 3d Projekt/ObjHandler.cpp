@@ -126,8 +126,8 @@ ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts)
 		Coordinates.b = PAD;
 		
 
-		Coordinates.u = uvCoord[(testIn[i].x - 1)].x;
-		Coordinates.v = uvCoord[(testIn[i].x - 1)].y;
+		Coordinates.u = uvCoord[(testIn[i].y - 1)].x;
+		Coordinates.v = uvCoord[(testIn[i].y - 1)].y;
 	
 	
 
