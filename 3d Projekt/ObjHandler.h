@@ -1,7 +1,5 @@
 #pragma once
 #include "Linker.h"
-#include "Model.h"
-
 class ObjHandler
 {
 
@@ -10,7 +8,7 @@ private:
 public:
 	ObjHandler();
 	
-	ObjHandler(std::string filePath, Model &model);
+	ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts);
 
 	void MtlHandler(std::string &filePath);
 

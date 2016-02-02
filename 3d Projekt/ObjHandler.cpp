@@ -31,7 +31,7 @@ void ObjHandler::MtlHandler(std::string &filePath)
 	loading.close();
 }
 
-ObjHandler::ObjHandler(std::string filePath, Model &model)
+ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts)
 {
 	//Recieve a string to the file path,
 	//Recieve a pointer to the model class vertices array
@@ -160,7 +160,7 @@ ObjHandler::ObjHandler(std::string filePath, Model &model)
 	
 
 		//modelVerts->push_back(vCoord[(testIn[i].x - 1)]); //<---------------------
-		model.setVertex(Coordinates);
+		modelVerts->push_back(Coordinates);
 	}
 
 	
