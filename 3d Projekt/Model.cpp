@@ -53,9 +53,12 @@ void Model::loadTexture(ID3D11Device* gDevice, std::string filePath)
 	//
 	//pTexture->Release();
 	
-	filePath = "testTX.jpg";
+	//filePath = "testTX.jpg";
 	
 	//Convert filepath to wString
+	if (filePath == "")
+		filePath = "testTX.jpg";
+
 	std::wstring widestr = std::wstring(filePath.begin(), filePath.end());
 	
 	//Convert the wString to wchar_t* (Needed by the texture loader)
@@ -88,10 +91,11 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 
 	ObjHandler* importer = new ObjHandler(filePath,vertices, textureFileName);
 
+	loadTexture(gDevice, textureFileName);
 	//Make import
 
 	delete importer; // delete when done;
-	loadTexture(gDevice,"hej");
+	//loadTexture(gDevice,"hej");
 
 	D3D11_BUFFER_DESC bufferDesc;
 	memset(&bufferDesc, 0, sizeof(bufferDesc));
