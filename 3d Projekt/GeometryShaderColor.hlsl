@@ -41,17 +41,23 @@ void GS_main(
 	float3 faceEdgeA = input[1].pos - input[0].pos;
 	float3 faceEdgeB = input[2].pos - input[0].pos;
 	float3 faceNormal = normalize(cross(faceEdgeA, faceEdgeB));
-
+	float dt = -0.5;
+	matrix combinedMatrix = mul(world, mul(projection, view));
 
 	//Calculating backface culling
-	faceNormal = normalize(mul(float4(faceNormal, 1.0f), world).xyz);
-	float3 viewDir = normalize(camLook - camPos);
-	float dt = dot(faceNormal, viewDir);
+	for (uint j = 0; j < 3; j++)
+	{
+		float3 faceNormal2 = normalize(mul(faceNormal, normalWorld));
+		float3 viewDir = camPos - input[j].pos.xyz;
+		viewDir = normalize(mul(viewDir, normalWorld));
+		dt = max(dot(-viewDir, faceNormal2), 0.0f);
+		if (dt > 0)
+			break;
+	}
 
-	if (dt > 0.0)
+	if (dt > 0)
 	{
 		//combining the matrices for simpler use, also more efficient
-		matrix combinedMatrix = mul(world, mul(projection, view));
 
 		//matrix combinedMatrix = mul(world, view);
 		//combinedMatrix = mul(combinedMatrix, projection);
@@ -66,7 +72,7 @@ void GS_main(
 			element.color = input[i].color;
 
 
-			element.normal = mul(faceNormal, normalWorld);
+			element.normal = normalize(mul(faceNormal, normalWorld));
 			output.Append(element);
 		}
 	}
