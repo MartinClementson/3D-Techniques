@@ -387,9 +387,9 @@ void Engine::loadModels()
 
 
 	this->addModel(PYRAMID);
-	this->modelsColor->at(3)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
-	this->modelsColor->at(3)->setRotateState(true);
-	this->modelsColor->at(3)->setTranslation(XMFLOAT3(0.0f, -0.5f, 0.0f));
+	this->modelsColor->at(3)->setScale(XMFLOAT3(0.6f, 0.6f, 0.6f));
+	this->modelsColor->at(3)->setRotation(XMFLOAT3(45.0f, 0.0f, 0.0f));
+	this->modelsColor->at(3)->setTranslation(XMFLOAT3(-5.0f, -0.5f, 0.0f));
 
 	this->addModel(PLANE);
 	this->modelsColor->at(4)->setTranslation(XMFLOAT3(0.0f, -1.5f, 0.0f));
