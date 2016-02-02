@@ -30,6 +30,7 @@ public:
 	void rotateYaw(float angle); // yaw == around y axis
 	void rotatePitch(float angle);
 	//Getting
+	DirectX::XMFLOAT3 getCamLookAt();
 	DirectX::XMFLOAT4X4 getView();
 	DirectX::XMFLOAT4X4 getProjection();
 	DirectX::XMFLOAT3 getCamPos();

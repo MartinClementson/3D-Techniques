@@ -10,6 +10,7 @@ cbuffer cameraConstantBuffer  : register(b1)
 
 	matrix projection;
 	matrix view;
+	float3 camLook;
 	float3 camPos;
 	// normalworld?
 };
@@ -40,17 +41,12 @@ void GS_main(
 	float3 faceEdgeA = input[1].pos - input[0].pos;
 	float3 faceEdgeB = input[2].pos - input[0].pos;
 	float3 faceNormal = normalize(cross(faceEdgeA, faceEdgeB));
-	float dt = 0;
 
-	int count = 0;
+
 	//Calculating backface culling
-	while (count < 3 || dt < 0.0)
-	{
-		faceNormal = mul(float4(faceNormal, 1.0f), world).xyz;
-		float3 camToPos = normalize(input[count].pos.xyz - camPos);
-		float dt = dot(-camToPos, faceNormal);
-		count++;
-	}
+	faceNormal = normalize(mul(float4(faceNormal, 1.0f), world).xyz);
+	float3 viewDir = normalize(camLook - camPos);
+	float dt = dot(faceNormal, viewDir);
 
 	if (dt > 0.0)
 	{
