@@ -66,6 +66,7 @@
     <ClCompile Include="Input.cpp">
       <Filter>Classes\Input</Filter>
     </ClCompile>
+    <ClCompile Include="DirectXTK\Src\WICTextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h">
@@ -111,6 +112,7 @@
       <Filter>Classes\Input</Filter>
     </ClInclude>
     <ClInclude Include="bth_image.h" />
+    <ClInclude Include="DirectXToolkit.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Classes">
