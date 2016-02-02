@@ -9,7 +9,29 @@ ObjHandler::ObjHandler()
 {
 }
 
-ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts)
+void ObjHandler::MtlHandler(std::string &filePath)
+{
+	string textureID;
+	ifstream loading;
+	loading.open(filePath);
+	string line2;
+	if (!loading)
+		std::cout << "\nfailed to load texturefile";
+	else
+	{
+		while (!loading.eof())
+		{
+			loading >> line2;
+			if (line2 == "map_Kd")
+			{
+				loading >> textureID;
+			}
+		}
+	}
+	loading.close();
+}
+
+ObjHandler::ObjHandler(std::string filePath, Model &model)
 {
 	//Recieve a string to the file path,
 	//Recieve a pointer to the model class vertices array
@@ -31,7 +53,7 @@ ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts)
 	string line2;
 	ifstream loading;
 	loading.open(filePath);
-	std::istringstream inputString();
+	//std::istringstream inputString();
 	if (!loading)
 		std::cout << "\nFailed to load file";
 	else
@@ -43,6 +65,12 @@ ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts)
 			while (!loading.eof())
 			{
 				loading >> line2;
+				if (line2 == "mtllib")
+				{
+					string tempString;
+					loading >> tempString;
+					MtlHandler(tempString);
+				}
 				if (line2 == "v")
 				{
 					loading >> vecIn.x;
@@ -132,7 +160,7 @@ ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts)
 	
 
 		//modelVerts->push_back(vCoord[(testIn[i].x - 1)]); //<---------------------
-		modelVerts->push_back(Coordinates);
+		model.setVertex(Coordinates);
 	}
 
 	
