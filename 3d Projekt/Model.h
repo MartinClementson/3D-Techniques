@@ -54,6 +54,7 @@ public:
 
 	//Setters
 
+	void setVertex(Vertex &nVertex); //<---------------------- may not be needed
 	void setRotateState(bool state);
 	void setPivotPoint(XMFLOAT3 newPosition);
 

@@ -403,6 +403,7 @@ void Engine::loadModels()
 
 	this->addModel(OBJ);
 	this->modelsTexture->at(0)->setTranslation(XMFLOAT3(5.0f, 0.0f, 0.0f));
+	//this->modelsTexture->at(0)->setRotateState(true);
 
 	this->addModel(OBJ, "BTHcube.obj");
 	this->modelsTexture->at(1)->setTranslation(XMFLOAT3(0.0f, 0.0f, 5.0f));

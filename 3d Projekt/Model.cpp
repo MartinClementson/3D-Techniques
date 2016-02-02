@@ -82,7 +82,10 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 	this->translation = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	this->rotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
-	ObjHandler* importer = new ObjHandler(filePath,vertices);
+	//texture file name
+	std::string textureFileName;
+
+	ObjHandler* importer = new ObjHandler(filePath,vertices, textureFileName);
 
 	//Make import
 
@@ -139,6 +142,11 @@ Model::Model(const Model &obj) //Copy Constructor
 	}
 
 
+}
+
+void Model::setVertex(Vertex &nVertex)
+{
+	this->vertices->push_back(nVertex);
 }
 
 void Model::createVertices(ID3D11Device* gDevice)
