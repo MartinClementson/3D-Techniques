@@ -9,7 +9,30 @@ ObjHandler::ObjHandler()
 {
 }
 
-ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts)
+std::string ObjHandler::MtlHandler(std::string &filePath)
+{
+	string textureID;
+	ifstream loading;
+	loading.open(filePath);
+	string line2;
+	if (!loading)
+		std::cout << "\nfailed to load texturefile";
+	else
+	{
+		while (!loading.eof())
+		{
+			loading >> line2;
+			if (line2 == "map_Kd")
+			{
+				loading >> textureID;
+			}
+		}
+	}
+	loading.close();
+	return textureID;
+}
+
+ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts, std::string &textureName)
 {
 	//Recieve a string to the file path,
 	//Recieve a pointer to the model class vertices array
@@ -25,13 +48,13 @@ ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts)
 	vector<DirectX::XMFLOAT3> uvCoord, vCoord;
 	Vertex normIn;
 	DirectX::XMFLOAT3 uvIn, vecIn;
-
+	
 	int count = 0;
 	//string fileName = "test.obj";
 	string line2;
 	ifstream loading;
 	loading.open(filePath);
-	std::istringstream inputString();
+	//std::istringstream inputString();
 	if (!loading)
 		std::cout << "\nFailed to load file";
 	else
@@ -43,6 +66,12 @@ ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts)
 			while (!loading.eof())
 			{
 				loading >> line2;
+				if (line2 == "mtllib")
+				{
+					string tempString;
+					loading >> tempString;
+					textureName = MtlHandler(tempString);
+				}
 				if (line2 == "v")
 				{
 					loading >> vecIn.x;
