@@ -1,9 +1,13 @@
 #include "Model.h"
 #include "bth_image.h"
-#include <DDSTextureLoader\DDSTextureLoader.h>
-#include <WICTextureLoader\WICTextureLoader.h>
-#include <DirectXTex\DirectXTex.h>
-#include <DirectXTex\DirectXTex.inl>
+#include "DirectXToolkit.h"
+
+
+
+//#include <DDSTextureLoader\DDSTextureLoader.h>
+//#include <WICTextureLoader\WICTextureLoader.h>
+//#include <DirectXTex\DirectXTex.h>
+//#include <DirectXTex\DirectXTex.inl>
 
 
 
@@ -58,15 +62,12 @@ void Model::loadTexture(ID3D11Device* gDevice, std::string filePath)
 	const wchar_t* fileName = widestr.c_str();
 	
 	//load Texture
-	//CoInitialize();
+	HRESULT hr = CoInitialize((LPVOID)0);
 	
-	//ScratchImage testIMG;
-	//HRESULT hr = LoadFromWICFile(L"testTX.jpg", WIC_FLAGS_NONE, nullptr, testIMG);
+	hr= CreateWICTextureFromFile(gDevice, fileName, nullptr, &this->texture);
 
-	HRESULT hr = CreateWICTextureFromFile(gDevice, L"testTX.jpg", nullptr, &this->texture);
-	//hr = CreateWICTextureFromFile()
-
-
+	
+	
 }
 
 //This is the constructor for OBJ import
@@ -108,7 +109,7 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 
 	//Create texture
 
-	HRESULT result;
+//	HRESULT result;
 	
 }
 
