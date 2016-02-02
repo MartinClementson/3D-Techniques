@@ -9,7 +9,7 @@ ObjHandler::ObjHandler()
 {
 }
 
-void ObjHandler::MtlHandler(std::string &filePath)
+std::string ObjHandler::MtlHandler(std::string &filePath)
 {
 	string textureID;
 	ifstream loading;
@@ -29,9 +29,10 @@ void ObjHandler::MtlHandler(std::string &filePath)
 		}
 	}
 	loading.close();
+	return textureID;
 }
 
-ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts)
+ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts, std::string &textureName)
 {
 	//Recieve a string to the file path,
 	//Recieve a pointer to the model class vertices array
@@ -47,7 +48,7 @@ ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts)
 	vector<DirectX::XMFLOAT3> uvCoord, vCoord;
 	Vertex normIn;
 	DirectX::XMFLOAT3 uvIn, vecIn;
-
+	
 	int count = 0;
 	//string fileName = "test.obj";
 	string line2;
@@ -69,7 +70,7 @@ ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts)
 				{
 					string tempString;
 					loading >> tempString;
-					MtlHandler(tempString);
+					textureName = MtlHandler(tempString);
 				}
 				if (line2 == "v")
 				{
