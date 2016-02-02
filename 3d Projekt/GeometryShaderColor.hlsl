@@ -45,17 +45,26 @@ void GS_main(
 	matrix combinedMatrix = mul(world, mul(projection, view));
 
 	//Calculating backface culling
-	for (uint j = 0; j < 3; j++)
-	{
-		float3 faceNormal2 = normalize(mul(faceNormal, normalWorld));
-		float3 viewDir = camPos - input[j].pos.xyz;
-		viewDir = normalize(mul(viewDir, normalWorld));
-		dt = max(dot(-viewDir, faceNormal2), 0.0f);
-		if (dt > 0)
-			break;
-	}
+	//for (uint j = 0; j < 3; j++)
+	//{
+	//	float3 faceNormal2 = normalize(mul(faceNormal, normalWorld));
+	//	float3 viewDir = normalize(camPos - normalize(mul(input[j].pos.xyz, world)));
+	//	//viewDir = normalize(mul(viewDir, view));
+	//	dt = max(dot(-viewDir, faceNormal2), 0.0f);
+	//	if (dt > 0)
+	//		break;
+	//}
 
-	if (dt > 0)
+	float3 faceNormal2 = normalize(mul(faceNormal, normalWorld));
+	float3 viewDir = normalize(mul(input[0].pos.xyz, world));
+	viewDir = normalize(viewDir - camPos);
+
+	dt = dot(viewDir, faceNormal2);
+
+
+
+
+	if (dt > -0.25)
 	{
 		//combining the matrices for simpler use, also more efficient
 
