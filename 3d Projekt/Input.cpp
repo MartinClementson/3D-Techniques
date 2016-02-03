@@ -71,6 +71,7 @@ Input::Input()
 
 bool Input::initialize(HINSTANCE* hinstance, HWND* hwnd,Camera* camera)
 {
+	hwndP = hwnd;
 	this->camera = camera;
 	HRESULT hr;
 	//Initialize the input interface
@@ -121,8 +122,9 @@ bool Input::initialize(HINSTANCE* hinstance, HWND* hwnd,Camera* camera)
 	{
 		return false;
 	}
-
+	
 	hr = mouse->SetCooperativeLevel(*hwnd, DISCL_EXCLUSIVE | DISCL_NOWINKEY | DISCL_FOREGROUND);
+	mouseHidden = true;
 	if (FAILED(hr))
 	{
 		return false;
@@ -258,12 +260,45 @@ void Input::ProcessInput()
 		camera->rotateYaw(-SENSITIVITY);
 	}
 
+	static float mouseShiftTimer = 3;
+
+	if (keyboardState[DIK_LSHIFT] && mouseShiftTimer > 3)
+	{
+		if (mouseHidden)
+		{
+			mouse->Unacquire();
+			mouse->SetCooperativeLevel(*hwndP, DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
+			mouse->Acquire();
+			mouseHidden = false;
+			mouseShiftTimer = 0;
+		}
+
+		else if (!mouseHidden)
+		{
+			mouse->Unacquire();
+			mouse->SetCooperativeLevel(*hwndP, DISCL_EXCLUSIVE | DISCL_NOWINKEY | DISCL_FOREGROUND);
+			mouse->Acquire();
+			mouseHidden = true;
+			mouseShiftTimer = 0;
+		}
+
+
+	}
+	else if (mouseShiftTimer < 3.5f)
+	{
+		mouseShiftTimer += 0.001;
+	}
+	
+	
 
 
 	
-	
-	camera->rotateYaw(dx*10);
-	camera->rotatePitch(dy*10); //THe *10 MUST BE removed once the problem of the mouse  not only being in the window is fixed
+	if (mouseHidden)
+	{
+
+		camera->rotateYaw(dx*10);
+		camera->rotatePitch(dy*10); //THe *10 MUST BE removed once the problem of the mouse  not only being in the window is fixed
+	}
 
 
 }

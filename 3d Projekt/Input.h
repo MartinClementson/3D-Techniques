@@ -6,6 +6,8 @@ class Input
 {
 private:
 
+	bool mouseHidden;
+
 	Camera* camera;
 	LPDIRECTINPUT8 input;
 	LPDIRECTINPUTDEVICE8 keyboard;
@@ -17,6 +19,7 @@ private:
 	void ProcessInput();
 	bool ReadKeyboard();
 	bool ReadMouse();
+	HWND* hwndP;
 public:
 	Input();
 	
