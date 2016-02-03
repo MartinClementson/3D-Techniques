@@ -93,7 +93,7 @@ bool Input::initialize(HINSTANCE* hinstance, HWND* hwnd,Camera* camera)
 		return false;
 	}
 
-	hr = keyboard->SetCooperativeLevel(*hwnd, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
+	hr = keyboard->SetCooperativeLevel(*hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
 
 	if (FAILED(hr))
 	{
@@ -103,7 +103,8 @@ bool Input::initialize(HINSTANCE* hinstance, HWND* hwnd,Camera* camera)
 	hr = keyboard->Acquire();
 	if (FAILED(hr))
 	{
-		return false;
+		hr= keyboard->Acquire();
+		//Re-acquire helps
 	}
 
 
@@ -121,7 +122,7 @@ bool Input::initialize(HINSTANCE* hinstance, HWND* hwnd,Camera* camera)
 		return false;
 	}
 
-	hr = mouse->SetCooperativeLevel(*hwnd, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
+	hr = mouse->SetCooperativeLevel(*hwnd, DISCL_EXCLUSIVE | DISCL_NOWINKEY | DISCL_FOREGROUND);
 	if (FAILED(hr))
 	{
 		return false;
@@ -130,7 +131,8 @@ bool Input::initialize(HINSTANCE* hinstance, HWND* hwnd,Camera* camera)
 	hr = mouse->Acquire();
 	if (FAILED(hr))
 	{
-		return false;
+		mouse->Acquire();
+		//re-acquire helps
 	}
 
 
