@@ -179,6 +179,10 @@ DirectX::XMFLOAT3 Camera::getCamPos()
 	return this->viewPosition;
 	
 }
+DirectX::XMFLOAT3 Camera::getCamLookAt()
+{
+	return viewLookAt;
+}
 
 void Camera::walk(float d)
 {

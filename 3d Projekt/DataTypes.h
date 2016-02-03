@@ -20,10 +20,12 @@ struct worldConstantBuffer
 struct cameraConstantBuffer
 {
 	
-	DirectX::XMFLOAT4X4 view;
 	DirectX::XMFLOAT4X4 projection;
-	DirectX::XMFLOAT3 camPos;
+	DirectX::XMFLOAT4X4 view;
+	DirectX::XMFLOAT3 camLook;
 	float pad;
+	DirectX::XMFLOAT3 camPos;
+	float pad2;
 };
 
 struct lightConstantBuffer

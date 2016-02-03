@@ -434,6 +434,7 @@ void Engine::update()
 	camStruct.view = cam->getView();
 	camStruct.projection = cam->getProjection();
 	camStruct.camPos = cam->getCamPos();
+	camStruct.camLook = cam->getCamLookAt();
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	ZeroMemory(&mappedResource, sizeof(mappedResource));
