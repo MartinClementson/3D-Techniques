@@ -10,6 +10,7 @@ cbuffer cameraConstantBuffer  : register(b1)
 
 	matrix projection;
 	matrix view;
+	float3 camLook;
 	float3 camPos;
 	// normalworld?
 };
@@ -40,23 +41,50 @@ void GS_main(
 	float3 faceEdgeA = input[1].pos - input[0].pos;
 	float3 faceEdgeB = input[2].pos - input[0].pos;
 	float3 faceNormal = normalize(cross(faceEdgeA, faceEdgeB));
+	float dt = 0;
 
-	//combining the matrices for simpler use, also more efficient
-	matrix combinedMatrix = mul(world, mul(projection,view));
+	//Calculating backface culling
+	//for (uint j = 0; j < 3; j++)
+	//{
+	//	float3 faceNormal2 = normalize(mul(faceNormal, normalWorld));
+	//	float3 viewDir = normalize(camPos - normalize(mul(input[j].pos.xyz, world)));
+	//	//viewDir = normalize(mul(viewDir, view));
+	//	dt = max(dot(-viewDir, faceNormal2), 0.0f);
+	//	if (dt > 0)
+	//		break;
+	//}
 
-	//matrix combinedMatrix = mul(world, view);
-	//combinedMatrix = mul(combinedMatrix, projection);
-	for (uint i = 0; i < 3; i++)
+	
+
+	float3 faceNormal2 = normalize(mul(faceNormal, normalWorld));
+	float3 viewDir = mul(input[0].pos, world);
+	viewDir = normalize(viewDir - camPos);
+
+	dt = dot(-viewDir, faceNormal2);
+
+
+
+
+	if (dt > 0)
 	{
-		GSOutput element;
-		element.pos = input[i].pos;
-		element.pos = mul(element.pos, combinedMatrix);
-		element.wPos = mul(element.pos, world);
-		element.camPos = camPos;
-		element.color = input[i].color;
+		//combining the matrices for simpler use, also more efficient
+
+		matrix combinedMatrix = mul(world, mul(view, projection));
+		//matrix combinedMatrix = mul(world, view);
+		//combinedMatrix = mul(combinedMatrix, projection);
+
+		for (uint i = 0; i < 3; i++)
+		{
+			GSOutput element;
+			element.pos = input[i].pos;
+			element.pos = mul(element.pos, combinedMatrix);
+			element.wPos = mul(element.pos, world);
+			element.camPos = camPos;
+			element.color = input[i].color;
 
 
-		element.normal = mul(faceNormal, normalWorld);
-		output.Append(element);
+			element.normal = normalize(mul(faceNormal, normalWorld));
+			output.Append(element);
+		}
 	}
 }

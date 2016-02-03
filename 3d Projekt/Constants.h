@@ -1,6 +1,6 @@
 #pragma once
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 600
+#define WINDOW_WIDTH 800.0f
+#define WINDOW_HEIGHT 600.0f
 #define WINDOWED true
 #define PAD 0.0f
 #define PI 3.14159265359f
