@@ -10,6 +10,7 @@ cbuffer cameraConstantBuffer  : register(b1)
 
 	matrix projection;
 	matrix view;
+	float3 camLook;
 	float3 camPos;
 	// normalworld?
 };
@@ -41,22 +42,31 @@ void GS_main(
 	float3 faceEdgeB = input[2].pos - input[0].pos;
 	float3 faceNormal = normalize(cross(faceEdgeA, faceEdgeB));
 
-	//combining the matrices for simpler use, also more efficient
-	matrix combinedMatrix = mul(world, mul(view, projection));
+	float3 faceNormal2 = normalize(mul(faceNormal, normalWorld));
+	float3 viewDir = mul(input[0].pos, world);
+	viewDir = normalize(viewDir - camPos);
 
-	//matrix combinedMatrix = mul(world, view);
-	//combinedMatrix = mul(combinedMatrix, projection);
-	for (uint i = 0; i < 3; i++)
+	float dt = dot(-viewDir, faceNormal2);
+
+	if (dt > 0)
 	{
-		GSOutput element;
-		element.pos = input[i].pos;
-		element.pos = mul(element.pos, combinedMatrix);
-		element.wPos = mul(element.pos, world);
-		element.camPos = camPos;
-		element.Texture = input[i].Texture;
+		//combining the matrices for simpler use, also more efficient
+		matrix combinedMatrix = mul(world, mul(view, projection));
+
+		//matrix combinedMatrix = mul(world, view);
+		//combinedMatrix = mul(combinedMatrix, projection);
+		for (uint i = 0; i < 3; i++)
+		{
+			GSOutput element;
+			element.pos = input[i].pos;
+			element.pos = mul(element.pos, combinedMatrix);
+			element.wPos = mul(element.pos, world);
+			element.camPos = camPos;
+			element.Texture = input[i].Texture;
 
 
-		element.normal = mul(faceNormal, normalWorld);
-		output.Append(element);
+			element.normal = mul(faceNormal, normalWorld);
+			output.Append(element);
+		}
 	}
 }
