@@ -23,6 +23,8 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	this->lightAmount = 0;
 	hr = CreateDirect3DContext(winHandle);
 
+	createRasterizerState();
+
 	setViewPort();
 
 	createShaders();
@@ -141,6 +143,23 @@ void Engine::createConstantBuffers()
 	if (SUCCEEDED(hr))
 		this->gDeviceContext->PSSetConstantBuffers(0, 1, &lightBuffer);
 
+
+}
+
+void Engine::createRasterizerState()
+{
+	D3D11_RASTERIZER_DESC rastDesc;
+	ID3D11RasterizerState *pRasterizerState = nullptr;
+
+	ZeroMemory(&rastDesc, sizeof(rastDesc));
+	rastDesc.FillMode = D3D11_FILL_SOLID;
+	rastDesc.CullMode = D3D11_CULL_NONE;
+	rastDesc.DepthClipEnable = true;
+
+	hr = gDevice->CreateRasterizerState(&rastDesc, &pRasterizerState);
+
+	if (SUCCEEDED(hr))
+		gDeviceContext->RSSetState(pRasterizerState);
 
 }
 
