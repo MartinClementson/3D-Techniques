@@ -63,7 +63,7 @@ private:
 	void createShaders();
 	void createTextureShaders();
 	void createColorShaders();
-
+	void createRasterizerState();
 	void createConstantBuffers();
 public:
 	Engine();
