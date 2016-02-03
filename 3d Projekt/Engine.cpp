@@ -12,10 +12,10 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	
 	this->cam = new Camera();
 	this->input = input;
-	input->initialize(hInstance, winHandle,this->cam);
-	if (!input)
+	bool inputResult = input->initialize(hInstance, winHandle,this->cam);
+	if (!inputResult)
 	{
-		MessageBox(*winHandle, L"Cannot find input device", L"Error", MB_OK);
+		MessageBox(*winHandle, L"Cannot intialize input device", L"Error", MB_OK);
 		
 	}
 	this->vertexAmount = 0;
