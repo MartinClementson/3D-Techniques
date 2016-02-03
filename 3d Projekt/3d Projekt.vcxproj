@@ -106,7 +106,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>\\storage10.student.bth.se\students\20142\dawi14\Programmering\3d-projekt\3d-projekt\3d-projekt\3d Projekt\DirectXTK\Inc;\\storage10.student.bth.se\students\20142\dawi14\Programmering\3d-projekt\3d-projekt\3d-projekt\3d Projekt\DirectXTK\MakeSpriteFont;\\storage10.student.bth.se\students\20142\dawi14\Programmering\3d-projekt\3d-projekt\3d Projekt\DirectXTK\MakeSpriteFont;\\storage10.student.bth.se\students\20142\dawi14\Programmering\3d-projekt\3d-projekt\3d Projekt\DirectXTK\Inc;\\storage10.student.bth.se\students\20142\maik14\3d-projekt\3d Projekt\DirectXTK\Audio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\DirectXTK\Src;$(SolutionDir)\DirectXTK\MakeSpriteFont;$(SolutionDir)\DirectXTK\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -142,7 +142,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>\\storage10.student.bth.se\students\20142\maik14\3d-projekt\3d Projekt\DirectXTK\XWBTool;\\storage10.student.bth.se\students\20142\maik14\3d-projekt\3d Projekt\DirectXTK\Src;\\storage10.student.bth.se\students\20142\maik14\3d-projekt\3d Projekt\DirectXTK\MakeSpriteFont;\\storage10.student.bth.se\students\20142\maik14\3d-projekt\3d Projekt\DirectXTK\Inc;\\storage10.student.bth.se\students\20142\maik14\3d-projekt\3d Projekt\DirectXTK\Audio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\DirectXTK\Src;$(SolutionDir)\DirectXTK\MakeSpriteFont;$(SolutionDir)\DirectXTK\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
