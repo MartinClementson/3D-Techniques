@@ -99,7 +99,7 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 	//texture file name
 	std::string textureFileName;
 
-	ObjHandler* importer = new ObjHandler(filePath,vertices, textureFileName,gDevice,gDeviceContext,worldBuffer,worldStruct);//Make import
+	ObjHandler* importer = new ObjHandler(&children,filePath,vertices, textureFileName,gDevice,gDeviceContext,worldBuffer,worldStruct);//Make import
 
 	//Load Texture 
 	loadTexture(gDevice, textureFileName);
