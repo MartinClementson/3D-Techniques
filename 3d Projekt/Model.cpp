@@ -4,12 +4,6 @@
 
 
 
-//#include <DDSTextureLoader\DDSTextureLoader.h>
-//#include <WICTextureLoader\WICTextureLoader.h>
-//#include <DirectXTex\DirectXTex.h>
-//#include <DirectXTex\DirectXTex.inl>
-
-
 
 
 
@@ -20,40 +14,7 @@ Model::Model()
 void Model::loadTexture(ID3D11Device* gDevice, std::string filePath)
 {
 	
-	//D3D11_TEXTURE2D_DESC textDesc;
-	//ZeroMemory(&textDesc, sizeof(textDesc));
 
-	//textDesc.Width = BTH_IMAGE_WIDTH;
-	//textDesc.Height = BTH_IMAGE_HEIGHT;
-	//textDesc.MipLevels = textDesc.ArraySize = 1;
-	//textDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	//textDesc.SampleDesc.Count = 1;
-	//textDesc.SampleDesc.Quality = 0;
-	//textDesc.Usage = D3D11_USAGE_DEFAULT;
-	//textDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	//textDesc.MiscFlags = 0;
-	//textDesc.CPUAccessFlags = 0;
-
-	//D3D11_SUBRESOURCE_DATA data;
-	//ZeroMemory(&data, sizeof(data));
-
-	//data.pSysMem = (void*)BTH_IMAGE_DATA;
-	//data.SysMemPitch = BTH_IMAGE_WIDTH * 4 * sizeof(char);
-	//HRESULT hr = gDevice->CreateTexture2D(&textDesc, &data, &pTexture);
-
-
-	//D3D11_SHADER_RESOURCE_VIEW_DESC resViewDesc;
-
-	//ZeroMemory(&resViewDesc, sizeof(resViewDesc));
-	//resViewDesc.Format = textDesc.Format;
-	//resViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	//resViewDesc.Texture2D.MipLevels = textDesc.MipLevels;
-	//resViewDesc.Texture2D.MostDetailedMip = 0;
-	//hr = gDevice->CreateShaderResourceView(pTexture, &resViewDesc, &texture);
-	//
-	//pTexture->Release();
-	
-	//filePath = "testTX.jpg";
 	
 	//Convert filepath to wString
 	if (filePath == "")
@@ -67,9 +28,15 @@ void Model::loadTexture(ID3D11Device* gDevice, std::string filePath)
 	//load Texture
 	HRESULT hr = CoInitialize((LPVOID)0);
 	
+	//The function will also create a subresource and bind it to the gpu
 	hr= CreateWICTextureFromFile(gDevice, fileName, nullptr, &this->texture);
 
-	
+
+	//Create an error if texture is not loaded
+	/*if (!SUCCEEDED(hr))
+		MessageBox(*winHandle, L"Cannot intialize input device", L"Error", MB_OK);
+
+	*/
 	
 }
 
@@ -89,13 +56,14 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 	//texture file name
 	std::string textureFileName;
 
-	ObjHandler* importer = new ObjHandler(filePath,vertices, textureFileName);
+	ObjHandler* importer = new ObjHandler(filePath,vertices, textureFileName);//Make import
 
+	//Load Texture 
 	loadTexture(gDevice, textureFileName);
-	//Make import
+	
 
 	delete importer; // delete when done;
-	//loadTexture(gDevice,"hej");
+	
 
 	D3D11_BUFFER_DESC bufferDesc;
 	memset(&bufferDesc, 0, sizeof(bufferDesc));
@@ -111,7 +79,7 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 
 	gDevice->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
 
-	//Create texture
+	
 
 //	HRESULT result;
 	
