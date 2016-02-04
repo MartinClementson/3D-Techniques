@@ -43,16 +43,6 @@ void GS_main(
 	float3 faceNormal = normalize(cross(faceEdgeA, faceEdgeB));
 	
 
-	//Calculating backface culling
-	//for (uint j = 0; j < 3; j++)
-	//{
-	//	float3 faceNormal2 = normalize(mul(faceNormal, normalWorld));
-	//	float3 viewDir = normalize(camPos - normalize(mul(input[j].pos.xyz, world)));
-	//	//viewDir = normalize(mul(viewDir, view));
-	//	dt = max(dot(-viewDir, faceNormal2), 0.0f);
-	//	if (dt > 0)
-	//		break;
-	//}
 
 	
 
