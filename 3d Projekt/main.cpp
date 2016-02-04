@@ -5,10 +5,12 @@
 #include "Linker.h"
 #include "Engine.h"
 #include "Input.h"
+#include "GameTimer.h"
 #include "windowInit.h"
 #define _CRTDBG_MAP_ALLOC
 HWND InitWindow(HINSTANCE hInstance);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
+void CalculateFPS(HWND& window, GameTimer& time);
 
 
 
@@ -20,13 +22,14 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	HWND wndHandle = InitWindow(hInstance); 
 	Input* input = new Input();
 	Engine* engine = new Engine(&hInstance,&wndHandle,input);
-
+	GameTimer* mTimer = new GameTimer();
 	
 
 	if (wndHandle)
 	{
 		ShowWindow(wndHandle, nCmdShow);
 
+		mTimer->Reset();
 		while (WM_QUIT != msg.message)
 		{
 			if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
@@ -36,6 +39,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			}
 			else
 			{
+				mTimer->Tick();
+				CalculateFPS(wndHandle, *mTimer);
 				engine->run();
 			}
 		}
@@ -43,6 +48,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 		input->Shutdown();
 		DestroyWindow(wndHandle);
 	}
+	delete mTimer;
 	delete engine;
 	delete input;
 	_CrtDumpMemoryLeaks();

@@ -1,4 +1,6 @@
 #include "windowInit.h"
+#include "GameTimer.h"
+#include <sstream>
 
 
 
@@ -55,4 +57,35 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 
 	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+void CalculateFPS(HWND& window, GameTimer& time)
+
+{
+	static int frameCnt = 0;
+	static float timeElapsed = 0.0f;
+
+	frameCnt++;
+
+	if ((time.TotalTime() - timeElapsed) >= 1.0f)
+	{
+		float fps = (float)frameCnt; //fps = frameCnt / 1
+		float mspf = 1000.0f / fps; //This is the miliseconds it takes to render one frame
+
+		std::wostringstream outs;
+		outs.precision(6);
+
+		outs << L"   " << L"FPS: " << fps << L"   "
+			<< L"Time Per Frame: " << mspf << L" (ms)";
+		SetWindowText(window, outs.str().c_str());
+
+
+		//Reset for next average
+		frameCnt = 0;
+		timeElapsed += 1.0f;
+
+
+	}
+
+
 }

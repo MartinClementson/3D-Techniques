@@ -67,6 +67,9 @@
       <Filter>Classes\Input</Filter>
     </ClCompile>
     <ClCompile Include="DirectXTK\Src\WICTextureLoader.cpp" />
+    <ClCompile Include="GameTimer.cpp">
+      <Filter>Classes\GameTimer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h">
@@ -113,6 +116,9 @@
     </ClInclude>
     <ClInclude Include="bth_image.h" />
     <ClInclude Include="DirectXToolkit.h" />
+    <ClInclude Include="GameTimer.h">
+      <Filter>Classes\GameTimer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Classes">
@@ -162,6 +168,9 @@
     </Filter>
     <Filter Include="Shaders\TextureShaders">
       <UniqueIdentifier>{ddb568a6-ca37-4440-9bbb-dc78daf7349c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\GameTimer">
+      <UniqueIdentifier>{e376b9c0-350b-4a04-83fe-4c00a68da4a0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

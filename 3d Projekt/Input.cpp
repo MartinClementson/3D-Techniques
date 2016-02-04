@@ -281,8 +281,12 @@ void Input::ProcessInput()
 			mouseHidden = true;
 			mouseShiftTimer = 0;
 		}
+				//look into
+				//ClientToScreen()
+				//getWindowRect()
+				//SetCursorPos(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
 
-
+		
 	}
 	else if (mouseShiftTimer < 3.5f)
 	{
