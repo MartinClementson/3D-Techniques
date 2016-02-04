@@ -13,8 +13,10 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	this->cam = new Camera();
 	this->input = input;
 	bool inputResult = input->initialize(hInstance, winHandle,this->cam);
+
+
 	if (!inputResult)
-	{
+	{	//If there is a problem creating the input, show a warning
 		MessageBox(*winHandle, L"Cannot intialize input device", L"Error", MB_OK);
 		
 	}
@@ -148,12 +150,15 @@ void Engine::createConstantBuffers()
 
 void Engine::createRasterizerState()
 {
+
+	//Setting up the Rasterizer state
+	//needed in this project to disable the built in back face culling
 	D3D11_RASTERIZER_DESC rastDesc;
 	ID3D11RasterizerState *pRasterizerState = nullptr;
 
 	ZeroMemory(&rastDesc, sizeof(rastDesc));
 	rastDesc.FillMode = D3D11_FILL_SOLID;
-	rastDesc.CullMode = D3D11_CULL_NONE;
+	rastDesc.CullMode = D3D11_CULL_NONE; //disable back face culling
 	rastDesc.DepthClipEnable = true;
 
 	hr = gDevice->CreateRasterizerState(&rastDesc, &pRasterizerState);
@@ -467,7 +472,7 @@ void Engine::update()
 
 	this->gDeviceContext->Unmap(camBuffer, 0);
 
-	this->gDeviceContext->GSSetConstantBuffers(1, 1, &camBuffer); //change to geometry shader later
+	this->gDeviceContext->GSSetConstantBuffers(1, 1, &camBuffer); 
 
 	this->updateLight();
 
@@ -600,7 +605,7 @@ void Engine::addModel(Primitives type)
 
 }
 
-void Engine::addModel(Primitives type, std::string filename)
+void Engine::addModel(Primitives type, std::string filename) // This is an overloaded function, For OBJ
 {
 	if (type == OBJ)
 	{

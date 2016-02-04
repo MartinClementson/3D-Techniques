@@ -139,17 +139,17 @@ bool Input::initialize(HINSTANCE* hinstance, HWND* hwnd,Camera* camera)
 
 
 
-	DIPROPDWORD dipdw;
-	
-	dipdw.diph.dwSize = sizeof(DIPROPDWORD);
-	dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
-	dipdw.diph.dwObj = 0;
-	dipdw.diph.dwHow = DIPH_DEVICE;
-	dipdw.dwData = 10;
-	hr = keyboard->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
+	//DIPROPDWORD dipdw;
+	//
+	//dipdw.diph.dwSize = sizeof(DIPROPDWORD);
+	//dipdw.diph.dwHeaderSize = sizeof(DIPROPHEADER);
+	//dipdw.diph.dwObj = 0;
+	//dipdw.diph.dwHow = DIPH_DEVICE;
+	//dipdw.dwData = 10;
+	//hr = keyboard->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
 
 
-	hr = mouse->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
+	//hr = mouse->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph);
 
 	
 	return true;
