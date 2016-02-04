@@ -1,6 +1,6 @@
 #pragma once
 #include "Linker.h"
-#include "ObjHandler.h"
+
 using namespace DirectX;
 
 class Model
@@ -21,7 +21,10 @@ protected:
 	XMFLOAT4X4 worldMatrix;
 	XMFLOAT4X4 normalWorld;
 
-	std::vector<Vertex> *vertices;
+
+	std::vector<Model*>* children = nullptr; //A model can have other models as it's children
+
+	std::vector<Vertex> *vertices = nullptr;
 
 	//This is a pointer to a deviceContext, we will store the adress to the main device here.
 	//since we use it alot, we shall avoid putting it in all the functions.
@@ -37,8 +40,11 @@ protected:
 	ID3D11ShaderResourceView* texture = nullptr; //If multitextures are to be supported. this will be an array
 	ID3D11Texture2D *pTexture = nullptr;
 	void loadTexture(ID3D11Device* gDevice, std::string filePath);
-	Model();//Default constuctor
 public:
+	Model();//Default constuctor
+
+	Model(std::vector<Vertex>* vertArray, std::string* texturePath, ID3D11Device* gDevice,
+		ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct); //this is the constructor for the children in the obj importer
 
 	Model(ID3D11DeviceContext* gDeviceContext, ID3D11Buffer* worldBuffer, worldConstantBuffer* worldStruct);
 	Model(const Model &obj); //copy constructor
@@ -50,11 +56,13 @@ public:
 	virtual void update();
 	virtual void render();
 
+	void renderChildren();
+
 	virtual void updateWorldMatrix();
 
 	//Setters
 
-	void setVertex(Vertex &nVertex); //<---------------------- may not be needed
+	void setVertex(Vertex nVertex); //<---------------------- may not be needed
 	void setRotateState(bool state);
 	void setPivotPoint(XMFLOAT3 newPosition);
 

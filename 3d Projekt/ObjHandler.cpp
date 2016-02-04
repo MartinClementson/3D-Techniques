@@ -4,9 +4,13 @@
 #include <iostream>
 #include <string>
 
+#include "DataTypes.h"
+
 using namespace std;
 ObjHandler::ObjHandler()
 {
+	
+	
 }
 
 std::string ObjHandler::MtlHandler(std::string &filePath)
@@ -32,7 +36,9 @@ std::string ObjHandler::MtlHandler(std::string &filePath)
 	return textureID;
 }
 
-ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts, std::string &textureName)
+ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts, std::string &textureName,
+	ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext,
+	ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct)
 {
 	//Recieve a string to the file path,
 	//Recieve a pointer to the model class vertices array

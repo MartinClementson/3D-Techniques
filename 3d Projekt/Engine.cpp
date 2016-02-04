@@ -524,7 +524,7 @@ void Engine::render()
 	{
 
 	
-		this->modelsColor->at(i)->update();
+		//this->modelsColor->at(i)->update();
 		this->modelsColor->at(i)->render();
 
 
@@ -547,7 +547,7 @@ void Engine::render()
 	{
 
 
-		this->modelsTexture->at(i)->update();
+		//this->modelsTexture->at(i)->update();
 		this->modelsTexture->at(i)->render();
 
 
