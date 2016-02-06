@@ -451,7 +451,7 @@ void Engine::run()
 
 	this->render();
 
-	this->gSwapChain->Present(1, 0); //Change front and back buffer after rendering
+	this->gSwapChain->Present(VSYNC, 0); //Change front and back buffer after rendering
 
 
 }

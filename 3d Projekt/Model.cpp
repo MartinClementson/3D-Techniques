@@ -252,7 +252,7 @@ void Model::update()
 	if (rotate)
 	{
 		float static angle = 0; //<----- just temporary to test rotation
-		angle += 0.01f;
+		angle += 0.2f;
 		this->setRotation(XMFLOAT3(0, angle, 0));
 
 

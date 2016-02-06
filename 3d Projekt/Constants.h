@@ -3,14 +3,14 @@
 #define WINDOW_HEIGHT 600.0f
 #define WINDOWED true
 #define WIREFRAME false
-#define VSYNC true
+#define VSYNC 1 //1 == ON, 0 = OFF
 
 
 
 #define PAD 0.0f
 #define PI 3.14159265359f
 #define SENSITIVITY 0.01f
-#define CAMERA_SPEED 1.0f
+#define CAMERA_SPEED 0.5f
 
 #define toRadian(degrees) ((degrees)* (PI/180.0f))
 
