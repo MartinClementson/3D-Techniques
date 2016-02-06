@@ -157,7 +157,10 @@ void Engine::createRasterizerState()
 	ID3D11RasterizerState *pRasterizerState = nullptr;
 
 	ZeroMemory(&rastDesc, sizeof(rastDesc));
-	rastDesc.FillMode = D3D11_FILL_SOLID;
+	if(WIREFRAME)
+		rastDesc.FillMode = D3D11_FILL_WIREFRAME;
+	else
+		rastDesc.FillMode = D3D11_FILL_SOLID;
 	rastDesc.CullMode = D3D11_CULL_NONE; //disable back face culling
 	rastDesc.DepthClipEnable = true;
 
@@ -181,7 +184,7 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 	scd.OutputWindow = *wndHandle;
 	scd.SampleDesc.Count = 4;
 	scd.Windowed = WINDOWED;
-
+	scd.BufferDesc.RefreshRate.Numerator = 60; //fps cap
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
@@ -448,7 +451,7 @@ void Engine::run()
 
 	this->render();
 
-	this->gSwapChain->Present(0, 0); //Change front and back buffer after rendering
+	this->gSwapChain->Present(1, 0); //Change front and back buffer after rendering
 
 
 }
