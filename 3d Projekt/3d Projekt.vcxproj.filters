@@ -19,6 +19,15 @@
     <FxCompile Include="PixelShaderTexture.hlsl">
       <Filter>Shaders\TextureShaders</Filter>
     </FxCompile>
+    <FxCompile Include="PixelShaderSky.hlsl">
+      <Filter>Shaders\SkyBox shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexShaderSky.hlsl">
+      <Filter>Shaders\SkyBox shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="GeometryShaderSky.hlsl">
+      <Filter>Shaders\SkyBox shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -70,6 +79,9 @@
     <ClCompile Include="GameTimer.cpp">
       <Filter>Classes\GameTimer</Filter>
     </ClCompile>
+    <ClCompile Include="SkyBox.cpp">
+      <Filter>Classes\Skybox</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h">
@@ -118,6 +130,9 @@
     <ClInclude Include="DirectXToolkit.h" />
     <ClInclude Include="GameTimer.h">
       <Filter>Classes\GameTimer</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyBox.h">
+      <Filter>Classes\Skybox</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +186,12 @@
     </Filter>
     <Filter Include="Classes\GameTimer">
       <UniqueIdentifier>{e376b9c0-350b-4a04-83fe-4c00a68da4a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\SkyBox shaders">
+      <UniqueIdentifier>{40847b4a-adb8-40b6-8f01-b229bf63f439}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Skybox">
+      <UniqueIdentifier>{751c97b6-1ad9-4940-bc63-dd1ee3cd9557}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -32,7 +32,7 @@ protected:
 	ID3D11Buffer* vertexBuffer = nullptr;
 
 	worldConstantBuffer* worldStruct = nullptr;
-	ID3D11Buffer* worldBuffer = nullptr;
+	ID3D11Buffer* worldBuffer = nullptr; //this is a pointer to the constant buffer, sent from the engine
 
 	virtual void createVertices(ID3D11Device* gDevice);
 

@@ -7,7 +7,9 @@ cbuffer lightBuffer
 
 };
 
-SamplerState SampleType; //modifies how the pixels are written to the polygon face when shaded
+SamplerState SampleType;
+
+//modifies how the pixels are written to the polygon face when shaded
 Texture2D shaderTexture;
 
 

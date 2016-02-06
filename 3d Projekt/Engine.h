@@ -8,11 +8,14 @@
 #include "Camera.h"
 #include "Light.h"
 #include "Input.h"
+#include "SkyBox.h"
 class Engine
 {
 
 private:
 	Camera* cam; 
+	SkyBox* sky;
+
 	int vertexAmount;
 	int modelAmount;
 	int lightAmount;
@@ -48,7 +51,10 @@ private:
 	ID3D11PixelShader* gPixelShaderTexture = nullptr;
 	ID3D11InputLayout* gVertexLayoutTexture = nullptr;
 
+	//SamplerState
+	ID3D11SamplerState* gSampleState = nullptr;
 
+	
 	//Constant buffers
 	worldConstantBuffer worldStruct;
 	ID3D11Buffer* worldBuffer = nullptr;
@@ -59,6 +65,8 @@ private:
 	lightConstantBuffer lightStruct;
 	ID3D11Buffer* lightBuffer = nullptr;
 
+	HWND* wndHandle;
+
 	HRESULT CreateDirect3DContext(HWND* wndHandle);
 	void setViewPort();
 	void createShaders();
@@ -66,6 +74,8 @@ private:
 	void createColorShaders();
 	void createRasterizerState();
 	void createConstantBuffers();
+
+	void errorMsg(std::string msg); //a function to show errors
 public:
 	Engine();
 	Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input);

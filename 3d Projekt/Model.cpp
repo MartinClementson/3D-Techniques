@@ -16,7 +16,7 @@ Model::Model()
 Model::Model(std::vector<Vertex>* vertArray, std::string * texturePath, ID3D11Device* gDevice,
 	ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct)
 {
-
+	
 	this->vertices = new std::vector<Vertex>;
 
 	for (int i = 0; i < vertArray->size(); i++)
@@ -268,7 +268,7 @@ void Model::update()
 	}
 
 
-	//Lastly, proceed to update this(the parent) model and continue render it.
+	//Lastly, proceed to update this(the parent)s constant buffer and continue render it.
 
 	this->worldStruct->world = this->worldMatrix;
 	this->worldStruct->normalWorld = this->normalWorld;
