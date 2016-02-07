@@ -101,15 +101,18 @@ void Engine::release()
 	gPixelShaderTexture->Release();
 	gGeometryShaderTexture->Release();
 
+	gRasterizerState->Release();
 	gBackbufferRTV->Release();
 	gSwapChain->Release();
 	gDevice->Release();
 	gDeviceContext->Release();
 	depthBuffer->Release();
+	depthState->Release();
 	depthStencilView->Release();
 	worldBuffer->Release();
 	camBuffer->Release();
 	lightBuffer->Release();
+	sky->Release();
 
 }
 
@@ -166,7 +169,7 @@ void Engine::createRasterizerState()
 	//Setting up the Rasterizer state
 	//needed in this project to disable the built in back face culling
 	D3D11_RASTERIZER_DESC rastDesc;
-	ID3D11RasterizerState *pRasterizerState = nullptr;
+	
 
 	ZeroMemory(&rastDesc, sizeof(rastDesc));
 
@@ -176,13 +179,13 @@ void Engine::createRasterizerState()
 		rastDesc.FillMode = D3D11_FILL_SOLID;
 
 
-	rastDesc.CullMode = D3D11_CULL_NONE; //disable back face culling
+	rastDesc.CullMode = D3D11_CULL_BACK;//D3D11_CULL_NONE; //disable back face culling
 	rastDesc.DepthClipEnable = true;
 
-	hr = gDevice->CreateRasterizerState(&rastDesc, &pRasterizerState);
+	hr = gDevice->CreateRasterizerState(&rastDesc, &gRasterizerState);
 
 	if (SUCCEEDED(hr))
-		gDeviceContext->RSSetState(pRasterizerState);
+		gDeviceContext->RSSetState(gRasterizerState);
 	else
 		errorMsg("Failed to create Rasterizer state");
 
@@ -234,6 +237,16 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 	hr = gDevice->CreateTexture2D(&desc, 0, &depthBuffer);
 
 	hr = gDevice->CreateDepthStencilView(depthBuffer, 0, &depthStencilView);
+
+	//Create depth state
+	D3D11_DEPTH_STENCIL_DESC dssDesc;
+	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+	dssDesc.DepthEnable = true;
+	dssDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL; //Default
+	dssDesc.DepthFunc = D3D11_COMPARISON_LESS; //Default
+
+	gDevice->CreateDepthStencilState(&dssDesc, &depthState);
+
 
 
 
@@ -579,9 +592,11 @@ void Engine::render()
 	this->gDeviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
 
 	//render skybox
-	sky->update();
+	sky->update(this->cam->getCamPos()); //Send in the position of the camera. The skybox needs to be centered around the camera
 	sky->render();
 
+	gDeviceContext->OMSetDepthStencilState(depthState, 0);
+	gDeviceContext->RSSetState(gRasterizerState);
 	////////////////////////////////////////////
 	//Render The objects that use the COLOR shaders
 	this->gDeviceContext->VSSetShader(gVertexShaderColor, nullptr, 0);

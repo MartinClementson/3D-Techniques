@@ -34,6 +34,8 @@ private:
 	IDXGISwapChain* gSwapChain = nullptr;
 	ID3D11RenderTargetView* gBackbufferRTV = nullptr;
 
+	//Depth stencil
+	ID3D11DepthStencilState* depthState = nullptr;
 	ID3D11DepthStencilView* depthStencilView = nullptr;
 	ID3D11Texture2D *depthBuffer = nullptr;
 	
@@ -54,6 +56,8 @@ private:
 	//SamplerState
 	ID3D11SamplerState* gSampleState = nullptr;
 
+	//RasterizerState
+	ID3D11RasterizerState *gRasterizerState = nullptr;
 	
 	//Constant buffers
 	worldConstantBuffer worldStruct;

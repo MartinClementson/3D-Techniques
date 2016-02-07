@@ -27,7 +27,7 @@ struct PS_IN
 float4 PS_main(PS_IN input) : SV_TARGET
 {
 
-	//float3 textureSample = shaderTexture.Sample(SampleType, input.Texture).xyz;
+	float3 textureSample = shaderTexture.Sample(SampleType, input.Texture).xyz;
 	//float3 diffuse = textureSample * fDot;
 
 	
@@ -36,6 +36,6 @@ float4 PS_main(PS_IN input) : SV_TARGET
 
 										 //float4 col ={ (ambient + diffuse + specularLight),1.0 }; //old Calculation
 
-	float4 col = {input.Texture,0.0,1.0 };
+	float4 col = {textureSample,1.0 };
 	return col;
 }

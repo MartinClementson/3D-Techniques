@@ -82,6 +82,7 @@
     <ClCompile Include="SkyBox.cpp">
       <Filter>Classes\Skybox</Filter>
     </ClCompile>
+    <ClCompile Include="DirectXTK\Src\DDSTextureLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h">

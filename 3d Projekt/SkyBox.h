@@ -17,10 +17,9 @@ private:
 	ID3D11PixelShader* SKYMAP_PS = nullptr;
 	ID3D11InputLayout* gInputLayout= nullptr;
 
-	ID3D11ShaderResourceView* skyTexture = nullptr; //This will contain the texture, a resource view that will be bound to the gpu
-
+	
 	ID3D11DepthStencilState* DSLessEqual; //This is needed to make sure the sky is ALWAYS behind all other geometry
-	//ID3D11RasterizerState* RSCullNone; //Removes culling, (Might not be needed, culling is already deactivated)
+	ID3D11RasterizerState* RSCullNone; //Removes culling, (Might not be needed, culling is already deactivated)
 
 	std::vector<Vertex> *vertices = nullptr;
 
@@ -34,15 +33,24 @@ private:
 	XMFLOAT4X4 worldMatrix;
 	worldConstantBuffer* worldStruct = nullptr;
 	ID3D11Buffer* worldBuffer = nullptr; //this is a pointer to the constant buffer, sent from the engine
+	
+	
+	
+	//Texture
+	ID3D11ShaderResourceView* texture = nullptr;
+	ID3D11Resource *pTexture = nullptr;
+	
 	bool createCube();
 	bool loadShaders();
+	bool createRenderStates();
 
+	bool loadTexture(std::string filePath);
 public:
 	SkyBox();
 	bool Init(ID3D11DeviceContext* gDeviceContext, ID3D11Device *gDevice, ID3D11Buffer * worldBuffer, worldConstantBuffer* worldStruct);
 	void Release();
 
-	void update();
+	void update(XMFLOAT3 camPos);
 	void render();
 
 	virtual ~SkyBox();

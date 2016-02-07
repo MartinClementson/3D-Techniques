@@ -54,7 +54,7 @@ void GS_main(
 		GSOutput element;
 		element.pos = input[i].pos;
 		//Set Pos to xyww instead of xyzw, so that z will always be 1 (furthest from camera)
-		element.pos = mul(element.pos, combinedMatrix);
+		element.pos = mul(element.pos, combinedMatrix).xyww;
 		element.wPos = mul(element.pos, world);
 		element.camPos = camPos;
 		element.Texture = input[i].Texture;
