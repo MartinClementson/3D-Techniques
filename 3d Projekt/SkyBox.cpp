@@ -470,7 +470,8 @@ bool SkyBox::loadTexture(std::string filePath)
 
 	//Convert filepath to wString
 	if (filePath == "")
-		filePath = "sunsetcube1024.DDS";
+		filePath = "testTX.jpg";
+		//filePath = "sunsetcube1024.DDS";
 
 	std::wstring widestr = std::wstring(filePath.begin(), filePath.end());
 
@@ -482,7 +483,7 @@ bool SkyBox::loadTexture(std::string filePath)
 
 	
 	//The function will also create a subresource and bind it to the gpu
-	//hr = CreateWICTextureFromFile(gDevice, fileName, nullptr, &this->texture);
+	hr = CreateWICTextureFromFile(gDevice, fileName, nullptr, &this->texture);
 	//D3D11_RESOURCE_MISC_TEXTURECUBE
 	
 
@@ -501,7 +502,7 @@ bool SkyBox::loadTexture(std::string filePath)
 	  https://www.gamedev.net/topic/661463-generate-mipmaps-for-dds-cubemaps-in-directx-11/
 	  */
 
-	hr = CreateDDSTextureFromFile(gDevice, fileName, nullptr, &this->texture);
+	//hr = CreateDDSTextureFromFile(gDevice, fileName, nullptr, &this->texture);
 	if (FAILED(hr))
 		return false;
 
