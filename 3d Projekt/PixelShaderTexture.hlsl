@@ -7,9 +7,11 @@ cbuffer lightBuffer
 
 };
 
-SamplerState SampleType; //modifies how the pixels are written to the polygon face when shaded
-Texture2D shaderTexture;
+SamplerState SampleType;
 
+//modifies how the pixels are written to the polygon face when shaded
+Texture2D shaderTexture : register(t0);
+textureCUBE skyBoxTexture : register(t1);
 
 struct PS_IN
 {
@@ -71,6 +73,13 @@ finalCol = textureSample* finalCol; // texture * (diffuse + ambient)
 finalCol = finalCol + specularLight; // + specular
 
 //float4 col ={ (ambient + diffuse + specularLight),1.0 }; //old Calculation
+
+//Calculate enviroment reflections
+float3 incident = input.wPos - input.camPos;
+float3 ref = reflect(incident, normalize(input.normal));
+float4 reflectionColor = skyBoxTexture.Sample(SampleType, ref);
+finalCol += reflectionColor.xyz;
+
 
 float4 col = { finalCol,1.0 };
 return col;

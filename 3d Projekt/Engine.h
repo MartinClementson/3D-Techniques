@@ -1,17 +1,21 @@
 #pragma once
 #include "Linker.h"
 #include "Model.h"
+
 #include "Cube.h"
 #include "Pyramid.h"
 #include "Plane.h"
 #include "Camera.h"
 #include "Light.h"
 #include "Input.h"
+#include "SkyBox.h"
 class Engine
 {
 
 private:
 	Camera* cam; 
+	SkyBox* sky;
+
 	int vertexAmount;
 	int modelAmount;
 	int lightAmount;
@@ -30,6 +34,8 @@ private:
 	IDXGISwapChain* gSwapChain = nullptr;
 	ID3D11RenderTargetView* gBackbufferRTV = nullptr;
 
+	//Depth stencil
+	ID3D11DepthStencilState* depthState = nullptr;
 	ID3D11DepthStencilView* depthStencilView = nullptr;
 	ID3D11Texture2D *depthBuffer = nullptr;
 	
@@ -47,7 +53,12 @@ private:
 	ID3D11PixelShader* gPixelShaderTexture = nullptr;
 	ID3D11InputLayout* gVertexLayoutTexture = nullptr;
 
+	//SamplerState
+	ID3D11SamplerState* gSampleState = nullptr;
 
+	//RasterizerState
+	ID3D11RasterizerState *gRasterizerState = nullptr;
+	
 	//Constant buffers
 	worldConstantBuffer worldStruct;
 	ID3D11Buffer* worldBuffer = nullptr;
@@ -58,6 +69,8 @@ private:
 	lightConstantBuffer lightStruct;
 	ID3D11Buffer* lightBuffer = nullptr;
 
+	HWND* wndHandle;
+
 	HRESULT CreateDirect3DContext(HWND* wndHandle);
 	void setViewPort();
 	void createShaders();
@@ -65,6 +78,8 @@ private:
 	void createColorShaders();
 	void createRasterizerState();
 	void createConstantBuffers();
+
+	void errorMsg(std::string msg); //a function to show errors
 public:
 	Engine();
 	Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input);
