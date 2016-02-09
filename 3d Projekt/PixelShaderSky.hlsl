@@ -11,6 +11,7 @@ SamplerState SampleType;
 
 //modifies how the pixels are written to the polygon face when shaded
 textureCUBE shaderTexture : register(t1); //the skybox is a texture cube,
+Texture2D renderTexture : register(t2);
 ///It consists of 6 separate textures
 
 

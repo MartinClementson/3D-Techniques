@@ -1,7 +1,7 @@
 #pragma once
 #include "Linker.h"
 #include "Model.h"
-
+#include "RenderTexture.h"
 #include "Cube.h"
 #include "Pyramid.h"
 #include "Plane.h"
@@ -53,6 +53,7 @@ private:
 	ID3D11PixelShader* gPixelShaderTexture = nullptr;
 	ID3D11InputLayout* gVertexLayoutTexture = nullptr;
 
+	RenderTexture* renderTexture;
 	//SamplerState
 	ID3D11SamplerState* gSampleState = nullptr;
 

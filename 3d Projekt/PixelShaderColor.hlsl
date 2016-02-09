@@ -9,7 +9,7 @@ cbuffer lightBuffer
 
 SamplerState SampleType;
 textureCUBE skyBoxTexture : register(t1);
-
+texture2D renderTexture : register(t2);
 struct PS_IN
 {
 	float4 pos : SV_POSITION;

@@ -83,6 +83,9 @@
       <Filter>Classes\Skybox</Filter>
     </ClCompile>
     <ClCompile Include="DirectXTK\Src\DDSTextureLoader.cpp" />
+    <ClCompile Include="RenderTexture.cpp">
+      <Filter>Classes\RenderTexture</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h">
@@ -134,6 +137,9 @@
     </ClInclude>
     <ClInclude Include="SkyBox.h">
       <Filter>Classes\Skybox</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTexture.h">
+      <Filter>Classes\RenderTexture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -193,6 +199,9 @@
     </Filter>
     <Filter Include="Classes\Skybox">
       <UniqueIdentifier>{751c97b6-1ad9-4940-bc63-dd1ee3cd9557}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\RenderTexture">
+      <UniqueIdentifier>{da9a61c1-5a42-4bb3-8597-f853120a4e02}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
