@@ -38,7 +38,7 @@ private:
 	
 	//Texture
 	ID3D11ShaderResourceView* texture = nullptr;
-	ID3D11Resource *pTexture = nullptr;
+	ID3D11Resource *pTextureSrc;
 	
 	bool createCube();
 	bool loadShaders();

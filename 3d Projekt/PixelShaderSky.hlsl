@@ -10,7 +10,8 @@ cbuffer lightBuffer
 SamplerState SampleType;
 
 //modifies how the pixels are written to the polygon face when shaded
-Texture2D shaderTexture;
+textureCUBE shaderTexture : register(t1); //the skybox is a texture cube,
+///It consists of 6 separate textures
 
 
 struct PS_IN
@@ -27,15 +28,14 @@ struct PS_IN
 float4 PS_main(PS_IN input) : SV_TARGET
 {
 
-	float3 textureSample = shaderTexture.Sample(SampleType, input.Texture).xyz;
-	//float3 diffuse = textureSample * fDot;
+	//To sample a cube map. 3d coorinates are used, not UV.
 
+
+	//Use the verts worldPos when sampling
+
+	float3 textureSample = shaderTexture.Sample(SampleType, input.wPos).xyz;
 	
-	//finalCol = textureSample* finalCol; // texture * (diffuse + ambient)
-	//finalCol = finalCol + specularLight; // + specular
 
-										 //float4 col ={ (ambient + diffuse + specularLight),1.0 }; //old Calculation
-
-	float4 col = {textureSample,1.0 };
+	float4 col = { textureSample,1.0 };
 	return col;
 }

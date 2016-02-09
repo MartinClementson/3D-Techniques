@@ -208,7 +208,7 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
-		NULL,
+		D3D11_CREATE_DEVICE_DEBUG,
 		NULL,
 		NULL,
 		D3D11_SDK_VERSION,
@@ -312,6 +312,7 @@ void Engine::createTextureShaders()
 	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
 	samplerDesc.MinLOD = 0; //0 most detailed mipmap level, higher number == less detail
 	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	
 
 	hr = gDevice->CreateSamplerState(&samplerDesc, &gSampleState);
 
@@ -508,7 +509,7 @@ void Engine::loadModels()
 	this->modelsTexture->at(0)->setTranslation(XMFLOAT3(5.0f, 0.0f, 0.0f));
 	//this->modelsTexture->at(0)->setRotateState(true);
 
-	this->addModel(OBJ, "txCube.obj");
+	this->addModel(OBJ, "BTHcube.obj");
 	this->modelsTexture->at(1)->setTranslation(XMFLOAT3(0.0f, 0.0f, 5.0f));
 	this->modelsTexture->at(1)->setRotateState(true);
 

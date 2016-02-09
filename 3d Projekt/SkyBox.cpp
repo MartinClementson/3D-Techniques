@@ -470,8 +470,7 @@ bool SkyBox::loadTexture(std::string filePath)
 
 	//Convert filepath to wString
 	if (filePath == "")
-		filePath = "testTX.jpg";
-		//filePath = "sunsetcube1024.DDS";
+		filePath = "sunsetcube1024.dds";
 
 	std::wstring widestr = std::wstring(filePath.begin(), filePath.end());
 
@@ -482,33 +481,13 @@ bool SkyBox::loadTexture(std::string filePath)
 	HRESULT hr = CoInitialize((LPVOID)0);
 
 	
-	//The function will also create a subresource and bind it to the gpu
-	hr = CreateWICTextureFromFile(gDevice, fileName, nullptr, &this->texture);
-	//D3D11_RESOURCE_MISC_TEXTURECUBE
+
+	hr = CreateDDSTextureFromFile(gDevice, fileName,nullptr, &this->texture);
 	
-
-	//Because microsoft removed their own style of loading textures, we now have
-	// to do this procedure
-
-	/*1) Create a texture using the CreateDDSTextureFromFile function
-	  2) Get the resolution
-	  3) Create a new cubemap texture with the same resolution
-	  4) Create a shader resource view
-	  5) For all 6 faces: create a render target
-	  6) For all 6 faces: select this render target: 
-      gDeviceContext->OMSetRenderTargets(1, &texture, nullptr);
-	  
-	  
-	  https://www.gamedev.net/topic/661463-generate-mipmaps-for-dds-cubemaps-in-directx-11/
-	  */
-
-	//hr = CreateDDSTextureFromFile(gDevice, fileName, nullptr, &this->texture);
 	if (FAILED(hr))
 		return false;
 
-
-
-
+	this->gDeviceContext->PSSetShaderResources(1, 1, &this->texture);
 
 	
 	return true;
@@ -560,8 +539,8 @@ void SkyBox::render()
 	//IF there is a texture. apply it to the pixel shader
 
 	if (texture != nullptr) {
-
-		this->gDeviceContext->PSSetShaderResources(0, 1, &this->texture);
+		
+		//this->gDeviceContext->PSSetShaderResources(1, 1, &this->texture);
 	}
 
 
