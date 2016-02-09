@@ -75,10 +75,10 @@ finalCol = finalCol + specularLight; // + specular
 //float4 col ={ (ambient + diffuse + specularLight),1.0 }; //old Calculation
 
 //Calculate enviroment reflections
-float3 incident = -v;
-float3 ref = reflect(incident, input.normal);
+float3 incident = input.wPos - input.camPos;
+float3 ref = reflect(incident, normalize(input.normal));
 float4 reflectionColor = skyBoxTexture.Sample(SampleType, ref);
-finalCol += reflectionColor.xyz ;
+finalCol += reflectionColor.xyz;
 
 
 float4 col = { finalCol,1.0 };

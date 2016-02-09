@@ -502,8 +502,8 @@ void Engine::loadModels()
 
 */
 	this->addModel(CUBE);
-	this->modelsColor->at(4)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
-	this->modelsColor->at(4)->setTranslation(XMFLOAT3(0.5f, 0.5f, 0.0f));
+	this->modelsColor->at(4)->setScale(XMFLOAT3(10.f, 10.0f, 10.0f));
+	this->modelsColor->at(4)->setTranslation(XMFLOAT3(0.5f, 1.0f, 30.0f));
 
 	this->addModel(OBJ);
 	this->modelsTexture->at(0)->setTranslation(XMFLOAT3(5.0f, 0.0f, 0.0f));
