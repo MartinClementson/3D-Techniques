@@ -13,7 +13,7 @@ ObjHandler::ObjHandler()
 	
 }
 
-std::string ObjHandler::MtlHandler(std::string &filePath)
+std::string ObjHandler::MtlHandler(std::string &filePath, std::string &material)
 {
 	string textureID;
 	ifstream loading;
@@ -26,9 +26,12 @@ std::string ObjHandler::MtlHandler(std::string &filePath)
 		while (!loading.eof())
 		{
 			loading >> line2;
-			if (line2 == "map_Kd")
+			if (line2 == material)
 			{
-				loading >> textureID;
+				//input materials here later
+				loading >> line2;
+				if (line2 == "map_Kd")
+					loading >> textureID;
 			}
 		}
 	}
@@ -137,7 +140,7 @@ Engine->render()
 
 	//big variable that everything goes into
 	Vertex Coordinates;
-
+	std::string mtlLib = "";
 
 	vector<Vertex> vNCoord;
 	vector<DirectX::XMFLOAT3> uvCoord, vCoord;
@@ -163,9 +166,13 @@ Engine->render()
 				loading >> line2;
 				if (line2 == "mtllib")
 				{
-					string tempString;
+					loading >> mtlLib;
+				}
+				if (line2 == "usemtl")
+				{
+					std::string tempString;
 					loading >> tempString;
-					textureName = MtlHandler(tempString);
+					textureName = MtlHandler(mtlLib, tempString);
 				}
 				if (line2 == "v")
 				{
