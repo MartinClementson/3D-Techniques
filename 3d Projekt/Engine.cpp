@@ -613,16 +613,22 @@ void Engine::render()
 
 		if (i == 0) //Render to texture. first loop
 		{
-
-			renderTexture->SetRenderTarget(gDeviceContext, depthStencilView);
+			renderTexture->SetRenderTarget(&*gDeviceContext, depthStencilView);
 			renderTexture->ClearRenderTarget(gDeviceContext, depthStencilView, 0, 1, 0, 0);
+			sky->update(this->cam->getCamPos()); //Send in the position of the camera. The skybox needs to be centered around the camera
+			sky->render();
 			renderScene();
 		}
 		else //render to backbuffer/screen. next loop
 		{
+
+			this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, depthStencilView);
 			ID3D11ShaderResourceView* shaderResourceViewz = renderTexture->GetShaderResourceView();
 			this->gDeviceContext->PSSetShaderResources(2, 1, &shaderResourceViewz);
-			this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, depthStencilView);
+			//render skybox
+			//this->gDeviceContext->PSSetShaderResources(2, 1, NULL);
+			sky->update(this->cam->getCamPos()); //Send in the position of the camera. The skybox needs to be centered around the camera
+			sky->render();
 			renderScene();
 		}
 
@@ -639,9 +645,6 @@ void Engine::renderScene() // This function will render the scene, no matter the
 {
 
 	
-	//render skybox
-	sky->update(this->cam->getCamPos()); //Send in the position of the camera. The skybox needs to be centered around the camera
-	sky->render();
 
 	gDeviceContext->OMSetDepthStencilState(depthState, 0);
 	gDeviceContext->RSSetState(gRasterizerState);

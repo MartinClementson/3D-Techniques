@@ -540,7 +540,7 @@ void SkyBox::render()
 
 	if (texture != nullptr) {
 		
-		//this->gDeviceContext->PSSetShaderResources(1, 1, &this->texture);
+		this->gDeviceContext->PSSetShaderResources(1, 1, &this->texture);
 	}
 
 
