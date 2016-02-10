@@ -596,89 +596,105 @@ void Engine::updateLight()
 
 void Engine::render()
 {
+
+
+	//In this function different render passes will be made.
+	//The scene is rendered in the renderScene() function
+	//the loop specifies  wich pass is being rendered
+
 	float clearColor[] = { 0, 0, 0, 1 };
+
+	this->gDeviceContext->ClearRenderTargetView(gBackbufferRTV, clearColor);
+	this->gDeviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
+
 
 	for (int i = 0; i < 2; i++)
 	{
-
-
-		this->gDeviceContext->ClearRenderTargetView(gBackbufferRTV, clearColor);
-		this->gDeviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
 
 		if (i == 0) //Render to texture. first loop
 		{
 
 			renderTexture->SetRenderTarget(gDeviceContext, depthStencilView);
-			//renderTexture->ClearRenderTarget(gDeviceContext, depthStencilView, 0, 1, 0, 0);
+			renderTexture->ClearRenderTarget(gDeviceContext, depthStencilView, 0, 1, 0, 0);
+			renderScene();
 		}
 		else //render to backbuffer/screen. next loop
 		{
 			ID3D11ShaderResourceView* shaderResourceViewz = renderTexture->GetShaderResourceView();
 			this->gDeviceContext->PSSetShaderResources(2, 1, &shaderResourceViewz);
 			this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, depthStencilView);
+			renderScene();
 		}
 
-		//render skybox
-		sky->update(this->cam->getCamPos()); //Send in the position of the camera. The skybox needs to be centered around the camera
-		sky->render();
-
-		gDeviceContext->OMSetDepthStencilState(depthState, 0);
-		gDeviceContext->RSSetState(gRasterizerState);
-		////////////////////////////////////////////
-		//Render The objects that use the COLOR shaders
-		this->gDeviceContext->VSSetShader(gVertexShaderColor, nullptr, 0);
-		this->gDeviceContext->HSSetShader(nullptr, nullptr, 0);
-		this->gDeviceContext->DSSetShader(nullptr, nullptr, 0);
-		this->gDeviceContext->GSSetShader(gGeometryShaderColor, nullptr, 0);
-		this->gDeviceContext->PSSetShader(gPixelShaderColor, nullptr, 0);
-		this->gDeviceContext->IASetInputLayout(gVertexLayoutColor);
-
-		for (int i = 0; i < this->modelsColor->size(); i++)
-		{
 
 
-			//this->modelsColor->at(i)->update();
-			this->modelsColor->at(i)->render();
-
-
-		}
-		////////////////////////////////////////////
-
-
-
-		////////////////////////////////////////////
-		//Render The objects that use the Texture shaders
-		//
 		
-		this->gDeviceContext->VSSetShader(gVertexShaderTexture, nullptr, 0);
-		this->gDeviceContext->HSSetShader(nullptr, nullptr, 0);
-		this->gDeviceContext->DSSetShader(nullptr, nullptr, 0);
-		this->gDeviceContext->GSSetShader(gGeometryShaderTexture, nullptr, 0);
-		this->gDeviceContext->PSSetShader(gPixelShaderTexture, nullptr, 0);
-		this->gDeviceContext->IASetInputLayout(gVertexLayoutTexture);
+
+	}
+
+}
 
 
-		for (int i = 0; i < this->modelsTexture->size(); i++)
-		{
+void Engine::renderScene() // This function will render the scene, no matter the render pass used
+{
+
+	
+	//render skybox
+	sky->update(this->cam->getCamPos()); //Send in the position of the camera. The skybox needs to be centered around the camera
+	sky->render();
+
+	gDeviceContext->OMSetDepthStencilState(depthState, 0);
+	gDeviceContext->RSSetState(gRasterizerState);
+	////////////////////////////////////////////
+	//Render The objects that use the COLOR shaders
+	this->gDeviceContext->VSSetShader(gVertexShaderColor, nullptr, 0);
+	this->gDeviceContext->HSSetShader(nullptr, nullptr, 0);
+	this->gDeviceContext->DSSetShader(nullptr, nullptr, 0);
+	this->gDeviceContext->GSSetShader(gGeometryShaderColor, nullptr, 0);
+	this->gDeviceContext->PSSetShader(gPixelShaderColor, nullptr, 0);
+	this->gDeviceContext->IASetInputLayout(gVertexLayoutColor);
+
+	for (int i = 0; i < this->modelsColor->size(); i++)
+	{
 
 
-			//this->modelsTexture->at(i)->update();
-			this->modelsTexture->at(i)->render();
-
-
-		}	
-		
+		//this->modelsColor->at(i)->update();
+		this->modelsColor->at(i)->render();
 
 
 	}
-	//
 	////////////////////////////////////////////
 
 
-	
-	
-	
-	
+
+	////////////////////////////////////////////
+	//Render The objects that use the Texture shaders
+	//
+
+	this->gDeviceContext->VSSetShader(gVertexShaderTexture, nullptr, 0);
+	this->gDeviceContext->HSSetShader(nullptr, nullptr, 0);
+	this->gDeviceContext->DSSetShader(nullptr, nullptr, 0);
+	this->gDeviceContext->GSSetShader(gGeometryShaderTexture, nullptr, 0);
+	this->gDeviceContext->PSSetShader(gPixelShaderTexture, nullptr, 0);
+	this->gDeviceContext->IASetInputLayout(gVertexLayoutTexture);
+
+
+	for (int i = 0; i < this->modelsTexture->size(); i++)
+	{
+
+
+		//this->modelsTexture->at(i)->update();
+		this->modelsTexture->at(i)->render();
+
+
+	}
+
+
+
+
+//
+////////////////////////////////////////////
+
 
 
 }

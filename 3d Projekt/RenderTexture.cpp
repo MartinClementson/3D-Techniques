@@ -25,8 +25,8 @@ bool RenderTexture::Init(ID3D11Device* device, int textureWidth, int textureHeig
 	ZeroMemory(&textureDesc, sizeof(textureDesc));
 	//Set up the render texture desciption
 
-	textureDesc.Width = textureWidth/4;
-	textureDesc.Height = textureHeight/4;
+	textureDesc.Width = textureWidth;
+	textureDesc.Height = textureHeight;
 	textureDesc.MipLevels = 1;
 	textureDesc.ArraySize = 1;
 	textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;

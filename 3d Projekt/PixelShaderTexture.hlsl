@@ -49,7 +49,7 @@ float shinyPower = 20.0f;
 
 float3 specularLight = { lightColor.xyz * pow(max(dot(r,v),0.0),shinyPower) };
 
-float3 textureSample = shaderTexture.Sample(SampleType, input.Texture).xyz;
+float3 textureSample = renderTexture.Sample(SampleType, input.Texture).xyz;
 //float3 diffuse = textureSample * fDot;
 
 float3 ambient = { 0.1f, 0.1f, 0.1f };

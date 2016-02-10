@@ -81,6 +81,8 @@ private:
 	void createConstantBuffers();
 
 	void errorMsg(std::string msg); //a function to show errors
+
+	void renderScene();
 public:
 	Engine();
 	Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input);
