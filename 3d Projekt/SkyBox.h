@@ -11,13 +11,7 @@ private:
 	ID3D11Device *gDevice = nullptr;
 	ID3D11DeviceContext* gDeviceContext =nullptr;
 
-	//The skyBox will need its own shaders, but we keep the cbuffers the same, to avoid making more constant buffers
-	ID3D11VertexShader* SKYMAP_VS = nullptr;
-	ID3D11GeometryShader* SKYMAP_GS = nullptr;
-	ID3D11PixelShader* SKYMAP_PS = nullptr;
-	ID3D11InputLayout* gInputLayout= nullptr;
 
-	
 	ID3D11DepthStencilState* DSLessEqual; //This is needed to make sure the sky is ALWAYS behind all other geometry
 	ID3D11RasterizerState* RSCullNone; //Removes culling, (Might not be needed, culling is already deactivated)
 
@@ -41,7 +35,7 @@ private:
 	
 	
 	bool createCube();
-	bool loadShaders();
+	
 	bool createRenderStates();
 
 	bool loadTexture(std::string filePath);

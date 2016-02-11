@@ -12,9 +12,10 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 		
 	this->cam = new Camera();
 	this->sky = new SkyBox();
+
 	this->renderTexture = new RenderTexture();
 	this->shaderManager = new ShaderManager();
-
+	this->dynCubeMap = new DynamicCubeMap();
 	this->input = input;
 	this->wndHandle = winHandle;
 
@@ -64,9 +65,18 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 		delete this->renderTexture;
 	}
 
+	if (!dynCubeMap->Init(gDevice, gDeviceContext))
+	{
+		errorMsg("Failed to initialize dynamic cube mapping");
+
+		delete this->dynCubeMap;
+	}
+
+
 	//Load the models and get their vertices
-	this->modelsColor = new std::vector<Model*>; //this will be an array 
+	this->modelsColor = new std::vector<Model*>; 
 	this->modelsTexture = new std::vector<Model*>;
+	this->cubeMapModels = new std::vector<Model*>;
 	this->lights = new std::vector<Light>;
 	
 	loadModels();
@@ -93,11 +103,19 @@ Engine::~Engine()
 		delete modelsTexture->at(i);
 
 	}
+
+	for (int i = 0; i < cubeMapModels->size(); i++)
+	{
+		delete cubeMapModels->at(i);
+
+	}
 	delete shaderManager;
 	delete renderTexture;
+	delete dynCubeMap;
 	delete sky;
 	delete modelsTexture;
 	delete modelsColor;
+	delete cubeMapModels;
 	delete lights;
 	delete cam;
 	
@@ -125,7 +143,7 @@ void Engine::release()
 	*/
 
 	input->Shutdown();
-
+	dynCubeMap->Release();
 	shaderManager->Release();
 	renderTexture->Release();
 	gRasterizerState->Release();
@@ -306,7 +324,7 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 
 void Engine::setViewPort()
 {
-	D3D11_VIEWPORT vp;
+	
 	vp.Width = (float)WINDOW_WIDTH;
 	vp.Height = (float)WINDOW_HEIGHT;
 	vp.MinDepth = 0.0f;
@@ -318,192 +336,6 @@ void Engine::setViewPort()
 
 }
 
-void Engine::createShaders()
-{
-
-	//createColorShaders();
-	createTextureShaders();
-	
-
-
-
-}
-
-void Engine::createTextureShaders()
-{
-//
-//	//Create a sample state first
-//
-//	
-//
-//	D3D11_SAMPLER_DESC samplerDesc;
-//	// use linear interpolation for minification, magnification, and mip-level sampling (quite expensive)
-//	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
-//	//for all filters: https://msdn.microsoft.com/en-us/library/windows/desktop/ff476132(v=vs.85).aspx
-//
-//	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-//	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP; //wrap, (repeat) for use of tiling texutures
-//	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-//	samplerDesc.MipLODBias = 0.0f; //mipmap offset level
-//	samplerDesc.MaxAnisotropy = 1; //Clamping value used if D3D11_FILTER_ANISOTROPIC or D3D11_FILTER_COMPARISON_ANISOTROPIC is specified in Filter. Valid values are between 1 and 16.
-//	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-//	samplerDesc.MinLOD = 0; //0 most detailed mipmap level, higher number == less detail
-//	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-//	
-//
-//	hr = gDevice->CreateSamplerState(&samplerDesc, &gSampleState);
-//
-//	if (FAILED(hr))
-//	{
-//		errorMsg("Failed to create SamplerState");
-//		//ERROR
-//
-//	}
-//	else
-//		gDeviceContext->PSSetSamplers(0, 1, &this->gSampleState);
-//	//Load the shaders
-//
-//
-//
-//	ID3DBlob* pVS = nullptr;
-//
-//	D3DCompileFromFile(
-//		L"VertexShaderTexture.hlsl",
-//		nullptr,
-//		nullptr,
-//		"VS_main",
-//		"vs_4_0",
-//		0,
-//		0,
-//		&pVS,
-//		nullptr);
-//
-//	hr = this->gDevice->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &gVertexShaderTexture);
-//
-//	if (FAILED(hr))
-//		errorMsg("Failed to create Vertex shader for texture");
-//	//Create input layout (every vertex)
-//	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
-//	{
-//		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
-//		/*{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA,0 }*/ //not in use
-//		{ "TEXCOORD",0, DXGI_FORMAT_R32G32_FLOAT, 0,24, D3D11_INPUT_PER_VERTEX_DATA,0} //We wont use Color here, that's why the offset is 32. were still using the same struct
-//		//Normals?
-//
-//	};
-//
-//	this->gDevice->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &gVertexLayoutTexture);
-//	pVS->Release();
-//
-//
-//	ID3DBlob *pPs = nullptr;
-//	D3DCompileFromFile(
-//		L"PixelShaderTexture.hlsl",
-//		nullptr,
-//		nullptr,
-//		"PS_main",
-//		"ps_4_0",
-//		0,
-//		0,
-//		&pPs,
-//		nullptr);
-//
-//	hr = this->gDevice->CreatePixelShader(pPs->GetBufferPointer(), pPs->GetBufferSize(), nullptr, &gPixelShaderTexture);
-//	pPs->Release();
-//
-//	if (FAILED(hr))
-//		errorMsg("Failed to Create pixelshader for texture");
-//
-//
-//	//Geometry shader
-//	ID3DBlob* pGS = nullptr;
-//	D3DCompileFromFile(
-//		L"GeometryShaderTexture.hlsl",
-//		nullptr,
-//		nullptr,
-//		"GS_main",
-//		"gs_4_0",
-//		0,
-//		0,
-//		&pGS,
-//		nullptr);
-//
-//	hr = this->gDevice->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &gGeometryShaderTexture);
-//	pGS->Release();
-//
-//	if (FAILED(hr))
-//		errorMsg("Failed to create geometryShader for texture");
-//
-//}
-//
-//void Engine::createColorShaders()
-//{
-//
-//	ID3DBlob* pVS = nullptr;
-//
-//	D3DCompileFromFile(
-//		L"VertexShaderColor.hlsl",
-//		nullptr,
-//		nullptr,
-//		"VS_main",
-//		"vs_4_0",
-//		0,
-//		0,
-//		&pVS,
-//		nullptr);
-//
-//	hr = this->gDevice->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &gVertexShaderColor);
-//	if (FAILED(hr))
-//		errorMsg("Failed to create vertex shader for color shading");
-//	//Create input layout (every vertex)
-//	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
-//	{
-//		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
-//		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA,0 }
-//		
-//	};
-//
-//	hr = this->gDevice->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &gVertexLayoutColor);
-//	pVS->Release();
-//	if (FAILED(hr))
-//		errorMsg("Failed to create input layout for color shaders");
-//
-//	ID3DBlob *pPs = nullptr;
-//	D3DCompileFromFile(
-//		L"PixelShaderColor.hlsl",
-//		nullptr,
-//		nullptr,
-//		"PS_main",
-//		"ps_4_0",
-//		0,
-//		0,
-//		&pPs,
-//		nullptr);
-//
-//	hr = this->gDevice->CreatePixelShader(pPs->GetBufferPointer(), pPs->GetBufferSize(), nullptr, &gPixelShaderColor);
-//	pPs->Release();
-//
-//	if (FAILED(hr))
-//		errorMsg("Failed to create pixel shader for color shading");
-//
-//	//Geometry shader
-//	ID3DBlob* pGS = nullptr;
-//	D3DCompileFromFile(
-//		L"GeometryShaderColor.hlsl",
-//		nullptr,
-//		nullptr,
-//		"GS_main",
-//		"gs_4_0",
-//		0,
-//		0,
-//		&pGS,
-//		nullptr);
-//
-//	hr = this->gDevice->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &gGeometryShaderColor);
-//	pGS->Release();
-//	if (FAILED(hr))
-//		errorMsg("Failed to create geometry shader for color shading");
-}
 
 void Engine::loadModels()
 {
@@ -532,12 +364,7 @@ void Engine::loadModels()
 	this->modelsColor->at(3)->setRotation(XMFLOAT3(45.0f, 0.0f, 0.0f));
 	this->modelsColor->at(3)->setTranslation(XMFLOAT3(-5.0f, -0.5f, 0.0f));
 
-	/*this->addModel(PLANE);
-	this->modelsColor->at(4)->setTranslation(XMFLOAT3(0.0f, -1.5f, 0.0f));
-	this->modelsColor->at(4)->setRotation(XMFLOAT3(90.0f, 180.0f, 0.0f));
-	this->modelsColor->at(4)->setScale(XMFLOAT3(50.0f, 50.0f, 50.0f));
 
-*/
 	this->addModel(CUBE);
 	this->modelsColor->at(4)->setScale(XMFLOAT3(10.f, 10.0f, 10.0f));
 	this->modelsColor->at(4)->setTranslation(XMFLOAT3(0.5f, 1.0f, 30.0f));
@@ -547,14 +374,17 @@ void Engine::loadModels()
 	//this->modelsTexture->at(0)->setRotateState(true);
 
 	this->addModel(OBJ, "BTHcube.obj");
-	this->modelsTexture->at(1)->setTranslation(XMFLOAT3(0.0f, 0.0f, 5.0f));
+	this->modelsTexture->at(1)->setTranslation(XMFLOAT3(0.0f, 1.0f, 5.0f));
 	this->modelsTexture->at(1)->setRotateState(true);
+	this->modelsTexture->at(1)->setPivotPoint(XMFLOAT3(0.0f, 0.0f, 1.0f));
 
 	this->addModel(OBJ, "plane.obj");
 	this->modelsTexture->at(2)->setTranslation(XMFLOAT3(0.0f, -2.0f, 0.0f));
 
-	this->addModel(OBJ, "Sphere.obj");
-	this->modelsTexture->at(3)->setTranslation(XMFLOAT3(0.0f, 1.0f, 0.0f));
+	this->addModel(OBJ, "Sphere.obj",CUBEMAPSHADER);
+	this->cubeMapModels->at(0)->setTranslation(XMFLOAT3(0.0f, 1.0f, 1.0f));
+
+
 }
 void Engine::loadLights()
 {
@@ -575,29 +405,32 @@ void Engine::run()
 
 void Engine::update()
 {
-	//updatera matrixBuffer här
 	
-	input->frame();
-	camStruct.view = cam->getView();
-	camStruct.projection = cam->getProjection();
-	camStruct.camPos = cam->getCamPos();
-	camStruct.camLook = cam->getCamLookAt();
-
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	ZeroMemory(&mappedResource, sizeof(mappedResource));
-
-	//mapping to the matrixbuffer
-	this->gDeviceContext->Map(camBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-
-	cameraConstantBuffer* temporary = (cameraConstantBuffer*)mappedResource.pData;
-
-	*temporary = camStruct;
-
-	this->gDeviceContext->Unmap(camBuffer, 0);
-
-	this->gDeviceContext->GSSetConstantBuffers(1, 1, &camBuffer); 
 	
+	input->frame(); //Check for user input
 
+
+
+	this->updateCamera(this->cam); //This needs to be moved
+	//update all the models
+	for (int i = 0; i < this->modelsColor->size(); i++)
+	{
+
+		this->modelsColor->at(i)->update();
+	}
+	for (int i = 0; i < this->modelsTexture->size(); i++)
+	{
+
+		this->modelsTexture->at(i)->update();
+	}
+	for (int i = 0; i < this->cubeMapModels->size(); i++)
+	{
+
+		this->cubeMapModels->at(i)->update();
+	}
+
+	
+	
 	this->updateLight();
 
 }
@@ -631,8 +464,19 @@ void Engine::render()
 	//In this function different render passes will be made.
 	//The scene is rendered in the renderScene() function
 	//the loop specifies  wich pass is being rendered
-
 	//It doesent really need to be a loop. Possible subject of change
+
+
+	//The first pass (added after the comment above) is the dynamic cubeMap
+	//This is independant from the later passes, as this renders from a whole set of different cameras and not the player camera
+
+	for (int j = 0; j < cubeMapModels->size(); j++)
+	{
+		XMFLOAT3 position = cubeMapModels->at(j)->getTranslation();
+		this->dynCubeMap->Render(position, this); //this function will set the viewport,depthbuffer,backbuffer to normal when it's done
+	}
+
+	this->updateCamera(this->cam);
 
 	float clearColor[] = { 0, 0, 0, 1 };
 
@@ -647,9 +491,11 @@ void Engine::render()
 		{
 			renderTexture->SetRenderTarget(&*gDeviceContext, depthStencilView);
 			renderTexture->ClearRenderTarget(gDeviceContext, depthStencilView, 0, 1, 0, 0);
-			sky->update(this->cam->getCamPos()); //Send in the position of the camera. The skybox needs to be centered around the camera
-			sky->render();
+			//this->shaderManager->setActiveShaders(SKYBOXSHADER);
+			
+			
 			renderScene();
+			
 		}
 		else //render to backbuffer/screen. next loop
 		{
@@ -660,10 +506,13 @@ void Engine::render()
 			this->gDeviceContext->PSSetShaderResources(2, 1, &shaderResourceViewz);
 			//render skybox
 			
-			sky->update(this->cam->getCamPos()); //Send in the position of the camera. The skybox needs to be centered around the camera
-			sky->render();
-			renderScene();
+			
+			//sky->update(this->cam->getCamPos()); //Send in the position of the camera. The skybox needs to be centered around the camera
+			//sky->render();
 
+			renderScene();
+			this->shaderManager->setActiveShaders(CUBEMAPSHADER);
+			this->cubeMapModels->at(0)->render();
 
 			//The render texture needs to be taken of as a shader resource
 			//This is so that we can write to it again in the next frame
@@ -685,8 +534,12 @@ void Engine::render()
 
 void Engine::renderScene() // This function will render the scene, no matter the render pass used
 {
+	this->shaderManager->setActiveShaders(SKYBOXSHADER);
+	sky->update(this->cam->getCamPos()); //Send in the position of the camera. The skybox needs to be centered around the camera
+	sky->render();
 
-	
+
+
 
 	gDeviceContext->OMSetDepthStencilState(depthState, 0);
 	gDeviceContext->RSSetState(gRasterizerState);
@@ -698,7 +551,7 @@ void Engine::renderScene() // This function will render the scene, no matter the
 	for (int i = 0; i < this->modelsColor->size(); i++)
 	{
 
-		//this->modelsColor->at(i)->update();
+		
 		this->modelsColor->at(i)->render();
 
 	}
@@ -714,7 +567,7 @@ void Engine::renderScene() // This function will render the scene, no matter the
 
 	for (int i = 0; i < this->modelsTexture->size(); i++)
 	{
-		//this->modelsTexture->at(i)->update();
+		 
 		this->modelsTexture->at(i)->render();
 	}
 	//
@@ -776,6 +629,65 @@ void Engine::addModel(Primitives type, std::string filename) // This is an overl
 
 		this->addModel(type);
 	}
+
+
+}
+
+
+void Engine::addModel(Primitives type, std::string filename,ShaderTypes shaderToBeUsed) // This is an overloaded function, For OBJ
+{
+
+	/* This function is another overload to "addModel" function, Here you can specify what shader the object are to be used with
+	this works on those that have the same input layout as the Textureshader,
+	for now. it is, Textureshaders, cubemap shaders. (Skybox could also work, but it is not what we want)*/
+	if (type == OBJ)
+	{
+		switch (shaderToBeUsed)
+		{
+		case TEXTURESHADER:
+			this->modelsTexture->push_back(new Model(filename, this->gDevice, this->gDeviceContext, this->worldBuffer, &this->worldStruct));
+			this->modelAmount += 1;
+			break;
+		
+		case CUBEMAPSHADER:
+			this->cubeMapModels->push_back(new Model(filename, this->gDevice, this->gDeviceContext, this->worldBuffer, &this->worldStruct));
+			this->modelAmount += 1;
+			break;
+
+
+
+		}
+
+
+	}
+	else {
+
+		this->addModel(type);
+	}
+
+
+}
+
+void Engine::updateCamera(Camera* cameraToRender)
+{
+	camStruct.view = cameraToRender->getView();
+	camStruct.projection = cameraToRender->getProjection();
+	camStruct.camPos = cameraToRender->getCamPos();
+	camStruct.camLook = cameraToRender->getCamLookAt();
+
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	ZeroMemory(&mappedResource, sizeof(mappedResource));
+
+	//mapping to the matrixbuffer
+	this->gDeviceContext->Map(camBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+
+	cameraConstantBuffer* temporary = (cameraConstantBuffer*)mappedResource.pData;
+
+	*temporary = camStruct;
+
+	this->gDeviceContext->Unmap(camBuffer, 0);
+
+	this->gDeviceContext->GSSetConstantBuffers(1, 1, &camBuffer);
 
 
 }

@@ -10,6 +10,8 @@
 #include "Input.h"
 #include "SkyBox.h"
 #include "ShaderManager.h"
+#include "DynamicCubeMap.h"
+class DynamicCubeMap;
 class Engine
 {
 
@@ -22,6 +24,7 @@ private:
 	int lightAmount;
 	std::vector<Model*>* modelsColor;
 	std::vector<Model*>* modelsTexture;
+	std::vector<Model*>* cubeMapModels; //Models to use the Dynamic cube map as reflection. This is very demanding, and should not be many objects
 	std::vector<Light>* lights;
 	
 	Input* input;
@@ -40,8 +43,8 @@ private:
 	ID3D11DepthStencilView* depthStencilView = nullptr;
 	ID3D11Texture2D *depthBuffer = nullptr;
 	
-	ShaderManager* shaderManager;
-
+	ShaderManager* shaderManager = nullptr;
+	DynamicCubeMap* dynCubeMap = nullptr;
 
 	RenderTexture* renderTexture;
 	//SamplerState
@@ -64,20 +67,18 @@ private:
 
 	HRESULT CreateDirect3DContext(HWND* wndHandle);
 	void setViewPort();
-	void createShaders();
-	void createTextureShaders();
-	//void createColorShaders();
+	
 	void createRasterizerState();
 	void createConstantBuffers();
-
+	D3D11_VIEWPORT vp; //Viewport
 	void errorMsg(std::string msg); //a function to show errors
 
-	void renderScene();
 public:
 	Engine();
 	Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input);
 	
 
+	void renderScene();
 	virtual ~Engine();
 
 
@@ -89,14 +90,17 @@ public:
 	void loadModels();
 	void addModel(Primitives type);
 	void addModel(Primitives type, std::string filename); //overload, for OBJ
-
+	void addModel(Primitives type, std::string filename, ShaderTypes shaderToBeUsed); //overload, for OBJ
+	void updateCamera(Camera* cameraToRender);
 	void updateLight();
 	void loadLights();
 	void addLight(lightTypes type);
 	
 
 
-
+	D3D11_VIEWPORT getViewPort() { return this->vp; };
+	ID3D11RenderTargetView* getRenderTargetView() { return this->gBackbufferRTV; };
+	ID3D11DepthStencilView* getDepthStencilView() { return this->depthStencilView; };
 
 };
 
