@@ -191,6 +191,7 @@ Pyramid::Pyramid(const Pyramid & obj)
 
 Pyramid::~Pyramid()
 {
+	
 
 }
 

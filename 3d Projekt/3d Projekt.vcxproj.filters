@@ -19,6 +19,15 @@
     <FxCompile Include="PixelShaderTexture.hlsl">
       <Filter>Shaders\TextureShaders</Filter>
     </FxCompile>
+    <FxCompile Include="PixelShaderSky.hlsl">
+      <Filter>Shaders\SkyBox shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexShaderSky.hlsl">
+      <Filter>Shaders\SkyBox shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="GeometryShaderSky.hlsl">
+      <Filter>Shaders\SkyBox shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -70,6 +79,16 @@
     <ClCompile Include="GameTimer.cpp">
       <Filter>Classes\GameTimer</Filter>
     </ClCompile>
+    <ClCompile Include="SkyBox.cpp">
+      <Filter>Classes\Skybox</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectXTK\Src\DDSTextureLoader.cpp" />
+    <ClCompile Include="RenderTexture.cpp">
+      <Filter>Classes\RenderTexture</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderManager.cpp">
+      <Filter>Classes\ShaderManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h">
@@ -118,6 +137,15 @@
     <ClInclude Include="DirectXToolkit.h" />
     <ClInclude Include="GameTimer.h">
       <Filter>Classes\GameTimer</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyBox.h">
+      <Filter>Classes\Skybox</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTexture.h">
+      <Filter>Classes\RenderTexture</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderManager.h">
+      <Filter>Classes\ShaderManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +199,18 @@
     </Filter>
     <Filter Include="Classes\GameTimer">
       <UniqueIdentifier>{e376b9c0-350b-4a04-83fe-4c00a68da4a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\SkyBox shaders">
+      <UniqueIdentifier>{40847b4a-adb8-40b6-8f01-b229bf63f439}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Skybox">
+      <UniqueIdentifier>{751c97b6-1ad9-4940-bc63-dd1ee3cd9557}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\RenderTexture">
+      <UniqueIdentifier>{da9a61c1-5a42-4bb3-8597-f853120a4e02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\ShaderManager">
+      <UniqueIdentifier>{704aec4d-98dc-43d4-8720-9c22d5fbc7bf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

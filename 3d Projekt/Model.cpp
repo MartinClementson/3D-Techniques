@@ -2,6 +2,7 @@
 #include "bth_image.h"
 #include "DirectXToolkit.h"
 
+#include "objHandler.h"
 
 
 
@@ -10,6 +11,48 @@
 Model::Model()
 {
 	
+}
+//this is the constructor for the children in the obj importer
+Model::Model(std::vector<Vertex>* vertArray, std::string * texturePath, ID3D11Device* gDevice,
+	ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct)
+{
+	
+	this->vertices = new std::vector<Vertex>;
+
+	for (int i = 0; i < vertArray->size(); i++)
+	{
+		//Not sure if this makes a copy. it should be calling the copy constructor
+		//if it doesent copy, the vertices will be removed when the obj import is done
+		setVertex(vertArray->at(i));
+		
+	}
+
+	this->gDeviceContext = gDeviceContext;
+	XMStoreFloat4x4(&this->worldMatrix, XMMatrixIdentity());
+	this->worldBuffer = worldBuffer;
+	this->worldStruct = worldStruct;
+	this->scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	this->translation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	this->rotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	this->rotate = false;
+	//Load Texture 
+	loadTexture(gDevice, *texturePath);
+
+	D3D11_BUFFER_DESC bufferDesc;
+	memset(&bufferDesc, 0, sizeof(bufferDesc));
+	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufferDesc.ByteWidth = sizeof(Vertex)* vertices->size();
+
+
+	D3D11_SUBRESOURCE_DATA data;
+	//Send the array of vertices in to pSysMem
+	data.pSysMem = vertices->data();
+	// data() "Returns a direct pointer to the memory array used internally by the vector to store its owned elements."
+
+	gDevice->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
+
+
 }
 void Model::loadTexture(ID3D11Device* gDevice, std::string filePath)
 {
@@ -56,7 +99,7 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 	//texture file name
 	std::string textureFileName;
 
-	ObjHandler* importer = new ObjHandler(filePath,vertices, textureFileName);//Make import
+	ObjHandler* importer = new ObjHandler(&children,filePath,vertices, textureFileName,gDevice,gDeviceContext,worldBuffer,worldStruct);//Make import
 
 	//Load Texture 
 	loadTexture(gDevice, textureFileName);
@@ -84,6 +127,8 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 //	HRESULT result;
 	
 }
+
+
 
 //This is the constructor for Primitives
 Model::Model(ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer* worldStruct)
@@ -117,7 +162,7 @@ Model::Model(const Model &obj) //Copy Constructor
 
 }
 
-void Model::setVertex(Vertex &nVertex)
+void Model::setVertex(Vertex nVertex)
 {
 	this->vertices->push_back(nVertex);
 }
@@ -177,22 +222,54 @@ XMFLOAT3 Model::getRotation()
 
 Model::~Model()
 {
+	if (children != nullptr)
+	{
+		for (int i = 0; i < this->children->size(); i++)
+		{
+			delete this->children->at(i);
 
-	delete vertices;
-	this->vertexBuffer->Release();
+
+		}
+		delete children;
+
+	}
+	if (vertices != nullptr)
+	{
+		delete vertices;
+		this->vertexBuffer->Release();
+	}
 }
 
 void Model::update()
 {
 
+	//This can be recursive, if the model has children.
+	//they must be rendered first
+
+	//BUT! this models transformation must be calculated first, so that the children wont be one frame behind
+	//for example. the rotation must be done here first before we sent this(the parents) information to the children
+
 	if (rotate)
 	{
 		float static angle = 0; //<----- just temporary to test rotation
-		angle += 0.01f;
+		angle += 0.2f;
 		this->setRotation(XMFLOAT3(0, angle, 0));
 
 
 	}
+
+	//Do Frame transformations here
+
+	//update and render children, If there is any
+	if (this->children != nullptr)
+	{
+		renderChildren();
+
+	}
+
+
+	//Lastly, proceed to update this(the parent)s constant buffer and continue render it.
+
 	this->worldStruct->world = this->worldMatrix;
 	this->worldStruct->normalWorld = this->normalWorld;
 
@@ -214,6 +291,9 @@ void Model::update()
 
 void Model::render()
 {
+	//update and render all the children
+	this->update();
+
 	UINT32 vertexSize = sizeof(Vertex);
 	UINT32 offset = 0;
 	this->gDeviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
@@ -228,6 +308,19 @@ void Model::render()
 
 
 	this->gDeviceContext->Draw(this->vertices->size(), 0); //This will be dynamic,
+
+
+}
+
+void Model::renderChildren()
+{
+		//update and render all the children
+	for (int i = 0; i < this->children->size(); i++)
+	{
+		this->children->at(i)->worldMatrix = this->worldMatrix;
+		this->children->at(i)->normalWorld = this->worldMatrix;
+		this->children->at(i)->render();
+	}
 
 
 }

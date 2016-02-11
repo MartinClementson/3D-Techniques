@@ -7,9 +7,9 @@ cbuffer lightBuffer
 
 };
 
-
-
-
+SamplerState SampleType;
+textureCUBE skyBoxTexture : register(t1);
+texture2D renderTexture : register(t2);
 struct PS_IN
 {
 	float4 pos : SV_POSITION;
@@ -66,10 +66,19 @@ float3 finalCol = (diffuse + ambient);
 finalCol = input.color * finalCol; //(texture or color) * (diffuse + ambient)
 finalCol = finalCol + specularLight; // + specular
 
+
+
+
+//Calculate enviroment reflections
+float3 incident = input.wPos - input.camPos;
+float3 ref = reflect(incident, normalize(input.normal));
+
+float4 reflectionColor = skyBoxTexture.Sample(SampleType, ref);
+finalCol += reflectionColor.xyz * 0.5;
+//finalCol.x = max(finalCol.x, 1.0);
+//finalCol.y = max(finalCol.y, 1.0);
+//finalCol.z = max(finalCol.z, 1.0);
 float4 col = { finalCol,1.0 };
-
-
-
 //float4 col = { (ambient + diffuse + specularLight),1.0 }; // old calculation
 
 return col;

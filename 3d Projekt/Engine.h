@@ -1,17 +1,22 @@
 #pragma once
 #include "Linker.h"
 #include "Model.h"
+#include "RenderTexture.h"
 #include "Cube.h"
 #include "Pyramid.h"
 #include "Plane.h"
 #include "Camera.h"
 #include "Light.h"
 #include "Input.h"
+#include "SkyBox.h"
+#include "ShaderManager.h"
 class Engine
 {
 
 private:
 	Camera* cam; 
+	SkyBox* sky;
+
 	int vertexAmount;
 	int modelAmount;
 	int lightAmount;
@@ -20,34 +25,31 @@ private:
 	std::vector<Light>* lights;
 	
 	Input* input;
-
+	ID3D11Debug* debug;
 
 	HRESULT hr;
 	ID3D11Device *gDevice = nullptr;
 	ID3D11DeviceContext* gDeviceContext = nullptr;
-	ID3D11Buffer* gVertexBuffer = nullptr;
+	
 
 	IDXGISwapChain* gSwapChain = nullptr;
 	ID3D11RenderTargetView* gBackbufferRTV = nullptr;
 
+	//Depth stencil
+	ID3D11DepthStencilState* depthState = nullptr;
 	ID3D11DepthStencilView* depthStencilView = nullptr;
 	ID3D11Texture2D *depthBuffer = nullptr;
 	
+	ShaderManager* shaderManager;
 
 
-	//Shaders for color
-	ID3D11VertexShader* gVertexShaderColor = nullptr;
-	ID3D11GeometryShader* gGeometryShaderColor = nullptr;
-	ID3D11PixelShader* gPixelShaderColor = nullptr;
-	ID3D11InputLayout* gVertexLayoutColor = nullptr;
+	RenderTexture* renderTexture;
+	//SamplerState
+	ID3D11SamplerState* gSampleState = nullptr;
 
-	//Shaders for Texture
-	ID3D11VertexShader* gVertexShaderTexture = nullptr;
-	ID3D11GeometryShader* gGeometryShaderTexture = nullptr;
-	ID3D11PixelShader* gPixelShaderTexture = nullptr;
-	ID3D11InputLayout* gVertexLayoutTexture = nullptr;
-
-
+	//RasterizerState
+	ID3D11RasterizerState *gRasterizerState = nullptr;
+	
 	//Constant buffers
 	worldConstantBuffer worldStruct;
 	ID3D11Buffer* worldBuffer = nullptr;
@@ -58,13 +60,19 @@ private:
 	lightConstantBuffer lightStruct;
 	ID3D11Buffer* lightBuffer = nullptr;
 
+	HWND* wndHandle;
+
 	HRESULT CreateDirect3DContext(HWND* wndHandle);
 	void setViewPort();
 	void createShaders();
 	void createTextureShaders();
-	void createColorShaders();
+	//void createColorShaders();
 	void createRasterizerState();
 	void createConstantBuffers();
+
+	void errorMsg(std::string msg); //a function to show errors
+
+	void renderScene();
 public:
 	Engine();
 	Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input);

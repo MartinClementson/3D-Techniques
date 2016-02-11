@@ -4,9 +4,13 @@
 #include <iostream>
 #include <string>
 
+#include "DataTypes.h"
+
 using namespace std;
 ObjHandler::ObjHandler()
 {
+	
+	
 }
 
 std::string ObjHandler::MtlHandler(std::string &filePath)
@@ -32,8 +36,99 @@ std::string ObjHandler::MtlHandler(std::string &filePath)
 	return textureID;
 }
 
-ObjHandler::ObjHandler(std::string filePath, std::vector<Vertex>* modelVerts, std::string &textureName)
+ObjHandler::ObjHandler(std::vector<Model*>** childrenArray,std::string filePath, std::vector<Vertex>* modelVerts, std::string &textureName,
+	ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext,
+	ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct)
 {
+
+	
+	///////////////////////////////////////////////////////
+	
+	
+	/*This function gets everything it needs to create children to the parent
+	
+	
+	suggestion:
+	check if there is more than one object in the obj. If there is only one, there is no need for the children,
+	(perhaps check after the first object has been read from the file? if it was alone. peek() or sumthing)
+	
+	If there is more than one object. the childrenArray must be initialized like this
+	*childrenArray =  new std::vector<Model*>;  (The deletion is already made in the model destructor)
+	then used with pushback
+	
+	Something like this. The model constructor for the children is below
+
+	*childrenArray->push_back(new Model(
+		std::vector<Vertex>* vertArray,		<--- a pointer to the array of vertices, gathered from the obj.
+		std::string * texturePath,			<--- a pointer to the string, containing the texture file name.
+		ID3D11Device* gDevice,					|
+		ID3D11DeviceContext * gDeviceContext,	|<--- send the rest of these parameters in, you have them from the objHandler constructor (that we are in)
+		ID3D11Buffer * worldBuffer,				|
+		worldConstantBuffer * worldStruct))		| worldConstantBuffer  is the name of the struct  data type
+
+
+
+
+	Furthermore David_coolbro. if there is only one object in the file, try to do it like before.
+
+	if it's to hard to do, create it as a child. and let the parent be abstract
+
+	IF the parent is abstract we might need to add more checks in the model class, for example not to release buffers when they don't exist
+	and not to create any buffers or load textures when this function we're in now returns back to the parent object.
+
+
+	How it all works when rendering
+
+	This is how it looks like after import. all the children are parts of the obj, but separate meshes (except for child1_1)
+	(all are model objects) 
+	Parent
+		|-child1
+		|	|
+		|	|-child1_1 <-this will not occur with obj import, but might in the future if "parenting different objects" will be implemented
+		|
+		|-child2
+		|-child3
+		|-child4
+
+Engine->render()
+    |
+    |  
+	|-Parent->render()							   //call update function .
+		|
+		|- Parent->update()						   //update rotation/animation, etc , if there are any children, Render them.
+			|
+			|-Parent->renderChildren()			   //Give the children the matrix of the parent and call their render function
+				|
+				|- child1 ->render()			   //Do the same as the parent has done up until now.
+				|	|
+				|	|-child1->update()
+				|		|
+				|		|-child1->renderChildren() //This is a special case. not gonna happen with this obj importer
+				|			|
+				|			|- child1_1->()render		
+				|
+				|
+				|- child2 ->render()
+				|
+				|- child3->render()
+				|
+				|- child4->render()
+	
+
+	After the child4 has rendered. it will go back up to the parent and render it last
+	
+	
+	
+	
+	*/
+
+	
+
+
+
+
+
+	///////////////////////////////////////////////////////
 	//Recieve a string to the file path,
 	//Recieve a pointer to the model class vertices array
 
