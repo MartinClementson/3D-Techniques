@@ -17,6 +17,6 @@
 enum Primitives{ PLANE , CUBE , PYRAMID, OBJ};
 enum lightTypes{ POINTLIGHT }; //add more light types here later
 enum moveDirection{ FORWARD,BACKWARD,LEFT,RIGHT};
-
+enum ShaderTypes { TEXTURESHADER, COLORSHADER, REFLECTIONSHADER,SKYBOXSHADER,PARTICLESHADER };
 
 

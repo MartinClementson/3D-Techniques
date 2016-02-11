@@ -18,6 +18,7 @@ void CalculateFPS(HWND& window, GameTimer& time);
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
+	
 	MSG msg = { 0 };
 	HWND wndHandle = InitWindow(hInstance); 
 	Input* input = new Input();
@@ -45,12 +46,13 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			}
 		}
 		engine->release();
-		input->Shutdown();
+		//input->Shutdown();
 		DestroyWindow(wndHandle);
 	}
 	delete mTimer;
 	delete engine;
 	delete input;
+	
 	_CrtDumpMemoryLeaks();
 	return (int)msg.wParam;
 }

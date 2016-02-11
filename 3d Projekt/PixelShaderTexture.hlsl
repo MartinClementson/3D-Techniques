@@ -49,7 +49,7 @@ float shinyPower = 20.0f;
 
 float3 specularLight = { lightColor.xyz * pow(max(dot(r,v),0.0),shinyPower) };
 
-float3 textureSample = renderTexture.Sample(SampleType, input.Texture).xyz;
+float3 textureSample = shaderTexture.Sample(SampleType, input.Texture).xyz;
 //float3 diffuse = textureSample * fDot;
 
 float3 ambient = { 0.1f, 0.1f, 0.1f };
@@ -79,7 +79,7 @@ finalCol = finalCol + specularLight; // + specular
 float3 incident = input.wPos - input.camPos;
 float3 ref = reflect(incident, normalize(input.normal));
 float4 reflectionColor = skyBoxTexture.Sample(SampleType, ref);
-finalCol += reflectionColor.xyz;
+finalCol += reflectionColor.xyz* 0.2;
 
 finalCol.x = min(finalCol.x, 1.0f);
 finalCol.y = min(finalCol.y, 1.0f);

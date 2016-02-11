@@ -38,7 +38,7 @@ protected:
 
 	//Texture
 	ID3D11ShaderResourceView* texture = nullptr; //If multitextures are to be supported. this will be an array
-	ID3D11Texture2D *pTexture = nullptr;
+	
 	void loadTexture(ID3D11Device* gDevice, std::string filePath);
 public:
 	Model();//Default constuctor

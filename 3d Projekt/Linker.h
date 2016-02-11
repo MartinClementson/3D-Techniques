@@ -9,7 +9,9 @@
 #include <DirectXMath.h>
 #include <vector>
 #include <dinput.h>
+#define D3D_DEBUG_INFO
 
+#include <d3d11sdklayers.h>
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 #pragma comment(lib, "dinput8.lib")

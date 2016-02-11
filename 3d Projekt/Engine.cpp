@@ -13,6 +13,7 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	this->cam = new Camera();
 	this->sky = new SkyBox();
 	this->renderTexture = new RenderTexture();
+	this->shaderManager = new ShaderManager();
 
 	this->input = input;
 	this->wndHandle = winHandle;
@@ -26,16 +27,26 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	this->vertexAmount = 0;
 	this->modelAmount = 0;
 	this->lightAmount = 0;
+
 	hr = CreateDirect3DContext(winHandle);
-	
 	if (FAILED(hr))
 		errorMsg("Failed to create Direct3D Context");
+
+
 
 	createRasterizerState();
 
 	setViewPort();
 
-	createShaders();
+	//createShaders();
+
+	//create all the shaders
+	if (!shaderManager->Init(this->gDevice,this->gDeviceContext))
+	{
+		errorMsg("Failed to initialize the shader manager");
+		delete shaderManager;
+
+	}
 
 	createConstantBuffers();
 
@@ -82,6 +93,7 @@ Engine::~Engine()
 		delete modelsTexture->at(i);
 
 	}
+	delete shaderManager;
 	delete renderTexture;
 	delete sky;
 	delete modelsTexture;
@@ -94,35 +106,49 @@ Engine::~Engine()
 void Engine::release()
 {
 	
-	//Release Color shaders
-	gVertexLayoutColor->Release();
-	gVertexShaderColor->Release();
-	gPixelShaderColor->Release();
-	gGeometryShaderColor->Release();
+	////Release Color shaders
+	//gVertexLayoutColor->Release();
+	//gVertexShaderColor->Release();
+	//gPixelShaderColor->Release();
+	//gGeometryShaderColor->Release();
 
 	//Release Texture shaders
-	if(gVertexLayoutTexture != NULL)
-		gVertexLayoutTexture->Release(); //If this crashes on shut down, is because there is no layout for texture yet
-	
+	//if(gVertexLayoutTexture != NULL)
+	//	gVertexLayoutTexture->Release(); //If this crashes on shut down, is because there is no layout for texture yet
+	//
 	if (gSampleState != nullptr)
 		gSampleState->Release();
 		
-	gVertexShaderTexture->Release();
+	/*gVertexShaderTexture->Release();
 	gPixelShaderTexture->Release();
 	gGeometryShaderTexture->Release();
+	*/
+
+	input->Shutdown();
+
+	shaderManager->Release();
 	renderTexture->Release();
 	gRasterizerState->Release();
 	gBackbufferRTV->Release();
 	gSwapChain->Release();
-	gDevice->Release();
+	
+
+	
+	gDeviceContext->ClearState();
 	gDeviceContext->Release();
+	gDevice->Release();
+	
 	depthBuffer->Release();
 	depthState->Release();
 	depthStencilView->Release();
+
+
 	worldBuffer->Release();
 	camBuffer->Release();
 	lightBuffer->Release();
 	sky->Release();
+
+	//debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 
 }
 
@@ -228,7 +254,8 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 		NULL,
 		&this->gDeviceContext);
 	
-
+	hr = gDevice->QueryInterface(__uuidof(ID3D11Debug), (void**)&debug);
+	if (FAILED(hr)) errorMsg("ERROR INITIALIZING DEBUG");
 	//Here goes depth buffer
 	D3D11_TEXTURE2D_DESC desc;
 
@@ -294,7 +321,7 @@ void Engine::setViewPort()
 void Engine::createShaders()
 {
 
-	createColorShaders();
+	//createColorShaders();
 	createTextureShaders();
 	
 
@@ -304,178 +331,178 @@ void Engine::createShaders()
 
 void Engine::createTextureShaders()
 {
-
-	//Create a sample state first
-
-	
-
-	D3D11_SAMPLER_DESC samplerDesc;
-	// use linear interpolation for minification, magnification, and mip-level sampling (quite expensive)
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
-	//for all filters: https://msdn.microsoft.com/en-us/library/windows/desktop/ff476132(v=vs.85).aspx
-
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP; //wrap, (repeat) for use of tiling texutures
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.MipLODBias = 0.0f; //mipmap offset level
-	samplerDesc.MaxAnisotropy = 1; //Clamping value used if D3D11_FILTER_ANISOTROPIC or D3D11_FILTER_COMPARISON_ANISOTROPIC is specified in Filter. Valid values are between 1 and 16.
-	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	samplerDesc.MinLOD = 0; //0 most detailed mipmap level, higher number == less detail
-	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-	
-
-	hr = gDevice->CreateSamplerState(&samplerDesc, &gSampleState);
-
-	if (FAILED(hr))
-	{
-		errorMsg("Failed to create SamplerState");
-		//ERROR
-
-	}
-	else
-		gDeviceContext->PSSetSamplers(0, 1, &this->gSampleState);
-	//Load the shaders
-
-
-
-	ID3DBlob* pVS = nullptr;
-
-	D3DCompileFromFile(
-		L"VertexShaderTexture.hlsl",
-		nullptr,
-		nullptr,
-		"VS_main",
-		"vs_4_0",
-		0,
-		0,
-		&pVS,
-		nullptr);
-
-	hr = this->gDevice->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &gVertexShaderTexture);
-
-	if (FAILED(hr))
-		errorMsg("Failed to create Vertex shader for texture");
-	//Create input layout (every vertex)
-	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
-		/*{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA,0 }*/ //not in use
-		{ "TEXCOORD",0, DXGI_FORMAT_R32G32_FLOAT, 0,24, D3D11_INPUT_PER_VERTEX_DATA,0} //We wont use Color here, that's why the offset is 32. were still using the same struct
-		//Normals?
-
-	};
-
-	this->gDevice->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &gVertexLayoutTexture);
-	pVS->Release();
-
-
-	ID3DBlob *pPs = nullptr;
-	D3DCompileFromFile(
-		L"PixelShaderTexture.hlsl",
-		nullptr,
-		nullptr,
-		"PS_main",
-		"ps_4_0",
-		0,
-		0,
-		&pPs,
-		nullptr);
-
-	hr = this->gDevice->CreatePixelShader(pPs->GetBufferPointer(), pPs->GetBufferSize(), nullptr, &gPixelShaderTexture);
-	pPs->Release();
-
-	if (FAILED(hr))
-		errorMsg("Failed to Create pixelshader for texture");
-
-
-	//Geometry shader
-	ID3DBlob* pGS = nullptr;
-	D3DCompileFromFile(
-		L"GeometryShaderTexture.hlsl",
-		nullptr,
-		nullptr,
-		"GS_main",
-		"gs_4_0",
-		0,
-		0,
-		&pGS,
-		nullptr);
-
-	hr = this->gDevice->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &gGeometryShaderTexture);
-	pGS->Release();
-
-	if (FAILED(hr))
-		errorMsg("Failed to create geometryShader for texture");
-
-}
-
-void Engine::createColorShaders()
-{
-
-	ID3DBlob* pVS = nullptr;
-
-	D3DCompileFromFile(
-		L"VertexShaderColor.hlsl",
-		nullptr,
-		nullptr,
-		"VS_main",
-		"vs_4_0",
-		0,
-		0,
-		&pVS,
-		nullptr);
-
-	hr = this->gDevice->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &gVertexShaderColor);
-	if (FAILED(hr))
-		errorMsg("Failed to create vertex shader for color shading");
-	//Create input layout (every vertex)
-	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA,0 }
-		
-	};
-
-	hr = this->gDevice->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &gVertexLayoutColor);
-	pVS->Release();
-	if (FAILED(hr))
-		errorMsg("Failed to create input layout for color shaders");
-
-	ID3DBlob *pPs = nullptr;
-	D3DCompileFromFile(
-		L"PixelShaderColor.hlsl",
-		nullptr,
-		nullptr,
-		"PS_main",
-		"ps_4_0",
-		0,
-		0,
-		&pPs,
-		nullptr);
-
-	hr = this->gDevice->CreatePixelShader(pPs->GetBufferPointer(), pPs->GetBufferSize(), nullptr, &gPixelShaderColor);
-	pPs->Release();
-
-	if (FAILED(hr))
-		errorMsg("Failed to create pixel shader for color shading");
-
-	//Geometry shader
-	ID3DBlob* pGS = nullptr;
-	D3DCompileFromFile(
-		L"GeometryShaderColor.hlsl",
-		nullptr,
-		nullptr,
-		"GS_main",
-		"gs_4_0",
-		0,
-		0,
-		&pGS,
-		nullptr);
-
-	hr = this->gDevice->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &gGeometryShaderColor);
-	pGS->Release();
-	if (FAILED(hr))
-		errorMsg("Failed to create geometry shader for color shading");
+//
+//	//Create a sample state first
+//
+//	
+//
+//	D3D11_SAMPLER_DESC samplerDesc;
+//	// use linear interpolation for minification, magnification, and mip-level sampling (quite expensive)
+//	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR;
+//	//for all filters: https://msdn.microsoft.com/en-us/library/windows/desktop/ff476132(v=vs.85).aspx
+//
+//	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+//	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP; //wrap, (repeat) for use of tiling texutures
+//	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+//	samplerDesc.MipLODBias = 0.0f; //mipmap offset level
+//	samplerDesc.MaxAnisotropy = 1; //Clamping value used if D3D11_FILTER_ANISOTROPIC or D3D11_FILTER_COMPARISON_ANISOTROPIC is specified in Filter. Valid values are between 1 and 16.
+//	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+//	samplerDesc.MinLOD = 0; //0 most detailed mipmap level, higher number == less detail
+//	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+//	
+//
+//	hr = gDevice->CreateSamplerState(&samplerDesc, &gSampleState);
+//
+//	if (FAILED(hr))
+//	{
+//		errorMsg("Failed to create SamplerState");
+//		//ERROR
+//
+//	}
+//	else
+//		gDeviceContext->PSSetSamplers(0, 1, &this->gSampleState);
+//	//Load the shaders
+//
+//
+//
+//	ID3DBlob* pVS = nullptr;
+//
+//	D3DCompileFromFile(
+//		L"VertexShaderTexture.hlsl",
+//		nullptr,
+//		nullptr,
+//		"VS_main",
+//		"vs_4_0",
+//		0,
+//		0,
+//		&pVS,
+//		nullptr);
+//
+//	hr = this->gDevice->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &gVertexShaderTexture);
+//
+//	if (FAILED(hr))
+//		errorMsg("Failed to create Vertex shader for texture");
+//	//Create input layout (every vertex)
+//	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
+//	{
+//		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
+//		/*{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA,0 }*/ //not in use
+//		{ "TEXCOORD",0, DXGI_FORMAT_R32G32_FLOAT, 0,24, D3D11_INPUT_PER_VERTEX_DATA,0} //We wont use Color here, that's why the offset is 32. were still using the same struct
+//		//Normals?
+//
+//	};
+//
+//	this->gDevice->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &gVertexLayoutTexture);
+//	pVS->Release();
+//
+//
+//	ID3DBlob *pPs = nullptr;
+//	D3DCompileFromFile(
+//		L"PixelShaderTexture.hlsl",
+//		nullptr,
+//		nullptr,
+//		"PS_main",
+//		"ps_4_0",
+//		0,
+//		0,
+//		&pPs,
+//		nullptr);
+//
+//	hr = this->gDevice->CreatePixelShader(pPs->GetBufferPointer(), pPs->GetBufferSize(), nullptr, &gPixelShaderTexture);
+//	pPs->Release();
+//
+//	if (FAILED(hr))
+//		errorMsg("Failed to Create pixelshader for texture");
+//
+//
+//	//Geometry shader
+//	ID3DBlob* pGS = nullptr;
+//	D3DCompileFromFile(
+//		L"GeometryShaderTexture.hlsl",
+//		nullptr,
+//		nullptr,
+//		"GS_main",
+//		"gs_4_0",
+//		0,
+//		0,
+//		&pGS,
+//		nullptr);
+//
+//	hr = this->gDevice->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &gGeometryShaderTexture);
+//	pGS->Release();
+//
+//	if (FAILED(hr))
+//		errorMsg("Failed to create geometryShader for texture");
+//
+//}
+//
+//void Engine::createColorShaders()
+//{
+//
+//	ID3DBlob* pVS = nullptr;
+//
+//	D3DCompileFromFile(
+//		L"VertexShaderColor.hlsl",
+//		nullptr,
+//		nullptr,
+//		"VS_main",
+//		"vs_4_0",
+//		0,
+//		0,
+//		&pVS,
+//		nullptr);
+//
+//	hr = this->gDevice->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &gVertexShaderColor);
+//	if (FAILED(hr))
+//		errorMsg("Failed to create vertex shader for color shading");
+//	//Create input layout (every vertex)
+//	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
+//	{
+//		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
+//		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA,0 }
+//		
+//	};
+//
+//	hr = this->gDevice->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &gVertexLayoutColor);
+//	pVS->Release();
+//	if (FAILED(hr))
+//		errorMsg("Failed to create input layout for color shaders");
+//
+//	ID3DBlob *pPs = nullptr;
+//	D3DCompileFromFile(
+//		L"PixelShaderColor.hlsl",
+//		nullptr,
+//		nullptr,
+//		"PS_main",
+//		"ps_4_0",
+//		0,
+//		0,
+//		&pPs,
+//		nullptr);
+//
+//	hr = this->gDevice->CreatePixelShader(pPs->GetBufferPointer(), pPs->GetBufferSize(), nullptr, &gPixelShaderColor);
+//	pPs->Release();
+//
+//	if (FAILED(hr))
+//		errorMsg("Failed to create pixel shader for color shading");
+//
+//	//Geometry shader
+//	ID3DBlob* pGS = nullptr;
+//	D3DCompileFromFile(
+//		L"GeometryShaderColor.hlsl",
+//		nullptr,
+//		nullptr,
+//		"GS_main",
+//		"gs_4_0",
+//		0,
+//		0,
+//		&pGS,
+//		nullptr);
+//
+//	hr = this->gDevice->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &gGeometryShaderColor);
+//	pGS->Release();
+//	if (FAILED(hr))
+//		errorMsg("Failed to create geometry shader for color shading");
 }
 
 void Engine::loadModels()
@@ -525,6 +552,9 @@ void Engine::loadModels()
 
 	this->addModel(OBJ, "plane.obj");
 	this->modelsTexture->at(2)->setTranslation(XMFLOAT3(0.0f, -2.0f, 0.0f));
+
+	this->addModel(OBJ, "Sphere.obj");
+	this->modelsTexture->at(3)->setTranslation(XMFLOAT3(0.0f, 1.0f, 0.0f));
 }
 void Engine::loadLights()
 {
@@ -602,6 +632,8 @@ void Engine::render()
 	//The scene is rendered in the renderScene() function
 	//the loop specifies  wich pass is being rendered
 
+	//It doesent really need to be a loop. Possible subject of change
+
 	float clearColor[] = { 0, 0, 0, 1 };
 
 	this->gDeviceContext->ClearRenderTargetView(gBackbufferRTV, clearColor);
@@ -624,12 +656,22 @@ void Engine::render()
 
 			this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, depthStencilView);
 			ID3D11ShaderResourceView* shaderResourceViewz = renderTexture->GetShaderResourceView();
+			//Applu the renderTexture to the pixel shader
 			this->gDeviceContext->PSSetShaderResources(2, 1, &shaderResourceViewz);
 			//render skybox
-			//this->gDeviceContext->PSSetShaderResources(2, 1, NULL);
+			
 			sky->update(this->cam->getCamPos()); //Send in the position of the camera. The skybox needs to be centered around the camera
 			sky->render();
 			renderScene();
+
+
+			//The render texture needs to be taken of as a shader resource
+			//This is so that we can write to it again in the next frame
+			//By not doing this, DirectX debug mode sent alot of warnings
+			ID3D11ShaderResourceView * tab[1];
+			tab[0] = NULL;
+			this->gDeviceContext->PSSetShaderResources(2, 1, tab);
+
 		}
 
 
@@ -648,22 +690,16 @@ void Engine::renderScene() // This function will render the scene, no matter the
 
 	gDeviceContext->OMSetDepthStencilState(depthState, 0);
 	gDeviceContext->RSSetState(gRasterizerState);
+
 	////////////////////////////////////////////
 	//Render The objects that use the COLOR shaders
-	this->gDeviceContext->VSSetShader(gVertexShaderColor, nullptr, 0);
-	this->gDeviceContext->HSSetShader(nullptr, nullptr, 0);
-	this->gDeviceContext->DSSetShader(nullptr, nullptr, 0);
-	this->gDeviceContext->GSSetShader(gGeometryShaderColor, nullptr, 0);
-	this->gDeviceContext->PSSetShader(gPixelShaderColor, nullptr, 0);
-	this->gDeviceContext->IASetInputLayout(gVertexLayoutColor);
+	this->shaderManager->setActiveShaders(COLORSHADER);
 
 	for (int i = 0; i < this->modelsColor->size(); i++)
 	{
 
-
 		//this->modelsColor->at(i)->update();
 		this->modelsColor->at(i)->render();
-
 
 	}
 	////////////////////////////////////////////
@@ -674,31 +710,15 @@ void Engine::renderScene() // This function will render the scene, no matter the
 	//Render The objects that use the Texture shaders
 	//
 
-	this->gDeviceContext->VSSetShader(gVertexShaderTexture, nullptr, 0);
-	this->gDeviceContext->HSSetShader(nullptr, nullptr, 0);
-	this->gDeviceContext->DSSetShader(nullptr, nullptr, 0);
-	this->gDeviceContext->GSSetShader(gGeometryShaderTexture, nullptr, 0);
-	this->gDeviceContext->PSSetShader(gPixelShaderTexture, nullptr, 0);
-	this->gDeviceContext->IASetInputLayout(gVertexLayoutTexture);
-
+	this->shaderManager->setActiveShaders(TEXTURESHADER);
 
 	for (int i = 0; i < this->modelsTexture->size(); i++)
 	{
-
-
 		//this->modelsTexture->at(i)->update();
 		this->modelsTexture->at(i)->render();
-
-
 	}
-
-
-
-
-//
-////////////////////////////////////////////
-
-
+	//
+	////////////////////////////////////////////
 
 }
 

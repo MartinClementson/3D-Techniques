@@ -9,6 +9,7 @@
 #include "Light.h"
 #include "Input.h"
 #include "SkyBox.h"
+#include "ShaderManager.h"
 class Engine
 {
 
@@ -24,12 +25,12 @@ private:
 	std::vector<Light>* lights;
 	
 	Input* input;
-
+	ID3D11Debug* debug;
 
 	HRESULT hr;
 	ID3D11Device *gDevice = nullptr;
 	ID3D11DeviceContext* gDeviceContext = nullptr;
-	ID3D11Buffer* gVertexBuffer = nullptr;
+	
 
 	IDXGISwapChain* gSwapChain = nullptr;
 	ID3D11RenderTargetView* gBackbufferRTV = nullptr;
@@ -39,19 +40,8 @@ private:
 	ID3D11DepthStencilView* depthStencilView = nullptr;
 	ID3D11Texture2D *depthBuffer = nullptr;
 	
+	ShaderManager* shaderManager;
 
-
-	//Shaders for color
-	ID3D11VertexShader* gVertexShaderColor = nullptr;
-	ID3D11GeometryShader* gGeometryShaderColor = nullptr;
-	ID3D11PixelShader* gPixelShaderColor = nullptr;
-	ID3D11InputLayout* gVertexLayoutColor = nullptr;
-
-	//Shaders for Texture
-	ID3D11VertexShader* gVertexShaderTexture = nullptr;
-	ID3D11GeometryShader* gGeometryShaderTexture = nullptr;
-	ID3D11PixelShader* gPixelShaderTexture = nullptr;
-	ID3D11InputLayout* gVertexLayoutTexture = nullptr;
 
 	RenderTexture* renderTexture;
 	//SamplerState
@@ -76,7 +66,7 @@ private:
 	void setViewPort();
 	void createShaders();
 	void createTextureShaders();
-	void createColorShaders();
+	//void createColorShaders();
 	void createRasterizerState();
 	void createConstantBuffers();
 

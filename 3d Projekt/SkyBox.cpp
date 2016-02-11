@@ -602,6 +602,8 @@ void SkyBox::Release()
 	//no need to check i realized here. I do a check at initalization, if there is none of these things, the error will be shown att initalization
 	SKYMAP_VS->Release();
 	SKYMAP_PS->Release();
+
+	
 	
 	DSLessEqual->Release();
 	RSCullNone->Release();
