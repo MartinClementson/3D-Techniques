@@ -28,6 +28,15 @@
     <FxCompile Include="GeometryShaderSky.hlsl">
       <Filter>Shaders\SkyBox shaders</Filter>
     </FxCompile>
+    <FxCompile Include="GeometryShaderCubeMap.hlsl">
+      <Filter>Shaders\DynamicCubeMap Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelShaderCubeMap.hlsl">
+      <Filter>Shaders\DynamicCubeMap Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexShaderCubeMap.hlsl">
+      <Filter>Shaders\DynamicCubeMap Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -89,6 +98,9 @@
     <ClCompile Include="ShaderManager.cpp">
       <Filter>Classes\ShaderManager</Filter>
     </ClCompile>
+    <ClCompile Include="DynamicCubeMap.cpp">
+      <Filter>Classes\Dynamic CubeMap</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h">
@@ -146,6 +158,9 @@
     </ClInclude>
     <ClInclude Include="ShaderManager.h">
       <Filter>Classes\ShaderManager</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicCubeMap.h">
+      <Filter>Classes\Dynamic CubeMap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -211,6 +226,12 @@
     </Filter>
     <Filter Include="Classes\ShaderManager">
       <UniqueIdentifier>{704aec4d-98dc-43d4-8720-9c22d5fbc7bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Dynamic CubeMap">
+      <UniqueIdentifier>{02671c99-9a5d-49ff-8b56-650208b9e8a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\DynamicCubeMap Shaders">
+      <UniqueIdentifier>{609bc833-94a6-4f9d-9df4-d61b64bf443f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

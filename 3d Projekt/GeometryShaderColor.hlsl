@@ -82,7 +82,7 @@ void GS_main(
 			GSOutput element;
 			element.pos = input[i].pos;
 			element.pos = mul(element.pos, combinedMatrix);
-			element.wPos = mul(element.pos, world);
+			element.wPos = mul(input[i].pos, world);
 			element.camPos = camPos;
 			element.color = input[i].color;
 

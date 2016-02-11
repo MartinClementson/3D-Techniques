@@ -34,6 +34,7 @@ protected:
 	worldConstantBuffer* worldStruct = nullptr;
 	ID3D11Buffer* worldBuffer = nullptr; //this is a pointer to the constant buffer, sent from the engine
 
+	void sendToConstantBuffer();
 	virtual void createVertices(ID3D11Device* gDevice);
 
 	//Texture

@@ -27,10 +27,7 @@ bool SkyBox::Init(ID3D11DeviceContext* gDeviceContext, ID3D11Device *gDevice, ID
 	{//Create the cube, and if it fails, return false
 		return false;
 	};
-	if (!this->loadShaders())
-	{
-		return false;
-	};
+
 
 	if (!this->createRenderStates())
 		return false;
@@ -39,96 +36,6 @@ bool SkyBox::Init(ID3D11DeviceContext* gDeviceContext, ID3D11Device *gDevice, ID
 	return true;
 }
 
-bool SkyBox::loadShaders()
-{
-	HRESULT hr;
-	ID3DBlob* pVS = nullptr;
-
-	D3DCompileFromFile(
-		L"VertexShaderSky.hlsl",
-		nullptr,
-		nullptr,
-		"VS_main",
-		"vs_4_0",
-		0,
-		0,
-		&pVS,
-		nullptr);
-
-	hr = this->gDevice->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &SKYMAP_VS);
-
-	if (FAILED(hr))
-		return false;
-
-
-	//Create input layout (every vertex)
-	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
-		/*{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA,0 }*/ //not in use
-		{ "TEXCOORD",0, DXGI_FORMAT_R32G32_FLOAT, 0,24, D3D11_INPUT_PER_VERTEX_DATA,0 } //We wont use Color here, that's why the offset is 32. were still using the same struct
-																						//Normals?
-
-	};
-	hr = this->gDevice->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &gInputLayout);
-	pVS->Release();
-	if (FAILED(hr))
-		return false;
-
-	//Geometry shader
-	ID3DBlob* pGS = nullptr;
-	D3DCompileFromFile(
-		L"GeometryShaderSky.hlsl",
-		nullptr,
-		nullptr,
-		"GS_main",
-		"gs_4_0",
-		0,
-		0,
-		&pGS,
-		nullptr);
-
- 	hr = this->gDevice->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &SKYMAP_GS);
-	pGS->Release();
-
-	if (FAILED(hr))
-		return false;
-
-
-
-
-
-
-
-
-
-	//Pixel shader
-	ID3DBlob *pPs = nullptr;
-	D3DCompileFromFile(
-		L"PixelShaderSky.hlsl",
-		nullptr,
-		nullptr,
-		"PS_main",
-		"ps_4_0",
-		0,
-		0,
-		&pPs,
-		nullptr);
-
-	hr = this->gDevice->CreatePixelShader(pPs->GetBufferPointer(), pPs->GetBufferSize(), nullptr, &SKYMAP_PS);
-	pPs->Release();
-	if (FAILED(hr))
-		return false;
-
-
-
-
-
-
-
-
-	return true;
-}
 bool SkyBox::createCube()
 {
 
@@ -523,13 +430,13 @@ bool SkyBox::createRenderStates()
 
 void SkyBox::render()
 {
-	this->gDeviceContext->VSSetShader(SKYMAP_VS, nullptr, 0);
+	/*this->gDeviceContext->VSSetShader(SKYMAP_VS, nullptr, 0);
 	this->gDeviceContext->HSSetShader(nullptr, nullptr, 0);
 	this->gDeviceContext->DSSetShader(nullptr, nullptr, 0);
 	this->gDeviceContext->GSSetShader(SKYMAP_GS, nullptr, 0);
 	this->gDeviceContext->PSSetShader(SKYMAP_PS, nullptr, 0);
 	this->gDeviceContext->IASetInputLayout(gInputLayout);
-
+*/
 
 	UINT32 vertexSize = sizeof(Vertex);
 	UINT32 offset = 0;
@@ -584,26 +491,25 @@ void SkyBox::update(XMFLOAT3 camPos)
 
 void SkyBox::Release()
 {
-	if (SKYMAP_VS != nullptr)
+	/*if (SKYMAP_VS != nullptr)
 		SKYMAP_VS->Release();
 	if (SKYMAP_GS != nullptr)
 		SKYMAP_GS->Release();
 	if (SKYMAP_PS != nullptr)
-		SKYMAP_PS->Release();
+		SKYMAP_PS->Release();*/
+
 	if (texture != nullptr)
 		texture->Release();
 	if (vertexBuffer != nullptr)
 		vertexBuffer->Release();
 	if (vertices != nullptr)
 		delete vertices;
-	if (gInputLayout != nullptr)
-		gInputLayout->Release();
-
+	
 	//no need to check i realized here. I do a check at initalization, if there is none of these things, the error will be shown att initalization
-	SKYMAP_VS->Release();
+	/*SKYMAP_VS->Release();
 	SKYMAP_PS->Release();
 
-	
+	*/
 	
 	DSLessEqual->Release();
 	RSCullNone->Release();

@@ -26,10 +26,11 @@ struct GSinput
 struct GSOutput
 {
 	float4 pos : SV_POSITION;
-	float2 Texture: TEXCOORD0;
+	float3 Texture: TEXCOORD0; //texture coords in a cube map consists of a 3 vector
 	float3 normal : NORMAL;
 	float4 wPos : WORLDPOS;
 	float3 camPos: CAMERAPOS;
+    
 };
 
 [maxvertexcount(3)]
@@ -38,6 +39,7 @@ void GS_main(
 	inout TriangleStream< GSOutput > output)
 
 {
+
 	float3 faceEdgeA = input[1].pos - input[0].pos;
 	float3 faceEdgeB = input[2].pos - input[0].pos;
 	float3 faceNormal = normalize(cross(faceEdgeA, faceEdgeB));
@@ -65,6 +67,10 @@ void GS_main(
 	//To show that it works : Create a vector from 0,0,-1  to viewDir,
 	if (dt > 0)
 	{
+
+
+
+        float3 origin = { 0.0f, 0.0f, 0.0f };
 		//combining the matrices for simpler use, also more efficient
 		matrix combinedMatrix = mul(world, mul(view, projection));
 
@@ -73,11 +79,23 @@ void GS_main(
 		for (uint i = 0; i < 3; i++)
 		{
 			GSOutput element;
+
+            /* 
+                    To find the texture coordinates.
+                    we need to create a vector from the origin to the vertex. (aka it's local space)
+                    That vector will be used to sample a texel in the cube map
+            */
+
+            element.Texture = input[i].pos.xyz;
+
+
+
+
 			element.pos = input[i].pos;
 			element.pos = mul(element.pos, combinedMatrix);
 			element.wPos = mul(input[i].pos, world);
 			element.camPos = camPos;
-			element.Texture = input[i].Texture;
+			
 
 
 			element.normal = mul(faceNormal, normalWorld);

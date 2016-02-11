@@ -13,11 +13,12 @@ SamplerState SampleType;
 Texture2D shaderTexture : register(t0);
 textureCUBE skyBoxTexture : register(t1);
 Texture2D renderTexture : register(t2);
+textureCUBE dynamicTexture : register(t3);
 
 struct PS_IN
 {
 	float4 pos : SV_POSITION;
-	float2 Texture : TEXCOORD0;
+	float3 Texture : TEXCOORD0;
 	float3 normal : NORMAL;
 	float4 wPos: WORLDPOS;
 	float3 camPos : CAMERAPOS;
@@ -49,7 +50,9 @@ float shinyPower = 20.0f;
 
 float3 specularLight = { lightColor.xyz * pow(max(dot(r,v),0.0),shinyPower) };
 
-float3 textureSample = shaderTexture.Sample(SampleType, input.Texture).xyz;
+    float4 origin = { 0.0f, 0.0f, 0.0f, 1.0f };
+    float3 samplePoint = input.wPos.xyz - origin.xyz;
+    float3 textureSample = dynamicTexture.Sample(SampleType, input.Texture).xyz;
 //float3 diffuse = textureSample * fDot;
 
 float3 ambient = { 0.1f, 0.1f, 0.1f };
@@ -66,26 +69,26 @@ float3 ambient = { 0.1f, 0.1f, 0.1f };
 ///////
 
 
-float3 diffuse = lightColor * fDot;
+//float3 diffuse = lightColor * fDot;
 
 
-float3 finalCol = (diffuse + ambient);
-finalCol = textureSample* finalCol; // texture * (diffuse + ambient)
-finalCol = finalCol + specularLight; // + specular
+//float3 finalCol = (diffuse + ambient);
+//finalCol = textureSample* finalCol; // texture * (diffuse + ambient)
+//finalCol = finalCol + specularLight; // + specular
 
 //float4 col ={ (ambient + diffuse + specularLight),1.0 }; //old Calculation
 
 //Calculate enviroment reflections
-float3 incident = input.wPos - input.camPos;
-float3 ref = reflect(incident, normalize(input.normal));
-float4 reflectionColor = skyBoxTexture.Sample(SampleType, ref);
-finalCol += reflectionColor.xyz *0.5;
+//float3 incident = input.wPos - input.camPos;
+//float3 ref = reflect(incident, normalize(input.normal));
+//float4 reflectionColor = skyBoxTexture.Sample(SampleType, ref);
+//finalCol += reflectionColor.xyz* 0.2;
 
-finalCol.x = min(finalCol.x, 1.0f);
-finalCol.y = min(finalCol.y, 1.0f);
-finalCol.z = min(finalCol.z, 1.0f);
+//finalCol.x = min(finalCol.x, 1.0f);
+//finalCol.y = min(finalCol.y, 1.0f);
+//finalCol.z = min(finalCol.z, 1.0f);
 
 
-float4 col = { finalCol,1.0 };
-return col;
+    float4 col = { textureSample, 1.0 };
+    return col;
 }

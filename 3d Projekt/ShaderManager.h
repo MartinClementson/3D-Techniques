@@ -22,6 +22,21 @@ private:
 	ID3D11PixelShader* gPixelShaderTexture = nullptr;
 	ID3D11InputLayout* gVertexLayoutTexture = nullptr;
 
+	//Shaders for skymap
+	ID3D11VertexShader* SKYMAP_VS = nullptr;
+	ID3D11GeometryShader* SKYMAP_GS = nullptr;
+	ID3D11PixelShader* SKYMAP_PS = nullptr;
+	ID3D11InputLayout* gVertexLayoutSky = nullptr;
+
+
+
+	//Shaders for the dynamic cube mapping
+
+	ID3D11VertexShader* CUBEMAP_VS = nullptr;
+	ID3D11GeometryShader* CUBEMAP_GS = nullptr;
+	ID3D11PixelShader* CUBEMAP_PS = nullptr;
+	ID3D11InputLayout* gVertexLayoutCubeMap = nullptr;
+
 
 	//SamplerStates
 	ID3D11SamplerState* gSampleState = nullptr;
@@ -31,6 +46,7 @@ private:
 	bool createTextureShader();
 	bool createColorShader();
 	bool createSkyShader();
+	bool createCubeMapShader();
 public:
 	ShaderManager();
 	~ShaderManager();
