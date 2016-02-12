@@ -340,34 +340,44 @@ void Engine::setViewPort()
 void Engine::loadModels()
 {
 
+#pragma region triangleHierarcy //#pragma region just makes the text collapsable
 	this->addModel(PYRAMID);
-	this->modelsColor->at(0)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
+	//this->modelsColor->at(0)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
 	this->modelsColor->at(0)->setRotateState(true);
-	this->modelsColor->at(0)->setTranslation(XMFLOAT3(0.5f, 0.0f, 0.0f));
-
+	this->modelsColor->at(0)->setTranslation(XMFLOAT3(0.0f, 0.5f, 4.0f));
 
 
 	this->addModel(PYRAMID);
-	this->modelsColor->at(1)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
+	//this->modelsColor->at(1)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
 	this->modelsColor->at(1)->setRotateState(true);
-	this->modelsColor->at(1)->setTranslation(XMFLOAT3(-0.5f, 0.0f, 0.0f));
+	this->modelsColor->at(1)->setRotationSpeed(1.0);
+	this->modelsColor->at(1)->setTranslation(XMFLOAT3(-1.0f, 0.0f, 4.0f));
+	this->modelsColor->at(1)->setPivotPoint(this->modelsColor->at(0)->getTranslation());
 
 
 	this->addModel(PYRAMID);
-	this->modelsColor->at(2)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
+	//this->modelsColor->at(2)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
 	this->modelsColor->at(2)->setRotateState(true);
-	this->modelsColor->at(2)->setTranslation(XMFLOAT3(0.0f, 0.5f, 0.0f));
+	this->modelsColor->at(2)->setRotationSpeed(1.0);
+	this->modelsColor->at(2)->setTranslation(XMFLOAT3(1.0f, 0.0f, 4.0f));
+	this->modelsColor->at(2)->setPivotPoint(this->modelsColor->at(0)->getTranslation());
 
+#pragma endregion end of hierarcy
 
 	this->addModel(PYRAMID);
 	this->modelsColor->at(3)->setScale(XMFLOAT3(0.6f, 0.6f, 0.6f));
 	this->modelsColor->at(3)->setRotation(XMFLOAT3(45.0f, 0.0f, 0.0f));
-	this->modelsColor->at(3)->setTranslation(XMFLOAT3(-5.0f, -0.5f, 0.0f));
+	this->modelsColor->at(3)->setRotationSpeed(-0.5);
+	this->modelsColor->at(3)->setTranslation(XMFLOAT3(-5.0f, -1.0f, 0.0f));
+	this->modelsColor->at(3)->setPivotPoint(XMFLOAT3(0.0f, 0.0f, 1.0f));
+	this->modelsColor->at(3)->setRotateState(true);
 
 
 	this->addModel(CUBE);
 	this->modelsColor->at(4)->setScale(XMFLOAT3(10.f, 10.0f, 10.0f));
 	this->modelsColor->at(4)->setTranslation(XMFLOAT3(0.5f, 1.0f, 30.0f));
+	this->modelsColor->at(4)->setRotateState(true);
+
 
 	this->addModel(OBJ);
 	this->modelsTexture->at(0)->setTranslation(XMFLOAT3(5.0f, 0.0f, 0.0f));
@@ -376,6 +386,7 @@ void Engine::loadModels()
 	this->addModel(OBJ, "BTHcube.obj");
 	this->modelsTexture->at(1)->setTranslation(XMFLOAT3(0.0f, 1.0f, 5.0f));
 	this->modelsTexture->at(1)->setRotateState(true);
+	this->modelsTexture->at(1)->setRotationSpeed(1.0f);
 	this->modelsTexture->at(1)->setPivotPoint(XMFLOAT3(0.0f, 0.0f, 1.0f));
 
 	this->addModel(OBJ, "plane.obj");

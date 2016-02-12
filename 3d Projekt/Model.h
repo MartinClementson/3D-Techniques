@@ -10,9 +10,9 @@ protected:
 
 	//Rotation bool, So every object can set rotation on/off
 	bool rotate = false;
+	float rotationSpeed = 0.2f;
 
-
-	XMFLOAT3 pivotPoint;
+	XMFLOAT3 pivotPoint = { 0.0f,0.0f,0.0f};
 
 	XMFLOAT3 translation;
 	XMFLOAT3 rotation;
@@ -65,6 +65,7 @@ public:
 
 	void setVertex(Vertex nVertex); //<---------------------- may not be needed
 	void setRotateState(bool state);
+	void setRotationSpeed(float speed) { this->rotationSpeed = speed; };
 	void setPivotPoint(XMFLOAT3 newPosition);
 
 	void setTranslation(XMFLOAT3 newTranslation);
