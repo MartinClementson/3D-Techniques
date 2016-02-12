@@ -29,33 +29,41 @@ struct PS_IN
 float4 PS_main(PS_IN input) : SV_TARGET
 {
 
+	/*
+		Using specular light on this, makes the edges of the quads visible,
+		until we fix the normals. Don't use the specular on this
+	
+	*/
+
+
+
  //The light ray from the vert position to the light
 //normalized to be used as a direction vector
-float3 vRay = normalize((float3)(lightPosition - input.wPos));
-
-//create a ray from the vert pos to the camera.
-float3 v = normalize(input.camPos - input.wPos.xyz);
-
-//Reflect is used in the specular shading
-float3 r = reflect(-vRay, normalize(input.normal));
-
-//Calculate how much of the pixel is to be lit
-float fDot = max(0.0f, dot(normalize(vRay), normalize(input.normal)));
-
-float3 color = lightColor.xyz;
-
-float3 lightColor = mul(color, intensity);
-
-float shinyPower = 20.0f;
-
-float3 specularLight = { lightColor.xyz * pow(max(dot(r,v),0.0),shinyPower) };
-
-    float4 origin = { 0.0f, 0.0f, 0.0f, 1.0f };
-    float3 samplePoint = input.wPos.xyz - origin.xyz;
-    float3 textureSample = dynamicTexture.Sample(SampleType, input.Texture).xyz;
+//float3 vRay = normalize((float3)(lightPosition - input.wPos));
+//
+////create a ray from the vert pos to the camera.
+//float3 v = normalize(input.camPos - input.wPos.xyz);
+//
+////Reflect is used in the specular shading
+//float3 r = reflect(-vRay, normalize(input.normal));
+//
+////Calculate how much of the pixel is to be lit
+//float fDot = max(0.0f, dot(normalize(vRay), normalize(input.normal)));
+//
+//float3 color = lightColor.xyz;
+//
+//float3 lightColor = mul(color, intensity);
+//
+//float shinyPower = 20.0f;
+//
+//float3 specularLight = { lightColor.xyz * pow(max(dot(r,v),0.0),shinyPower) };
+//
+//
+   
+float3 textureSample = dynamicTexture.Sample(SampleType, input.Texture).xyz;
 //float3 diffuse = textureSample * fDot;
 
-float3 ambient = { 0.1f, 0.1f, 0.1f };
+//float3 ambient = { 0.1f, 0.1f, 0.1f };
 
 
 
@@ -71,7 +79,7 @@ float3 ambient = { 0.1f, 0.1f, 0.1f };
 
 //float3 diffuse = lightColor * fDot;
 
-
+//
 //float3 finalCol = (diffuse + ambient);
 //finalCol = textureSample* finalCol; // texture * (diffuse + ambient)
 //finalCol = finalCol + specularLight; // + specular
