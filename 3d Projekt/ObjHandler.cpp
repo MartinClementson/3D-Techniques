@@ -146,8 +146,9 @@ Engine->render()
 	vector<DirectX::XMFLOAT3> uvCoord, vCoord;
 	Vertex normIn;
 	DirectX::XMFLOAT3 uvIn, vecIn;
+	bool moreObjects = false;
 	
-	int count = 0;
+	int count = 0, offset = 0;
 	//string fileName = "test.obj";
 	string line2;
 	ifstream loading;
@@ -188,7 +189,7 @@ Engine->render()
 					vecIn.ColorPad = PAD;*/
 
 					vCoord.push_back(vecIn);
-					count++;
+					//count++;
 				}
 				if (line2 == "vt")
 				{
@@ -196,7 +197,7 @@ Engine->render()
 					loading >> uvIn.y;
 					uvIn.z = 1.0f;
 					uvCoord.push_back(uvIn);
-					count++;
+					//count++;
 				}
 				/*if (line2 == "vn")
 				{
@@ -226,11 +227,37 @@ Engine->render()
 								testIn.push_back(index);
 								loading.ignore();
 								count++;
+								if (loading.peek() == 'g')
+								{
+									if (moreObjects == false)
+										moreObjects = true;
+								}
 							}
 						}
 						else
 							loading.ignore();
 					//}
+				}
+				if (moreObjects)
+				{
+					*childrenArray = new vector<Model*>;
+					for (int i = 0; i < count; i++)
+					{
+
+						Coordinates.x = vCoord[(testIn[offset].x)].x;
+						Coordinates.y = vCoord[(testIn[offset].x)].y;
+						Coordinates.z = vCoord[(testIn[offset].x)].z;
+
+						Coordinates.u = uvCoord[(testIn[offset].y)].x;
+						Coordinates.v = uvCoord[(testIn[offset].y)].y;
+
+						offset++;
+
+					}
+					//kolla med martin
+					*childrenArray->push_back(new Model(Coordinates, mtlLib, gDevice, gDeviceContext, worldBuffer, worldStruct));
+					count = 0;
+					moreObjects = false;
 				}
 			}
 			/*for (int i = 0; i < testIn.size(); i++)
