@@ -43,7 +43,7 @@ protected:
 public:
 	Model();//Default constuctor
 
-	Model(std::vector<Vertex>* vertArray, std::string* texturePath, ID3D11Device* gDevice,
+	Model(std::vector<Vertex> *vertArray, std::string* texturePath, ID3D11Device* gDevice,
 		ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct); //this is the constructor for the children in the obj importer
 
 	Model(ID3D11DeviceContext* gDeviceContext, ID3D11Buffer* worldBuffer, worldConstantBuffer* worldStruct);

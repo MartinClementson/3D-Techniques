@@ -1,9 +1,9 @@
 #include "ObjHandler.h"
 #include <fstream>
-#include <vector>
 #include <iostream>
 #include <string>
 
+#include "Linker.h"
 #include "DataTypes.h"
 
 using namespace std;
@@ -39,7 +39,7 @@ std::string ObjHandler::MtlHandler(std::string &filePath, std::string &material)
 	return textureID;
 }
 
-ObjHandler::ObjHandler(std::vector<Model*>** childrenArray,std::string filePath, std::vector<Vertex>* modelVerts, std::string &textureName,
+ObjHandler::ObjHandler(std::vector<Model*>* childrenArray,std::string filePath, std::vector<Vertex>* modelVerts, std::string &textureName,
 	ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext,
 	ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct)
 {
@@ -241,8 +241,10 @@ Engine->render()
 				}
 				if (moreObjects)
 				{
-					*childrenArray = new vector<Model*>;
-					for (int i = offset; i < count; i++)
+					if (childrenArray == nullptr)
+						childrenArray = new vector<Model*>;
+					std::vector<Vertex>* sendCoordinates;
+					for (int i = 0; i < count; i++)
 					{
 
 						Coordinates.x = vCoord[(testIn[offset].x)].x;
@@ -252,14 +254,62 @@ Engine->render()
 						Coordinates.u = uvCoord[(testIn[offset].y)].x;
 						Coordinates.v = uvCoord[(testIn[offset].y)].y;
 
-						modelVerts->push_back(Coordinates);
+						sendCoordinates->push_back(Coordinates);
 
 						offset++;
 					}
-					//kolla med martin <-------------------------------------------------------------------------------------------------------
-					childrenArray[0]->push_back(new Model(*modelVerts, mtlLib, gDevice, gDeviceContext, worldBuffer, worldStruct));
+					//kolla med marti
+					
+					//vector<Vertex>::iterator send = sendCoordinates->begin();
+					childrenArray->push_back(new Model(sendCoordinates,&mtlLib, gDevice, gDeviceContext, worldBuffer, worldStruct));
 					count = 0;
 					moreObjects = false;
+				}
+				else if (childrenArray != nullptr)
+				{
+					std::vector<Vertex>* sendCoordinates;
+					for (int i = 0; i < count; i++)
+					{
+
+						Coordinates.x = vCoord[(testIn[offset].x)].x;
+						Coordinates.y = vCoord[(testIn[offset].x)].y;
+						Coordinates.z = vCoord[(testIn[offset].x)].z;
+
+						Coordinates.u = uvCoord[(testIn[offset].y)].x;
+						Coordinates.v = uvCoord[(testIn[offset].y)].y;
+
+						sendCoordinates->push_back(Coordinates);
+
+						offset++;
+					}
+					//kolla med marti
+
+					//vector<Vertex>::iterator send = sendCoordinates->begin();
+					childrenArray->push_back(new Model(sendCoordinates, &mtlLib, gDevice, gDeviceContext, worldBuffer, worldStruct));
+					count = 0;
+				}
+				else if (childrenArray == nullptr)
+				{
+					for (int i = 0; i < testIn.size(); i++)
+					{
+						Coordinates.x = vCoord[(testIn[i].x - 1)].x;
+						Coordinates.y = vCoord[(testIn[i].x - 1)].y;
+						Coordinates.z = vCoord[(testIn[i].x - 1)].z;
+
+
+						Coordinates.r = PAD;
+						Coordinates.g = PAD;
+						Coordinates.b = PAD;
+
+
+						Coordinates.u = uvCoord[(testIn[i].y - 1)].x;
+						Coordinates.v = uvCoord[(testIn[i].y - 1)].y;
+
+
+
+						//modelVerts->push_back(vCoord[(testIn[i].x - 1)]); //<---------------------
+						modelVerts->push_back(Coordinates);
+					}
 				}
 			}
 			/*for (int i = 0; i < testIn.size(); i++)
@@ -274,26 +324,26 @@ Engine->render()
 		//cout << "\n\n" << count;
 	}
 	loading.close();
-	for (int i = 0; i < testIn.size(); i++)
-	{
-		Coordinates.x = vCoord[(testIn[i].x - 1)].x;
-		Coordinates.y = vCoord[(testIn[i].x - 1)].y;
-		Coordinates.z = vCoord[(testIn[i].x - 1)].z;
-		
+	//for (int i = 0; i < testIn.size(); i++)
+	//{
+	//	Coordinates.x = vCoord[(testIn[i].x - 1)].x;
+	//	Coordinates.y = vCoord[(testIn[i].x - 1)].y;
+	//	Coordinates.z = vCoord[(testIn[i].x - 1)].z;
+	//	
 
-		Coordinates.r = PAD;
-		Coordinates.g = PAD;
-		Coordinates.b = PAD;
-		
+	//	Coordinates.r = PAD;
+	//	Coordinates.g = PAD;
+	//	Coordinates.b = PAD;
+	//	
 
-		Coordinates.u = uvCoord[(testIn[i].y - 1)].x;
-		Coordinates.v = uvCoord[(testIn[i].y - 1)].y;
-	
-	
+	//	Coordinates.u = uvCoord[(testIn[i].y - 1)].x;
+	//	Coordinates.v = uvCoord[(testIn[i].y - 1)].y;
+	//
+	//
 
-		//modelVerts->push_back(vCoord[(testIn[i].x - 1)]); //<---------------------
-		modelVerts->push_back(Coordinates);
-	}
+	//	//modelVerts->push_back(vCoord[(testIn[i].x - 1)]); //<---------------------
+	//	modelVerts->push_back(Coordinates);
+	//}
 
 	
 }

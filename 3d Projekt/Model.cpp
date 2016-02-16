@@ -13,7 +13,7 @@ Model::Model()
 	
 }
 //this is the constructor for the children in the obj importer
-Model::Model(std::vector<Vertex>* vertArray, std::string * texturePath, ID3D11Device* gDevice,
+Model::Model(std::vector<Vertex> *vertArray, std::string * texturePath, ID3D11Device* gDevice,
 	ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct)
 {
 
@@ -99,7 +99,7 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 	//texture file name
 	std::string textureFileName;
 
-	ObjHandler* importer = new ObjHandler(&children,filePath,vertices, textureFileName,gDevice,gDeviceContext,worldBuffer,worldStruct);//Make import
+	ObjHandler* importer = new ObjHandler(children,filePath,vertices, textureFileName,gDevice,gDeviceContext,worldBuffer,worldStruct);//Make import
 
 	//Load Texture 
 	loadTexture(gDevice, textureFileName);
