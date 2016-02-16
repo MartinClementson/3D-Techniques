@@ -428,16 +428,16 @@ void Engine::loadModels()
 	this->modelsColor->at(4)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
 	this->modelsColor->at(4)->setTranslation(XMFLOAT3(0.5f, 0.5f, 0.0f));
 
-	this->addModel(OBJ);
-	this->modelsTexture->at(0)->setTranslation(XMFLOAT3(5.0f, 0.0f, 0.0f));
-	//this->modelsTexture->at(0)->setRotateState(true);
+	//this->addModel(OBJ);
+	//this->modelsTexture->at(0)->setTranslation(XMFLOAT3(5.0f, 0.0f, 0.0f));
+	////this->modelsTexture->at(0)->setRotateState(true);
 
-	this->addModel(OBJ, "BTHcube.obj");
-	this->modelsTexture->at(1)->setTranslation(XMFLOAT3(0.0f, 0.0f, 5.0f));
-	this->modelsTexture->at(1)->setRotateState(true);
+	//this->addModel(OBJ, "BTHcube.obj");
+	//this->modelsTexture->at(1)->setTranslation(XMFLOAT3(0.0f, 0.0f, 5.0f));
+	//this->modelsTexture->at(1)->setRotateState(true);
 
-	this->addModel(OBJ, "plane.obj");
-	this->modelsTexture->at(2)->setTranslation(XMFLOAT3(0.0f, -2.0f, 0.0f));
+	this->addModel(OBJ, "cubes.obj");
+	this->modelsTexture->at(0)->setTranslation(XMFLOAT3(0.0f, -2.0f, 0.0f));
 }
 void Engine::loadLights()
 {
