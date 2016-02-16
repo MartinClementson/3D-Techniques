@@ -46,18 +46,18 @@ std::string ObjHandler::MtlHandler(std::string &filePath, std::string &material)
 
 void ObjHandler::create(std::vector<Model*>* childrenArray, std::vector<Vertex>* modelVerts,
 	std::string &textureName, ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext,
-	ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct, int &count, vector<DirectX::XMFLOAT3> uvCoord,
-	vector<DirectX::XMFLOAT3> vCoord, vector<DirectX::XMINT3> testIn, int *offset, bool *father)
+	ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct, int &count, std::vector<DirectX::XMFLOAT3> *uvCoord,
+	std::vector<DirectX::XMFLOAT3> *vCoord, std::vector<DirectX::XMINT3> *testIn, int &offset, bool &father)
 {
 	Vertex Coordinates;
 
 	if (father)
 	{
-		for (int i = 0; i < testIn.size(); i++)
+		for (int i = 0; i < testIn->size(); i++)
 		{
-			Coordinates.x = vCoord[(testIn[i].x - 1)].x;
-			Coordinates.y = vCoord[(testIn[i].x - 1)].y;
-			Coordinates.z = vCoord[(testIn[i].x - 1)].z;
+			Coordinates.x = vCoord->at((testIn->at(i).x - 1)).x;
+			Coordinates.y = vCoord->at((testIn->at(i).x - 1)).y;
+			Coordinates.z = vCoord->at((testIn->at(i).x - 1)).z;
 
 
 			Coordinates.r = PAD;
@@ -65,14 +65,16 @@ void ObjHandler::create(std::vector<Model*>* childrenArray, std::vector<Vertex>*
 			Coordinates.b = PAD;
 
 
-			Coordinates.u = uvCoord[(testIn[i].y - 1)].x;
-			Coordinates.v = uvCoord[(testIn[i].y - 1)].y;
+			Coordinates.u = uvCoord->at((testIn->at(i).y - 1)).x;
+			Coordinates.v = uvCoord->at((testIn->at(i).y - 1)).y;
 
 
 
 			modelVerts->push_back(Coordinates);
+			offset++;
 		}
 		father = false;
+		count = 0;
 	}
 	else
 	{
@@ -82,12 +84,12 @@ void ObjHandler::create(std::vector<Model*>* childrenArray, std::vector<Vertex>*
 		for (int i = 0; i < count; i++)
 		{
 
-			Coordinates.x = vCoord[(testIn[offset].x - 1)].x;
-			Coordinates.y = vCoord[(testIn[offset].x - 1)].y;
-			Coordinates.z = vCoord[(testIn[offset].x - 1)].z;
+			Coordinates.x = vCoord->at((testIn->at(offset).x - 1)).x;
+			Coordinates.y = vCoord->at((testIn->at(offset).x - 1)).y;
+			Coordinates.z = vCoord->at((testIn->at(offset).x - 1)).z;
 
-			Coordinates.u = uvCoord[(testIn[offset].y - 1)].x;
-			Coordinates.v = uvCoord[(testIn[offset].y - 1)].y;
+			Coordinates.u = uvCoord->at((testIn->at(offset).y - 1)).x;
+			Coordinates.v = uvCoord->at((testIn->at(offset).y - 1)).y;
 
 			sendCoordinates.push_back(Coordinates);
 
@@ -282,7 +284,8 @@ Engine->render()
 								count++;
 								if (loading.peek() == 'g' || loading.eof())
 								{
-									
+									create(childrenArray, modelVerts, mtlLib, gDevice, gDeviceContext, worldBuffer,
+										worldStruct, count, &uvCoord, &vCoord, &testIn, offset, father);
 								}
 							}
 						}
