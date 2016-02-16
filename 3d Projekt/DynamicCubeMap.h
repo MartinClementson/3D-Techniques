@@ -7,6 +7,21 @@ class Engine;
 3D game programming with direct X
  p.559
 */
+
+
+
+/*
+	
+	Before reading this, you should read the description for
+	RenderToTexture and have an understanding of that and understand cubetexturing.
+	
+	Cubetexturing should be briefly explained in skybox.h
+
+
+*/
+
+
+
 using namespace DirectX;
 
 

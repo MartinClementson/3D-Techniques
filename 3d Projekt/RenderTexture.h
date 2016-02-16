@@ -1,7 +1,8 @@
 #pragma once
 #include "Linker.h"
 
-
+#pragma region Comment
+//pragma region makes the text collapsable
 /*
 	What this class does: it creates a render target and store what is rendered
 	to a texture. 
@@ -28,6 +29,7 @@
 	more advanced variations of this
 
 */
+#pragma endregion Description of class
 
 
 

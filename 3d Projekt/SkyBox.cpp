@@ -2,6 +2,11 @@
 #include "DirectXToolkit.h"
 
 
+/* 
+
+	Read Skybox.h for description
+*/
+
 SkyBox::SkyBox()
 {
 	

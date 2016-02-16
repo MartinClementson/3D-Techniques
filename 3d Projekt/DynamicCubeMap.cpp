@@ -1,5 +1,8 @@
 #include "DynamicCubeMap.h"
 
+/*
+	For desciption. Read DynamicCubeMap.h
+*/
 
 DynamicCubeMap::DynamicCubeMap()
 {

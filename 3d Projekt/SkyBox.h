@@ -1,5 +1,40 @@
 #pragma once
 #include "Linker.h"
+
+
+#pragma region Comment
+//pragma region makes the text collapsable
+/*
+	The skybox is pretty straight forward, here we intoduce cube textures.
+
+	a cube texture. (a.k.a, cube mapping) is a texture file that is built up
+	of 6 individual pictures. 
+	https://upload.wikimedia.org/wikipedia/commons/b/b4/Skybox_example.png
+
+
+	To find which texel goes to which pixel, UV coordinates are not used as they are
+	normally. A 3d vector will be used.
+
+	The easy solution to that in this project, is that we take the vertex local position
+	as a direction vector that points to the texel to be used.
+
+
+	Furthermore, We create a cube and scale it up.
+	This cube needs to have its own depthstencilState and rasterizerstate, to make
+	it behave as a skybox should, for example always be behind all other geometry, etc.
+
+	The cube needs to be centered around the camera all the time. therefore the cameras position
+	is connected to the cube. 
+
+	It is also important that the box is as far away as it can be. Therefore, in the geometryshader
+	we give the z value the value of w. so that z always gets the value 1. which
+	is the farthest possible depth.
+
+
+*/
+
+#pragma endregion Description of class
+
 using namespace DirectX;
 class SkyBox
 {
