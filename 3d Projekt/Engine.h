@@ -1,4 +1,5 @@
 #pragma once
+#pragma region Includes
 #include "Linker.h"
 #include "Model.h"
 #include "RenderTexture.h"
@@ -12,26 +13,40 @@
 #include "ShaderManager.h"
 #include "DynamicCubeMap.h"
 class DynamicCubeMap; //forward declaration
+#pragma endregion
+
+
 class Engine
 {
 
 private:
-	Camera* cam; 
-	
-	SkyBox* sky;
+#pragma region Custom Classes
+	Camera* cam = nullptr; 
+	Input* input = nullptr;
+	SkyBox* sky = nullptr;
+	ShaderManager* shaderManager = nullptr;
+	DynamicCubeMap* dynCubeMap = nullptr;
+	RenderTexture* renderTexture;
+
+#pragma endregion
 
 	int vertexAmount;
 	int modelAmount;
 	int lightAmount;
+
+
+#pragma region Model arrays
 	std::vector<Model*>* modelsColor;
 	std::vector<Model*>* modelsTexture;
 	std::vector<Model*>* cubeMapModels; //Models to use the Dynamic cube map as reflection. This is very demanding, and should not be many objects
 	std::vector<Light>* lights;
+#pragma endregion
 	
-	Input* input;
-	ID3D11Debug* debug;
+#pragma region COM objects/DirectX
+	ID3D11Debug* debug; //Debug COM
+	HRESULT hr; //Result variable
 
-	HRESULT hr;
+
 	ID3D11Device *gDevice = nullptr;
 	ID3D11DeviceContext* gDeviceContext = nullptr;
 	
@@ -44,10 +59,6 @@ private:
 	ID3D11DepthStencilView* depthStencilView = nullptr;
 	ID3D11Texture2D *depthBuffer = nullptr;
 	
-	ShaderManager* shaderManager = nullptr;
-	DynamicCubeMap* dynCubeMap = nullptr;
-
-	RenderTexture* renderTexture;
 	//SamplerState
 	ID3D11SamplerState* gSampleState = nullptr;
 
@@ -63,16 +74,19 @@ private:
 
 	lightConstantBuffer lightStruct;
 	ID3D11Buffer* lightBuffer = nullptr;
+	D3D11_VIEWPORT vp; //Viewport
 
 	HWND* wndHandle;
+#pragma endregion
 
+#pragma region Private functions
 	HRESULT CreateDirect3DContext(HWND* wndHandle);
 	void setViewPort();
 	
 	void createRasterizerState();
 	void createConstantBuffers();
-	D3D11_VIEWPORT vp; //Viewport
 	void errorMsg(std::string msg); //a function to show errors
+#pragma endregion
 
 public:
 	Engine();
