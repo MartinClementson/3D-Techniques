@@ -140,6 +140,7 @@ Engine->render()
 
 	//big variable that everything goes into
 	Vertex Coordinates;
+	vector<Vertex>* allCoordinates;
 	std::string mtlLib = "";
 
 	vector<Vertex> vNCoord;
@@ -241,7 +242,7 @@ Engine->render()
 				if (moreObjects)
 				{
 					*childrenArray = new vector<Model*>;
-					for (int i = 0; i < count; i++)
+					for (int i = offset; i < count; i++)
 					{
 
 						Coordinates.x = vCoord[(testIn[offset].x)].x;
@@ -251,11 +252,12 @@ Engine->render()
 						Coordinates.u = uvCoord[(testIn[offset].y)].x;
 						Coordinates.v = uvCoord[(testIn[offset].y)].y;
 
-						offset++;
+						modelVerts->push_back(Coordinates);
 
+						offset++;
 					}
-					//kolla med martin
-					*childrenArray->push_back(new Model(Coordinates, mtlLib, gDevice, gDeviceContext, worldBuffer, worldStruct));
+					//kolla med martin <-------------------------------------------------------------------------------------------------------
+					childrenArray[0]->push_back(new Model(*modelVerts, mtlLib, gDevice, gDeviceContext, worldBuffer, worldStruct));
 					count = 0;
 					moreObjects = false;
 				}
