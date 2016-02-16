@@ -324,9 +324,7 @@ std::vector<Vertex>* Cube::getVerts()
 
 void Cube::update()
 {
-	float static angle = 0; //<----- just temporary to test rotation
-	angle += 0.01f;
-	this->setRotation(XMFLOAT3(0, angle, 0));
+	
 	return Model::update();
 }
 

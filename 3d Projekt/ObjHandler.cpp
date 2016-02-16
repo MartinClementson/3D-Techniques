@@ -49,7 +49,7 @@ ObjHandler::ObjHandler(std::vector<Model*>* childrenArray,std::string filePath, 
 	ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct)
 {
 
-	
+#pragma region Description
 	///////////////////////////////////////////////////////
 	
 	
@@ -130,7 +130,7 @@ Engine->render()
 	
 	*/
 
-	
+#pragma endregion Explaination of function
 
 
 

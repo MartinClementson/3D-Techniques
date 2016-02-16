@@ -16,7 +16,7 @@ Model::Model()
 Model::Model(std::vector<Vertex> *vertArray, std::string * texturePath, ID3D11Device* gDevice,
 	ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct)
 {
-
+	
 	this->vertices = new std::vector<Vertex>;
 
 	for (int i = 0; i < vertArray->size(); i++)
@@ -34,6 +34,7 @@ Model::Model(std::vector<Vertex> *vertArray, std::string * texturePath, ID3D11De
 	this->scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	this->translation = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	this->rotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	this->pivotPoint = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	this->rotate = false;
 	//Load Texture 
 	loadTexture(gDevice, *texturePath);
@@ -95,7 +96,7 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 	this->scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	this->translation = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	this->rotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
-
+	this->pivotPoint = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	//texture file name
 	std::string textureFileName;
 
@@ -142,6 +143,7 @@ Model::Model(ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, w
 	this->scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	this->translation = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	this->rotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	this->pivotPoint = XMFLOAT3(0.0f, 0.0f, 0.0f);
 
 
 }
@@ -167,6 +169,27 @@ void Model::setVertex(Vertex nVertex)
 	this->vertices->push_back(nVertex);
 }
 
+void Model::sendToConstantBuffer()
+{
+
+	this->worldStruct->world = this->worldMatrix;
+	this->worldStruct->normalWorld = this->normalWorld;
+	D3D11_MAPPED_SUBRESOURCE mappedResourceWorld;
+	ZeroMemory(&mappedResourceWorld, sizeof(mappedResourceWorld));
+
+	//mapping to the matrixbuffer
+	this->gDeviceContext->Map(worldBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResourceWorld);
+
+	worldConstantBuffer* temporaryWorld = (worldConstantBuffer*)mappedResourceWorld.pData;
+
+	*temporaryWorld = *worldStruct;
+
+	this->gDeviceContext->Unmap(worldBuffer, 0);
+
+
+
+}
+
 void Model::createVertices(ID3D11Device* gDevice)
 {
 }
@@ -185,13 +208,32 @@ void Model::setPivotPoint(XMFLOAT3 newPosition)
 
 void Model::setTranslation(XMFLOAT3 newTranslation)
 {
+	//Calculate offset from pivot to the translation
+	XMFLOAT3 offset;
+
+	offset.x = pivotPoint.x - translation.x;
+	offset.y = pivotPoint.y - translation.y;
+	offset.z = pivotPoint.z - translation.z;
+		
+
+
+
+
+	this->pivotPoint.x = newTranslation.x + offset.x;
+	this->pivotPoint.y = newTranslation.y + offset.y;
+	this->pivotPoint.z = newTranslation.z + offset.z;
+
+	//PIVOT POINT MUST GET THE TRANSLATION AS WELL
+
 	this->translation = newTranslation;
 	updateWorldMatrix();
 }
 
 void Model::setRotation(XMFLOAT3 degrees)
 {
-	this->rotation = degrees;
+	this->rotation.x += degrees.x;
+	this->rotation.y += degrees.y;
+	this->rotation.z += degrees.z;
 	updateWorldMatrix();
 }
 
@@ -251,48 +293,46 @@ void Model::update()
 
 	if (rotate)
 	{
-		float static angle = 0; //<----- just temporary to test rotation
-		angle += 0.01f;
-		this->setRotation(XMFLOAT3(0, angle, 0));
+		
+		this->setRotation(XMFLOAT3(0, rotationSpeed, 0));
 
 
 	}
 
 	//Do Frame transformations here
 
-	//update and render children, If there is any
+	
+
+	//update  children, If there is any
 	if (this->children != nullptr)
 	{
-		renderChildren();
+		for (int i = 0; i < this->children->size(); i++) //maybe send in the worldStruct of the parent?
+		{
+			this->children->at(i)->update();
+
+		}
 
 	}
 
 
-	//Lastly, proceed to update this(the parent) model and continue render it.
+	
 
-	this->worldStruct->world = this->worldMatrix;
-	this->worldStruct->normalWorld = this->normalWorld;
+	
 
-	D3D11_MAPPED_SUBRESOURCE mappedResourceWorld;
-	ZeroMemory(&mappedResourceWorld, sizeof(mappedResourceWorld));
-
-	//mapping to the matrixbuffer
-	this->gDeviceContext->Map(worldBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResourceWorld);
-
-	worldConstantBuffer* temporaryWorld = (worldConstantBuffer*)mappedResourceWorld.pData;
-
-	*temporaryWorld = *worldStruct;
-
-	this->gDeviceContext->Unmap(worldBuffer, 0);
-
-	this->gDeviceContext->GSSetConstantBuffers(0, 1, &worldBuffer); 
 
 }
 
 void Model::render()
 {
 	//update and render all the children
-	this->update();
+	
+	if (this->children != nullptr)
+	{
+		renderChildren();
+
+	}
+	this->sendToConstantBuffer();
+	this->gDeviceContext->GSSetConstantBuffers(0, 1, &worldBuffer); 
 
 	UINT32 vertexSize = sizeof(Vertex);
 	UINT32 offset = 0;
@@ -334,16 +374,55 @@ void Model::updateWorldMatrix()
 	DirectX::XMMATRIX rotationMatrixX = DirectX::XMMatrixRotationX(toRadian(rotation.x));
 	DirectX::XMMATRIX rotationMatrixY = DirectX::XMMatrixRotationY(toRadian(rotation.y));
 	DirectX::XMMATRIX rotationMatrixZ = DirectX::XMMatrixRotationZ(toRadian(rotation.z));
+	
 
+	/*
+		To rotate around the models pivot point.
+
+		Translate to -pivot point, rotate*scale , translate back
+	
+	
+	
+	*/
+
+	
+	/*Get a vector from the translation to the pivot point */
+	XMFLOAT3 vectorToTranslate;
+	vectorToTranslate.x = pivotPoint.x - translation.x;
+	vectorToTranslate.y = pivotPoint.y - translation.y;
+	vectorToTranslate.z = pivotPoint.z - translation.z;
+
+	
+
+	
+	//Create the rotation matrix
 	DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixMultiply(rotationMatrixZ, rotationMatrixX);
 	rotationMatrix = DirectX::XMMatrixMultiply(rotationMatrix, rotationMatrixY);
 
 
+	//Intoduce the world matrix, multiply rotation and scale. (world translation comes later)
+	DirectX::XMMATRIX world = DirectX::XMMatrixMultiply(rotationMatrix, scaleMatrix);
+	
+	//Translate the distance of the translation------>pivot (Inverted) vector
+	DirectX::XMMATRIX pivotTranslation = DirectX::XMMatrixTranslation(vectorToTranslate.x*-1, vectorToTranslate.y*-1, vectorToTranslate.z* -1);
+	
+	//Multiply the rotation and scale matrix with this translation
+	world = DirectX::XMMatrixMultiply(pivotTranslation,world);
+
+	//Turn back the inverted vector and create a matrix that will translate back to origin
+	pivotTranslation = DirectX::XMMatrixTranslation(vectorToTranslate.x, vectorToTranslate.y, vectorToTranslate.z);
+	
+	//Translate back to original position (origin)
+	world = DirectX::XMMatrixMultiply(world, pivotTranslation);
+
+
+
+	//Create the world translation matrix
 	DirectX::XMMATRIX translationMatrix = DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z);
 
-
-	DirectX::XMMATRIX world = DirectX::XMMatrixMultiply(rotationMatrix, scaleMatrix);
+	//Multiply the (scale*rotation) matrix with the world translation matrix
 	world = DirectX::XMMatrixMultiply(world, translationMatrix);
+
 	XMVECTOR worldDet = XMMatrixDeterminant(world);
 	XMStoreFloat4x4(&normalWorld, XMMatrixInverse(&worldDet, world));
 	

@@ -72,15 +72,28 @@ Camera::~Camera()
 {
 }
 
-void Camera::setViewPosition(DirectX::XMFLOAT3& nViewPos)
+void Camera::setViewPosition(DirectX::XMFLOAT3 nViewPos)
 {
 	this->viewPosition = nViewPos;
 }
 
-void Camera::setViewLookAt(DirectX::XMFLOAT3& nViewLookAt)
+void Camera::setViewLookAt(DirectX::XMFLOAT3 nViewLookAt)
 {
 	
 	this->viewLookAt = nViewLookAt;
+}
+
+void Camera::setViewUpDirection(XMFLOAT3 nViewUpDirection)
+{
+	this->viewUpDirection = nViewUpDirection;
+}
+
+void Camera::setCameraLens(float angle, float ratio, float nearPlane, float farPlane)
+{
+	DirectX::XMMATRIX tempProjection;
+	tempProjection = DirectX::XMMatrixPerspectiveFovLH(angle, ratio, nearPlane, farPlane);
+	tempProjection = DirectX::XMMatrixTranspose(tempProjection);
+	DirectX::XMStoreFloat4x4(&projection, tempProjection);
 }
 
 void Camera::rotateYaw(float angle)
@@ -112,8 +125,6 @@ void Camera::rotateYaw(float angle)
 	XMStoreFloat3(&viewLookAt, l);
 	/////
 	
-
-	this->updateView();
 
 }
 
@@ -154,9 +165,6 @@ void Camera::rotatePitch(float angle)
 	XMStoreFloat3(&viewLookAt,l );
 	/////
 
-
-
-	this->updateView();
 	
 
 }
@@ -164,7 +172,7 @@ void Camera::rotatePitch(float angle)
 DirectX::XMFLOAT4X4 Camera::getView()
 {
 	
-	
+	updateView();
 	return this->view;
 }
 
@@ -213,7 +221,7 @@ void Camera::walk(float d)
 	XMStoreFloat3(&viewLookAt, l); //store the "look at"
 
 
-	updateView(); //Update view matrix
+	
 }
 
 void Camera::strafe(float d)
@@ -248,8 +256,6 @@ void Camera::strafe(float d)
 	
 
 
-
-	updateView();
 
 
 

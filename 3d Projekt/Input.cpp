@@ -290,7 +290,7 @@ void Input::ProcessInput()
 	}
 	else if (mouseShiftTimer < 3.5f)
 	{
-		mouseShiftTimer += 0.001;
+		mouseShiftTimer += 0.1;
 	}
 	
 	
