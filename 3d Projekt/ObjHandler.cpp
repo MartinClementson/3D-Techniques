@@ -25,7 +25,6 @@ std::string ObjHandler::MtlHandler(std::string &filePath, std::string &material)
 	{
 		while (!loading.eof())
 		{
-			//loading >> line2;
 			if (line2 == material)
 			{
 				//input materials here later
@@ -193,31 +192,23 @@ Engine->render()
 
 
 
-	///////////////////////////////////////////////////////
-	//Recieve a string to the file path,
-	//Recieve a pointer to the model class vertices array
-
+	
 	vector<DirectX::XMINT3> testIn;
 	DirectX::XMINT3 index;
 
 	//big variable that everything goes into
-	Vertex Coordinates;
-	vector<Vertex>* allCoordinates;
 	std::string mtlLib = "";
 
 	vector<Vertex> vNCoord;
 	vector<DirectX::XMFLOAT3> uvCoord, vCoord;
 	Vertex normIn;
 	DirectX::XMFLOAT3 uvIn, vecIn;
-	bool moreObjects = false;
 	bool father = true;
 
 	int count = 0, offset = 0;
-	//string fileName = "test.obj";
 	string line2;
 	ifstream loading;
 	loading.open(filePath);
-	//std::istringstream inputString();
 	if (!loading)
 		std::cout << "\nFailed to load file";
 	else
@@ -244,7 +235,6 @@ Engine->render()
 					loading >> vecIn.z;
 
 					vCoord.push_back(vecIn);
-					//count++;
 				}
 				if (line2 == "vt")
 				{
@@ -252,7 +242,6 @@ Engine->render()
 					loading >> uvIn.y;
 					uvIn.z = 1.0f;
 					uvCoord.push_back(uvIn);
-					//count++;
 				}
 				/*if (line2 == "vn")
 				{
@@ -266,14 +255,10 @@ Engine->render()
 				{
 					loading.ignore();
 					//for (int i = 0; i < 3; i++) //some .obj files have 4 faces, make a while loops that peeks the next character and bases the loop on that
-					//{
 						if (loading.peek() != ' ' && loading.peek() != '/')
 						{
 							for (int x = 0; x < 3; x++)
 							{
-								/*loading >> tempIndex[x];
-								testIn.push_back(tempIndex[x]);
-								loading.ignore();*/
 								loading >> index.x;
 								loading.ignore();
 								loading >> index.y;
@@ -291,45 +276,15 @@ Engine->render()
 						}
 						else
 							loading.ignore();
-					//}
-				
 				}
 			}
-			/*for (int i = 0; i < testIn.size(); i++)
-			{
-			}*/
 		}
 		catch (...)
 		{
-			//cout << "failed";
 			throw;
 		}
-		//cout << "\n\n" << count;
 	}
 	loading.close();
-	//childrenArray = nullptr;
-	//for (int i = 0; i < testIn.size(); i++)
-	//{
-	//	Coordinates.x = vCoord[(testIn[i].x - 1)].x;
-	//	Coordinates.y = vCoord[(testIn[i].x - 1)].y;
-	//	Coordinates.z = vCoord[(testIn[i].x - 1)].z;
-	//	
-
-	//	Coordinates.r = PAD;
-	//	Coordinates.g = PAD;
-	//	Coordinates.b = PAD;
-	//	
-
-	//	Coordinates.u = uvCoord[(testIn[i].y - 1)].x;
-	//	Coordinates.v = uvCoord[(testIn[i].y - 1)].y;
-	//
-	//
-
-	//	//modelVerts->push_back(vCoord[(testIn[i].x - 1)]); //<---------------------
-	//	modelVerts->push_back(Coordinates);
-	//}
-
-	
 }
 
 
