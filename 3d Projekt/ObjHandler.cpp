@@ -44,6 +44,61 @@ std::string ObjHandler::MtlHandler(std::string &filePath, std::string &material)
 	return textureID;
 }
 
+void ObjHandler::create(std::vector<Model*>* childrenArray, std::vector<Vertex>* modelVerts,
+	std::string &textureName, ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext,
+	ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct, int &count, vector<DirectX::XMFLOAT3> uvCoord,
+	vector<DirectX::XMFLOAT3> vCoord, vector<DirectX::XMINT3> testIn, int *offset, bool *father)
+{
+	Vertex Coordinates;
+
+	if (father)
+	{
+		for (int i = 0; i < testIn.size(); i++)
+		{
+			Coordinates.x = vCoord[(testIn[i].x - 1)].x;
+			Coordinates.y = vCoord[(testIn[i].x - 1)].y;
+			Coordinates.z = vCoord[(testIn[i].x - 1)].z;
+
+
+			Coordinates.r = PAD;
+			Coordinates.g = PAD;
+			Coordinates.b = PAD;
+
+
+			Coordinates.u = uvCoord[(testIn[i].y - 1)].x;
+			Coordinates.v = uvCoord[(testIn[i].y - 1)].y;
+
+
+
+			modelVerts->push_back(Coordinates);
+		}
+		father = false;
+	}
+	else
+	{
+		if (childrenArray == nullptr)
+			childrenArray = new vector<Model*>;
+		std::vector<Vertex> sendCoordinates;
+		for (int i = 0; i < count; i++)
+		{
+
+			Coordinates.x = vCoord[(testIn[offset].x - 1)].x;
+			Coordinates.y = vCoord[(testIn[offset].x - 1)].y;
+			Coordinates.z = vCoord[(testIn[offset].x - 1)].z;
+
+			Coordinates.u = uvCoord[(testIn[offset].y - 1)].x;
+			Coordinates.v = uvCoord[(testIn[offset].y - 1)].y;
+
+			sendCoordinates.push_back(Coordinates);
+
+			offset++;
+		}
+
+		childrenArray->push_back(new Model(&sendCoordinates, &textureName, gDevice, gDeviceContext, worldBuffer, worldStruct));
+		count = 0;
+	}
+}
+
 ObjHandler::ObjHandler(std::vector<Model*>* childrenArray,std::string filePath, std::vector<Vertex>* modelVerts, std::string &textureName,
 	ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext,
 	ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct)
@@ -153,7 +208,7 @@ Engine->render()
 	Vertex normIn;
 	DirectX::XMFLOAT3 uvIn, vecIn;
 	bool moreObjects = false;
-	bool indexComplete = false;
+	bool father = true;
 
 	int count = 0, offset = 0;
 	//string fileName = "test.obj";
@@ -165,8 +220,6 @@ Engine->render()
 		std::cout << "\nFailed to load file";
 	else
 	{
-		//int tempIndex[3];
-		int tempIndex;
 		try
 		{
 			while (!loading.eof())
@@ -227,93 +280,16 @@ Engine->render()
 								testIn.push_back(index);
 								loading.ignore();
 								count++;
-								if (loading.peek() == 'g')
+								if (loading.peek() == 'g' || loading.eof())
 								{
-									if (moreObjects == false)
-										moreObjects = true;
+									
 								}
 							}
 						}
 						else
 							loading.ignore();
 					//}
-						indexComplete = true;
-				}
-				if (indexComplete == true && loading.peek() != 'f')
-				{
-					if (moreObjects)
-					{
-						if (childrenArray == nullptr)
-							childrenArray = new vector<Model*>;
-						std::vector<Vertex> sendCoordinates;
-						for (int i = 0; i < count; i++)
-						{
-
-							Coordinates.x = vCoord[(testIn[offset].x - 1)].x;
-							Coordinates.y = vCoord[(testIn[offset].x - 1)].y;
-							Coordinates.z = vCoord[(testIn[offset].x - 1)].z;
-
-							Coordinates.u = uvCoord[(testIn[offset].y - 1)].x;
-							Coordinates.v = uvCoord[(testIn[offset].y - 1)].y;
-
-							sendCoordinates.push_back(Coordinates);
-
-							offset++;
-						}
-						//kolla med marti
-
-						//vector<Vertex>::iterator send = sendCoordinates->begin();
-						childrenArray->push_back(new Model(&sendCoordinates, &mtlLib, gDevice, gDeviceContext, worldBuffer, worldStruct));
-						count = 0;
-						moreObjects = false;
-					}
-					else if (childrenArray != nullptr)
-					{
-						std::vector<Vertex> sendCoordinates;
-						for (int i = 0; i < count; i++)
-						{
-
-							Coordinates.x = vCoord[(testIn[offset].x - 1)].x;
-							Coordinates.y = vCoord[(testIn[offset].x - 1)].y;
-							Coordinates.z = vCoord[(testIn[offset].x - 1)].z;
-
-							Coordinates.u = uvCoord[(testIn[offset].y - 1)].x;
-							Coordinates.v = uvCoord[(testIn[offset].y - 1)].y;
-
-							sendCoordinates.push_back(Coordinates);
-
-							offset++;
-						}
-						//kolla med marti
-
-						//vector<Vertex>::iterator send = sendCoordinates->begin();
-						childrenArray->push_back(new Model(&sendCoordinates, &mtlLib, gDevice, gDeviceContext, worldBuffer, worldStruct));
-						count = 0;
-					}
-					else if (childrenArray == nullptr)
-					{
-						for (int i = 0; i < testIn.size(); i++)
-						{
-							Coordinates.x = vCoord[(testIn[i].x - 1)].x;
-							Coordinates.y = vCoord[(testIn[i].x - 1)].y;
-							Coordinates.z = vCoord[(testIn[i].x - 1)].z;
-
-
-							Coordinates.r = PAD;
-							Coordinates.g = PAD;
-							Coordinates.b = PAD;
-
-
-							Coordinates.u = uvCoord[(testIn[i].y - 1)].x;
-							Coordinates.v = uvCoord[(testIn[i].y - 1)].y;
-
-
-
-							//modelVerts->push_back(vCoord[(testIn[i].x - 1)]); //<---------------------
-							modelVerts->push_back(Coordinates);
-						}
-					}
-					indexComplete = false;
+				
 				}
 			}
 			/*for (int i = 0; i < testIn.size(); i++)
@@ -328,6 +304,7 @@ Engine->render()
 		//cout << "\n\n" << count;
 	}
 	loading.close();
+	childrenArray = nullptr;
 	//for (int i = 0; i < testIn.size(); i++)
 	//{
 	//	Coordinates.x = vCoord[(testIn[i].x - 1)].x;
