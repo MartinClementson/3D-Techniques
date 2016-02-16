@@ -2,18 +2,21 @@
 #include <fstream>
 
 
-void Terrain::release()
+void Terrain::Release()
 {
-	mHeightMap->Release();
+	heightMapRSV->Release();
 }
 
 Terrain::Terrain()
 {
+	heightMapHeight = 2049;
+	heightMapWidth = 2049;
+	heightScale = 50;
 }
 
 bool Terrain::inBounds(int i, int j)
 {
-
+	return true;
 }
 
 float Terrain::average(int i, int j)
@@ -28,16 +31,24 @@ void Terrain::smooth()
 bool Terrain::init(std::string fileName, ID3D11Device *gDevice, ID3D11DeviceContext *gDeviceContext)
 {
 	HRESULT hr;
-	std::vector<unsigned char> in;
+	std::vector<unsigned char> in(heightMapHeight * heightMapWidth);
 	std::ifstream loading;
-	loading.open(fileName);
+	loading.open("terrain.raw", std::ios_base::binary);
 	if (!loading)
 		return false;
 	else
 	{
 		loading.read((char*)&in[0], (std::streamsize)in.size());
+
+		loading.close();
 	}
-	return hr;
+	mHeightMap.resize((heightMapHeight * heightMapWidth), 0);
+	for (UINT i = 0; i < (heightMapHeight * heightMapWidth); ++i)
+	{
+
+		mHeightMap.at(i) = (in.at(i) / 255.0f)*heightScale;
+	}
+	return true;
 }
 
 Terrain::~Terrain()

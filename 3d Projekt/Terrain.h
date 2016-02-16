@@ -13,9 +13,9 @@ private:
 	float average(int i, int j);
 	void smooth();
 
-	ID3D11ShaderResourceView *mHeightMap = nullptr;
+	ID3D11ShaderResourceView *heightMapRSV = nullptr;
 public:
-	void release();
+	void Release();
 	Terrain();
 	bool init(std::string fileName, ID3D11Device *gDevice, ID3D11DeviceContext *gDeviceContext);
 	~Terrain();
