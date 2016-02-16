@@ -101,11 +101,12 @@ public:
 	void run();
 	void update();
 	void render();
-
+#pragma region Adding models
 	void loadModels();
 	void addModel(Primitives type);
 	void addModel(Primitives type, std::string filename); //overload, for OBJ
 	void addModel(Primitives type, std::string filename, ShaderTypes shaderToBeUsed); //overload, for OBJ
+#pragma endregion
 	void updateCamera(Camera* cameraToRender);
 	void updateLight();
 	void loadLights();
