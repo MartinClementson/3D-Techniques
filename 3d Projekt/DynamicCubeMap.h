@@ -9,7 +9,8 @@ class Engine;
 */
 
 
-
+#pragma region Comment
+//pragma region makes the text collapsable
 /*
 	
 	Before reading this, you should read the description for
@@ -18,8 +19,32 @@ class Engine;
 	Cubetexturing should be briefly explained in skybox.h
 
 
-*/
+	This method is somewhat of a combination of the technique used in
+	render to texture, and skybox.
 
+	In short. a dynamic cube map is a cubetexture that keeps updating every frame.
+	therefore it is dynamic, since the texture can change every frame.
+
+	This could be used to make dynamic reflections. The dynamic aspect
+	is easily demonstrated by having animated objects in the scene, and see them
+	move in the reflection¨.
+
+
+	steps to this method
+
+	1. create 6 cameras, everyone looks down it's own world axis ( +x,-x,+y,-y,+z,-z)
+
+	2. position the cameras at the point where the reflective object is.
+
+	3. render the scene for every camera!, but do not render the reflective object. Render to a texture each
+
+	4. put the textures together as a cubemap.
+
+	5. use the cubemap as a texture for the reflective object.
+
+
+*/
+#pragma endregion Class description
 
 
 using namespace DirectX;
