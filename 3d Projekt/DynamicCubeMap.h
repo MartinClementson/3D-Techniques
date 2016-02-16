@@ -14,10 +14,9 @@ class Engine;
 /*
 	
 	Before reading this, you should read the description for
-	RenderToTexture and have an understanding of that and understand cubetexturing.
+	RenderToTexture and have an understanding of that and also understand cubetexturing.
 	
 	Cubetexturing should be briefly explained in skybox.h
-
 
 	This method is somewhat of a combination of the technique used in
 	render to texture, and skybox.
@@ -27,7 +26,7 @@ class Engine;
 
 	This could be used to make dynamic reflections. The dynamic aspect
 	is easily demonstrated by having animated objects in the scene, and see them
-	move in the reflection¨.
+	move in the reflection.
 
 
 	steps to this method

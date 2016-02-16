@@ -344,14 +344,14 @@ void Engine::loadModels()
 	this->addModel(PYRAMID);
 	//this->modelsColor->at(0)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
 	this->modelsColor->at(0)->setRotateState(true);
-	this->modelsColor->at(0)->setTranslation(XMFLOAT3(0.0f, 0.5f, 4.0f));
+	this->modelsColor->at(0)->setTranslation(XMFLOAT3(-10.0f, 1.0f, 4.0f));
 
 
 	this->addModel(PYRAMID);
 	//this->modelsColor->at(1)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
 	this->modelsColor->at(1)->setRotateState(true);
 	this->modelsColor->at(1)->setRotationSpeed(1.0);
-	this->modelsColor->at(1)->setTranslation(XMFLOAT3(-1.0f, 0.0f, 4.0f));
+	this->modelsColor->at(1)->setTranslation(XMFLOAT3(-12.0f, 0.0f, 4.0f));
 	this->modelsColor->at(1)->setPivotPoint(this->modelsColor->at(0)->getTranslation());
 
 
@@ -359,7 +359,7 @@ void Engine::loadModels()
 	//this->modelsColor->at(2)->setScale(XMFLOAT3(0.3f, 0.3f, 0.3f));
 	this->modelsColor->at(2)->setRotateState(true);
 	this->modelsColor->at(2)->setRotationSpeed(1.0);
-	this->modelsColor->at(2)->setTranslation(XMFLOAT3(1.0f, 0.0f, 4.0f));
+	this->modelsColor->at(2)->setTranslation(XMFLOAT3(-8.0f, 0.0f, 4.0f));
 	this->modelsColor->at(2)->setPivotPoint(this->modelsColor->at(0)->getTranslation());
 
 #pragma endregion end of hierarcy
