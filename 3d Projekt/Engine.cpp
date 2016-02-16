@@ -511,26 +511,26 @@ void Engine::render()
 			renderScene();
 			
 		}
+
 		else //render to backbuffer/screen. next loop
 		{
 
-			this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, depthStencilView);
+			this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, depthStencilView);	//Set backbuffer as render target
+			
+			/////////////////////////////////
+			//Set the renderToTexture as a subresource
 			ID3D11ShaderResourceView* shaderResourceViewz = renderTexture->GetShaderResourceView();
 			//Applu the renderTexture to the pixel shader
 			this->gDeviceContext->PSSetShaderResources(2, 1, &shaderResourceViewz);
-			//render skybox
-			
-			
-			//sky->update(this->cam->getCamPos()); //Send in the position of the camera. The skybox needs to be centered around the camera
-			//sky->render();
+			//////////////////////////////////
 
-			renderScene();
-			this->shaderManager->setActiveShaders(CUBEMAPSHADER);
-			this->cubeMapModels->at(0)->render();
+			renderScene();											//Render scene
+			this->shaderManager->setActiveShaders(CUBEMAPSHADER);	//Apply dynamic cube map shader
+			this->cubeMapModels->at(0)->render();					//Render the model using the dynamix cube map
 
 			//The render texture needs to be taken of as a shader resource
 			//This is so that we can write to it again in the next frame
-			//By not doing this, DirectX debug mode sent alot of warnings
+			//When we were not doing this, DirectX debug mode sent alot of warnings
 			ID3D11ShaderResourceView * tab[1];
 			tab[0] = NULL;
 			this->gDeviceContext->PSSetShaderResources(2, 1, tab);
@@ -548,6 +548,7 @@ void Engine::render()
 
 void Engine::renderScene() // This function will render the scene, no matter the render pass used
 {
+	//Render skybox
 	this->shaderManager->setActiveShaders(SKYBOXSHADER);
 	sky->update(this->cam->getCamPos()); //Send in the position of the camera. The skybox needs to be centered around the camera
 	sky->render();
