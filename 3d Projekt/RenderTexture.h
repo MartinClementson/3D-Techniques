@@ -1,5 +1,37 @@
 #pragma once
 #include "Linker.h"
+
+
+/*
+	What this class does: it creates a render target and store what is rendered
+	to a texture. 
+
+	When this is used. the scene will not be rendered to the backbuffer.
+	therefore, the user wont see what is rendered as it is only stored
+	as a texture.
+
+	To use this and still let the user see the scene, this needs to be a separate
+	rendering pass.
+
+	The texture can be used (after it's render pass) as any other texture.
+	Making it a dynamic texture.
+
+	This is, connected to the player camera. But can be set to any camera.
+
+
+	This is the fundamental technique to many things such as shadow mapping,
+	dynamic cube mapping, projective texturing, and more.
+
+
+	This technique is not on the list of things to do in the project.
+	However, it is very good to know how this works before turning to 
+	more advanced variations of this
+
+*/
+
+
+
+
 class RenderTexture
 {
 public:

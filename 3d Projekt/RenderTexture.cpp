@@ -1,5 +1,9 @@
 #include "RenderTexture.h"
 
+/*
+	Read RenderTexture.h for description
+*/
+
 
 
 RenderTexture::RenderTexture()
