@@ -1,9 +1,9 @@
 #include "ObjHandler.h"
 #include <fstream>
-#include <vector>
 #include <iostream>
 #include <string>
 
+#include "Linker.h"
 #include "DataTypes.h"
 
 using namespace std;
@@ -13,27 +13,91 @@ ObjHandler::ObjHandler()
 	
 }
 
-std::string ObjHandler::MtlHandler(std::string &filePath)
+std::string ObjHandler::MtlHandler(std::string &filePath, std::string &material)
 {
 	string textureID;
 	ifstream loading;
 	loading.open(filePath);
-	string line2;
+	string line2, line3;
 	if (!loading)
 		std::cout << "\nfailed to load texturefile";
 	else
 	{
 		while (!loading.eof())
 		{
-			loading >> line2;
-			if (line2 == "map_Kd")
+			if (line2 == material)
 			{
-				loading >> textureID;
+				//input materials here later
+				loading >> line3;
+				if (line3 == "map_Kd")
+				{
+					loading >> textureID;
+					line2 = "";
+				}
 			}
+			else
+				loading >> line2;
 		}
 	}
 	loading.close();
 	return textureID;
+}
+
+void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>* modelVerts,
+	std::string &textureName, ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext,
+	ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct, int &count, std::vector<DirectX::XMFLOAT3> *uvCoord,
+	std::vector<DirectX::XMFLOAT3> *vCoord, std::vector<DirectX::XMINT3> *testIn, int &offset, bool &father)
+{
+	Vertex Coordinates;
+
+	if (father)
+	{
+		for (int i = 0; i < testIn->size(); i++)
+		{
+			Coordinates.x = vCoord->at((testIn->at(i).x - 1)).x;
+			Coordinates.y = vCoord->at((testIn->at(i).x - 1)).y;
+			Coordinates.z = vCoord->at((testIn->at(i).x - 1)).z;
+
+
+			Coordinates.r = PAD;
+			Coordinates.g = PAD;
+			Coordinates.b = PAD;
+
+
+			Coordinates.u = uvCoord->at((testIn->at(i).y - 1)).x;
+			Coordinates.v = uvCoord->at((testIn->at(i).y - 1)).y;
+
+
+
+			modelVerts->push_back(Coordinates);
+			offset++;
+		}
+		father = false;
+		count = 0;
+	}
+	else
+	{
+		if (childrenArray[0] == nullptr)
+			childrenArray[0] = new vector<Model*>;
+		std::vector<Vertex> sendCoordinates;
+		for (int i = 0; i < count; i++)
+		{
+
+			Coordinates.x = vCoord->at((testIn->at(offset).x - 1)).x;
+			Coordinates.y = vCoord->at((testIn->at(offset).x - 1)).y;
+			Coordinates.z = vCoord->at((testIn->at(offset).x - 1)).z;
+
+			Coordinates.u = uvCoord->at((testIn->at(offset).y - 1)).x;
+			Coordinates.v = uvCoord->at((testIn->at(offset).y - 1)).y;
+
+			sendCoordinates.push_back(Coordinates);
+
+			offset++;
+		}
+
+		childrenArray[0]->push_back(new Model(&sendCoordinates, &textureName, gDevice, gDeviceContext, worldBuffer, worldStruct));
+		count = 0;
+	}
 }
 
 ObjHandler::ObjHandler(std::vector<Model*>** childrenArray,std::string filePath, std::vector<Vertex>* modelVerts, std::string &textureName,
@@ -128,34 +192,27 @@ Engine->render()
 
 
 
-	///////////////////////////////////////////////////////
-	//Recieve a string to the file path,
-	//Recieve a pointer to the model class vertices array
-
+	
 	vector<DirectX::XMINT3> testIn;
 	DirectX::XMINT3 index;
 
 	//big variable that everything goes into
-	Vertex Coordinates;
-
+	std::string mtlLib = "";
 
 	vector<Vertex> vNCoord;
 	vector<DirectX::XMFLOAT3> uvCoord, vCoord;
 	Vertex normIn;
 	DirectX::XMFLOAT3 uvIn, vecIn;
-	
-	int count = 0;
-	//string fileName = "test.obj";
+	bool father = true;
+
+	int count = 0, offset = 0;
 	string line2;
 	ifstream loading;
 	loading.open(filePath);
-	//std::istringstream inputString();
 	if (!loading)
 		std::cout << "\nFailed to load file";
 	else
 	{
-		//int tempIndex[3];
-		int tempIndex;
 		try
 		{
 			while (!loading.eof())
@@ -163,25 +220,21 @@ Engine->render()
 				loading >> line2;
 				if (line2 == "mtllib")
 				{
-					string tempString;
+					loading >> mtlLib;
+				}
+				if (line2 == "usemtl")
+				{
+					std::string tempString;
 					loading >> tempString;
-					textureName = MtlHandler(tempString);
+					textureName = MtlHandler(mtlLib, tempString);
 				}
 				if (line2 == "v")
 				{
 					loading >> vecIn.x;
 					loading >> vecIn.y;
 					loading >> vecIn.z;
-					//vecIn.pad = PAD;
-					
-					//temp <-----------------------------
-					/*vecIn.r = 0.0f;
-					vecIn.g = 1.0f;
-					vecIn.b = 0.0f;
-					vecIn.ColorPad = PAD;*/
 
 					vCoord.push_back(vecIn);
-					count++;
 				}
 				if (line2 == "vt")
 				{
@@ -189,7 +242,6 @@ Engine->render()
 					loading >> uvIn.y;
 					uvIn.z = 1.0f;
 					uvCoord.push_back(uvIn);
-					count++;
 				}
 				/*if (line2 == "vn")
 				{
@@ -203,14 +255,10 @@ Engine->render()
 				{
 					loading.ignore();
 					//for (int i = 0; i < 3; i++) //some .obj files have 4 faces, make a while loops that peeks the next character and bases the loop on that
-					//{
 						if (loading.peek() != ' ' && loading.peek() != '/')
 						{
 							for (int x = 0; x < 3; x++)
 							{
-								/*loading >> tempIndex[x];
-								testIn.push_back(tempIndex[x]);
-								loading.ignore();*/
 								loading >> index.x;
 								loading.ignore();
 								loading >> index.y;
@@ -219,47 +267,24 @@ Engine->render()
 								testIn.push_back(index);
 								loading.ignore();
 								count++;
+								if (loading.peek() == 'g' || loading.eof())
+								{
+									create(childrenArray, modelVerts, textureName, gDevice, gDeviceContext, worldBuffer,
+										worldStruct, count, &uvCoord, &vCoord, &testIn, offset, father);
+								}
 							}
 						}
 						else
 							loading.ignore();
-					//}
 				}
 			}
-			/*for (int i = 0; i < testIn.size(); i++)
-			{
-			}*/
 		}
 		catch (...)
 		{
-			//cout << "failed";
 			throw;
 		}
-		//cout << "\n\n" << count;
 	}
 	loading.close();
-	for (int i = 0; i < testIn.size(); i++)
-	{
-		Coordinates.x = vCoord[(testIn[i].x - 1)].x;
-		Coordinates.y = vCoord[(testIn[i].x - 1)].y;
-		Coordinates.z = vCoord[(testIn[i].x - 1)].z;
-		
-
-		Coordinates.r = PAD;
-		Coordinates.g = PAD;
-		Coordinates.b = PAD;
-		
-
-		Coordinates.u = uvCoord[(testIn[i].y - 1)].x;
-		Coordinates.v = uvCoord[(testIn[i].y - 1)].y;
-	
-	
-
-		//modelVerts->push_back(vCoord[(testIn[i].x - 1)]); //<---------------------
-		modelVerts->push_back(Coordinates);
-	}
-
-	
 }
 
 

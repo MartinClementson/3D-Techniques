@@ -13,7 +13,7 @@ Model::Model()
 	
 }
 //this is the constructor for the children in the obj importer
-Model::Model(std::vector<Vertex>* vertArray, std::string * texturePath, ID3D11Device* gDevice,
+Model::Model(std::vector<Vertex> *vertArray, std::string * texturePath, ID3D11Device* gDevice,
 	ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct)
 {
 	
@@ -358,7 +358,7 @@ void Model::renderChildren()
 	for (int i = 0; i < this->children->size(); i++)
 	{
 		this->children->at(i)->worldMatrix = this->worldMatrix;
-		this->children->at(i)->normalWorld = this->worldMatrix;
+		this->children->at(i)->normalWorld = this->normalWorld;
 		this->children->at(i)->render();
 	}
 

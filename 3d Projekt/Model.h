@@ -51,9 +51,11 @@ public:
 #pragma region Constructors
 	Model();//Default constuctor
 
+
 	//this is the constructor for the children in the obj importer
 	Model(std::vector<Vertex>* vertArray, std::string* texturePath, ID3D11Device* gDevice,
 		ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct);
+
 
 	//This is the constructor for the primitives
 	Model(ID3D11DeviceContext* gDeviceContext, ID3D11Buffer* worldBuffer, worldConstantBuffer* worldStruct);
