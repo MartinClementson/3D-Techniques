@@ -100,7 +100,7 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 	//texture file name
 	std::string textureFileName;
 
-	ObjHandler* importer = new ObjHandler(children,filePath,vertices, textureFileName,gDevice,gDeviceContext,worldBuffer,worldStruct);//Make import
+	ObjHandler* importer = new ObjHandler(&children,filePath,vertices, textureFileName,gDevice,gDeviceContext,worldBuffer,worldStruct);//Make import
 
 	//Load Texture 
 	loadTexture(gDevice, textureFileName);
@@ -358,7 +358,7 @@ void Model::renderChildren()
 	for (int i = 0; i < this->children->size(); i++)
 	{
 		this->children->at(i)->worldMatrix = this->worldMatrix;
-		this->children->at(i)->normalWorld = this->worldMatrix;
+		this->children->at(i)->normalWorld = this->normalWorld;
 		this->children->at(i)->render();
 	}
 

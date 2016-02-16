@@ -10,11 +10,11 @@ private:
 public:
 	ObjHandler();
 	
-	ObjHandler(std::vector<Model*>* childrenArray,std::string filePath, std::vector<Vertex>* modelVerts,
+	ObjHandler(std::vector<Model*>** childrenArray,std::string filePath, std::vector<Vertex>* modelVerts,
 		std::string &textureName, ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext,
 		ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct);
 
-	void create(std::vector<Model*>* childrenArray, std::vector<Vertex>* modelVerts,
+	void create(std::vector<Model*>** childrenArray, std::vector<Vertex>* modelVerts,
 		std::string &textureName, ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext,
 		ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct, int &count, std::vector<DirectX::XMFLOAT3> *uvCoord,
 		std::vector<DirectX::XMFLOAT3> *vCoord, std::vector<DirectX::XMINT3> *testIn, int &offset, bool &father);

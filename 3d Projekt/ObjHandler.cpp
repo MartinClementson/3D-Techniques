@@ -44,7 +44,7 @@ std::string ObjHandler::MtlHandler(std::string &filePath, std::string &material)
 	return textureID;
 }
 
-void ObjHandler::create(std::vector<Model*>* childrenArray, std::vector<Vertex>* modelVerts,
+void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>* modelVerts,
 	std::string &textureName, ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext,
 	ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct, int &count, std::vector<DirectX::XMFLOAT3> *uvCoord,
 	std::vector<DirectX::XMFLOAT3> *vCoord, std::vector<DirectX::XMINT3> *testIn, int &offset, bool &father)
@@ -78,8 +78,8 @@ void ObjHandler::create(std::vector<Model*>* childrenArray, std::vector<Vertex>*
 	}
 	else
 	{
-		if (childrenArray == nullptr)
-			childrenArray = new vector<Model*>;
+		if (childrenArray[0] == nullptr)
+			childrenArray[0] = new vector<Model*>;
 		std::vector<Vertex> sendCoordinates;
 		for (int i = 0; i < count; i++)
 		{
@@ -96,12 +96,12 @@ void ObjHandler::create(std::vector<Model*>* childrenArray, std::vector<Vertex>*
 			offset++;
 		}
 
-		childrenArray->push_back(new Model(&sendCoordinates, &textureName, gDevice, gDeviceContext, worldBuffer, worldStruct));
+		childrenArray[0]->push_back(new Model(&sendCoordinates, &textureName, gDevice, gDeviceContext, worldBuffer, worldStruct));
 		count = 0;
 	}
 }
 
-ObjHandler::ObjHandler(std::vector<Model*>* childrenArray,std::string filePath, std::vector<Vertex>* modelVerts, std::string &textureName,
+ObjHandler::ObjHandler(std::vector<Model*>** childrenArray,std::string filePath, std::vector<Vertex>* modelVerts, std::string &textureName,
 	ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext,
 	ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct)
 {
@@ -284,7 +284,7 @@ Engine->render()
 								count++;
 								if (loading.peek() == 'g' || loading.eof())
 								{
-									create(childrenArray, modelVerts, mtlLib, gDevice, gDeviceContext, worldBuffer,
+									create(childrenArray, modelVerts, textureName, gDevice, gDeviceContext, worldBuffer,
 										worldStruct, count, &uvCoord, &vCoord, &testIn, offset, father);
 								}
 							}
@@ -307,7 +307,7 @@ Engine->render()
 		//cout << "\n\n" << count;
 	}
 	loading.close();
-	childrenArray = nullptr;
+	//childrenArray = nullptr;
 	//for (int i = 0; i < testIn.size(); i++)
 	//{
 	//	Coordinates.x = vCoord[(testIn[i].x - 1)].x;

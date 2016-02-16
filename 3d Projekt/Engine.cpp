@@ -379,9 +379,9 @@ void Engine::loadModels()
 	this->modelsColor->at(4)->setRotateState(true);
 
 
-	this->addModel(OBJ, "cubes.obj");
+	this->addModel(OBJ, "ogre.obj");
 	this->modelsTexture->at(0)->setTranslation(XMFLOAT3(5.0f, 0.0f, 0.0f));
-	////this->modelsTexture->at(0)->setRotateState(true);
+	this->modelsTexture->at(0)->setRotateState(true);
 
 
 	this->addModel(OBJ, "BTHcube.obj");
