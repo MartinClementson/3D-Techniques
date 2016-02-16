@@ -1,5 +1,8 @@
 #include "ShaderManager.h"
 
+
+//Read ShaderManager.h for description
+
 ShaderManager::ShaderManager()
 {
 }
