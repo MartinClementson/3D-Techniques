@@ -11,12 +11,13 @@
 #include "SkyBox.h"
 #include "ShaderManager.h"
 #include "DynamicCubeMap.h"
-class DynamicCubeMap;
+class DynamicCubeMap; //forward declaration
 class Engine
 {
 
 private:
 	Camera* cam; 
+	
 	SkyBox* sky;
 
 	int vertexAmount;

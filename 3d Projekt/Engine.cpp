@@ -481,13 +481,16 @@ void Engine::render()
 	//The first pass (added after the comment above) is the dynamic cubeMap
 	//This is independant from the later passes, as this renders from a whole set of different cameras and not the player camera
 
-	for (int j = 0; j < cubeMapModels->size(); j++)
+	for (int j = 0; j < cubeMapModels->size(); j++)					//looping is a little overkill, since we only have one object that uses this.
+																	//also, there is no support for multiple objects yet.
+																	//for multiple objects, we need to implement multiple textures in the class
 	{
-		XMFLOAT3 position = cubeMapModels->at(j)->getTranslation();
-		this->dynCubeMap->Render(position, this); //this function will set the viewport,depthbuffer,backbuffer to normal when it's done
+		XMFLOAT3 position = cubeMapModels->at(j)->getTranslation(); //Get the position of the reflective object
+		this->dynCubeMap->Render(position, this);					//this function will set the viewport,depthbuffer,backbuffer, back to normal when it's done
 	}
 
-	this->updateCamera(this->cam);
+	this->updateCamera(this->cam);									//this sets the camera to the const buffer, Replacing the cameras
+																	// used with dynamic cube mapping
 
 	float clearColor[] = { 0, 0, 0, 1 };
 
@@ -698,10 +701,11 @@ void Engine::updateCamera(Camera* cameraToRender)
 
 	this->gDeviceContext->Unmap(camBuffer, 0);
 
-	this->gDeviceContext->GSSetConstantBuffers(1, 1, &camBuffer);
+	//&this->gDeviceContext->GSSetConstantBuffers(1, 1, &camBuffer); <--- im not sure why it works with this commented
 
 
 }
+
 
 void Engine::addLight(lightTypes type)
 {

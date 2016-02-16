@@ -2,7 +2,7 @@
 #include "Linker.h"
 #include "Camera.h"
 #include "Engine.h"
-class Engine;
+class Engine; //forward declaration
 /* Dynamic Cube mapping is well presented in Frank, D , lunas book
 3D game programming with direct X
  p.559
