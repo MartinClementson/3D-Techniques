@@ -70,6 +70,10 @@ void Terrain::smooth()
 
 }
 
+void Terrain::createPoints()
+{
+}
+
 bool Terrain::init(std::string fileName, ID3D11Device *gDevice, ID3D11DeviceContext *gDeviceContext)
 {
 	HRESULT hr;
