@@ -1,6 +1,8 @@
 #pragma once
 #include "Linker.h"
 
+
+// http://www.rastertek.com/tertut02.html
 class Terrain
 {
 private:
