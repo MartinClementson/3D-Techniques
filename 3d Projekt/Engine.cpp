@@ -597,6 +597,12 @@ void Engine::renderScene() // This function will render the scene, no matter the
 	//
 	////////////////////////////////////////////
 
+	/////////////////////////////////////////////
+	//Render the terrain
+	//
+
+	this->heightMap->Render(this->gDeviceContext);
+
 }
 
 void Engine::addModel(Primitives type)
