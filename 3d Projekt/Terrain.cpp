@@ -53,6 +53,21 @@ float Terrain::average(int i, int j)
 
 void Terrain::smooth()
 {
+	std::vector<float> dest(mHeightMap.size());
+	for (UINT i = 0; i < heightMapHeight; i++)
+	{
+
+		for (UINT j = 0; j < heightMapWidth; j++)
+		{
+
+			dest[i * heightMapWidth + j] = average(i, j);
+
+		}
+
+	}
+	//replace the old heightmap with the new filtered one
+	mHeightMap = dest;
+
 }
 
 bool Terrain::init(std::string fileName, ID3D11Device *gDevice, ID3D11DeviceContext *gDeviceContext)
