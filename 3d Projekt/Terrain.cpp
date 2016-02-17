@@ -16,12 +16,39 @@ Terrain::Terrain()
 
 bool Terrain::inBounds(int i, int j)
 {
-	return true;
+	// true if ij are valid indices, false ortherwise
+
+	return
+		i >= 0 && i < (int)heightMapHeight &&
+		j >= 0 && j < (int)heightMapWidth;
+	
 }
 
 float Terrain::average(int i, int j)
 {
-	return 0.0f;
+	/*This function computes the average height oj the ij element.
+	It does this by averaging with 8 neighbour pixel, If we are at the edges, we take as many as possible*/
+	
+	float avg = 0.0f;
+	float num = 0.0f;
+
+	for (int m = i - 1; m <= i + 1; ++m)
+	{
+		for (int n = j - 1; n <= j + 1; ++n)
+		{
+			if (inBounds(m, n))
+			{
+				avg += mHeightMap[m * heightMapWidth + n];
+				num += 1;
+
+			}
+
+		}
+
+	}
+	
+	
+	return avg/num;
 }
 
 void Terrain::smooth()
