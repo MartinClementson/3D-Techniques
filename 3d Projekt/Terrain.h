@@ -21,7 +21,7 @@ public:
 	void Release();
 	Terrain();
 	bool init(std::string fileName, ID3D11Device *gDevice, ID3D11DeviceContext *gDeviceContext);
-	std::vector<Vertex> getPoints() { return hMapPoints; }
+	//std::vector<Vertex> getPoints() { return hMapPoints; }
 	~Terrain();
 };
 
