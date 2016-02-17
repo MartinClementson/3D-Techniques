@@ -9,8 +9,8 @@ void Terrain::Release()
 
 Terrain::Terrain()
 {
-	heightMapHeight = 1024;
-	heightMapWidth = 1024;
+	heightMapHeight = 2049;
+	heightMapWidth = 2049;
 	heightScale = 50;
 }
 
@@ -72,81 +72,6 @@ void Terrain::smooth()
 
 void Terrain::createPoints()
 {
-	float height = heightMapHeight / 2;
-	float width = heightMapWidth / 2;
-	Vertex point;
-
-	for (int j = 0; j < (heightMapHeight-1); j++ )
-	{
-		for (int i = 0; i < (heightMapWidth-1); i++)
-		{
-			int index1 = (heightMapHeight * j) + i;				//bottom left
-			int index2 = (heightMapHeight * j) + (i + 1);		//Bottom Right
-			int index3 = (heightMapHeight * (j + 1)) + i;		//Upper Left
-			int index4 = (heightMapHeight * (j + 1)) + (i + 1); //Upper Right
-
-			//upper left
-			point.x = j + 1 + i;
-			point.z = j + i;
-			point.y = mHeightMap[index3];
-
-			point.u = mHeightMap[index3];
-			point.v = mHeightMap[index3];
-
-			hMapPoints.push_back(point);
-
-			//upper Right
-			point.x = j + 1 + i;
-			point.z = j + 1 + i;
-			point.y = mHeightMap[index4];
-
-			point.u = mHeightMap[index4];
-			point.v = mHeightMap[index4];
-
-			hMapPoints.push_back(point);
-
-			//bottom Right
-			point.x = j + i;
-			point.z = j + 1 + i;
-			point.y = mHeightMap[index2];
-
-			point.u = mHeightMap[index2];
-			point.v = mHeightMap[index2];
-
-			hMapPoints.push_back(point);
-
-			//bottom Right
-			point.x = j + i;
-			point.z = j + 1 + i;
-			point.y = mHeightMap[index2];
-
-			point.u = mHeightMap[index2];
-			point.v = mHeightMap[index2];
-
-			hMapPoints.push_back(point);
-
-			//Bottom left
-			point.x = j + i;
-			point.z = j + i;
-			point.y = mHeightMap[index1];
-
-			point.u = mHeightMap[index1];
-			point.v = mHeightMap[index1];
-
-			hMapPoints.push_back(point);
-
-			//upper left
-			point.x = j + 1 + i;
-			point.z = j + i;
-			point.y = mHeightMap[index3];
-
-			point.u = mHeightMap[index3];
-			point.v = mHeightMap[index3];
-
-			hMapPoints.push_back(point);
-
-		}
-	}
 }
 
 bool Terrain::init(std::string fileName, ID3D11Device *gDevice, ID3D11DeviceContext *gDeviceContext)
@@ -169,7 +94,6 @@ bool Terrain::init(std::string fileName, ID3D11Device *gDevice, ID3D11DeviceCont
 
 		mHeightMap.at(i) = (in.at(i) / 255.0f)*heightScale;
 	}
-	smooth();
 	return true;
 }
 
