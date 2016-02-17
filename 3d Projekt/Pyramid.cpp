@@ -8,137 +8,53 @@ void Pyramid::createVertices(ID3D11Device* gDevice)
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
-		0.0f, 0.5f , 0.0f,
+		0.0f, 0.5f , 0.0f, //0
 		1.0f, 1.0f, 1.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		
-		-0.5f, -0.5f , 0.5f,
+		-0.5f, -0.5f , 0.5f, //1
 		0.0f, 0.0f,   1.0f
 	});
 	this->vertices->push_back(Vertex
 	{
 		
-		0.5f, -0.5f , 0.5f,
+		0.5f, -0.5f , 0.5f, //2
 		0.0f, 1.0f,   0.0f
-	});
-
-
-	//second tris
-	this->vertices->push_back(Vertex
-	{
-		//first Vert
-		0.0f, 0.5f , 0.0f, 
-		1.0f, 1.0f, 1.0f
 	});
 
 	this->vertices->push_back(Vertex
 	{
 		
-		0.5f, -0.5f , 0.5f, 
-		0.0f, 1.0f,   0.0f
-	});
-	this->vertices->push_back(Vertex
-	{
-		
-		0.5f, -0.5f , -0.5f,
+		0.5f, -0.5f , -0.5f,//3
 		1.0f, 0.0f,   0.0f
 	});
 
 
-	//third tris
-	this->vertices->push_back(Vertex
-	{
-		//first Vert
-		0.0f, 0.5f , 0.0f, 
-		1.0f, 1.0f, 1.0f
-	});
 
-	this->vertices->push_back(Vertex
-	{
-		//Third Vert
-		0.5f, -0.5f , -0.5f,
-		1.0f, 0.0f,   0.0f
-	});
 	this->vertices->push_back(Vertex
 	{
 		//Second Vert
-		-0.5f, -0.5f , -0.5f, 
+		-0.5f, -0.5f , -0.5f, //4
 		0.0f, 1.0f,   1.0f
 	});
 
 
-	//fourth tris
-	this->vertices->push_back(Vertex
-	{
-		//first Vert
-		0.0f, 0.5f , 0.0f,
-		1.0f, 1.0f, 1.0f
-	});
-
-	this->vertices->push_back(Vertex
-	{
-		// Vert
-		-0.5f, -0.5f , -0.5f, 
-		0.0f, 1.0f,   1.0f
-	});
-	this->vertices->push_back(Vertex
-	{
-		// Vert
-		-0.5f, -0.5f , 0.5f,
-		0.0f, 0.0f,   1.0f
-	});
-
-
-	//Bottom quad
-
-	//first tris
 	
-	this->vertices->push_back(Vertex
+
+	UINT in[18] //Index buffer
 	{
-		//first Vert
-		-0.5f, -0.5f , 0.5f, 
-		1.0f, 1.0f, 1.0f
-	});
+		0,1,2, // first tris
+		0,2,3, // second tris
+		0,3,4, // third tris
+		0,4,1, // fourth tris
+		1,4,3, // fifth tris
+		2,1,3 // sixth tris
+	};
 
-	this->vertices->push_back(Vertex
-	{
-		
-		-0.5f, -0.5f , -0.5f,
-		1.0f, 1.0f,   1.0f
-	});
-	this->vertices->push_back(Vertex
-	{
-		
-		0.5f, -0.5f , -0.5f, 
-		1.0f, 1.0f,   1.0f
-	});
-
-
-	//Second tris
-
-	this->vertices->push_back(Vertex
-	{
-		//first Vert
-		0.5f, -0.5f , 0.5f, 
-		1.0f, 0.0f, 0.0f
-	});
-
-	this->vertices->push_back(Vertex
-	{
-		-0.5f, -0.5f , 0.5f,
-		1.0f, 1.0f,   1.0f
-	});
-
-	this->vertices->push_back(Vertex
-	{
-		
-		0.5f, -0.5f , -0.5f,
-		1.0f, 1.0f,   1.0f
-	});
-
+	
 
 
 	D3D11_BUFFER_DESC bufferDesc;
@@ -155,6 +71,27 @@ void Pyramid::createVertices(ID3D11Device* gDevice)
 
 	gDevice->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
 
+
+
+
+
+	//create indexbuffer
+
+	D3D11_BUFFER_DESC ibd;
+
+	ibd.Usage = D3D11_USAGE_IMMUTABLE;
+	ibd.ByteWidth = sizeof(UINT) * 18;
+	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibd.CPUAccessFlags = 0;
+	ibd.MiscFlags = 0;
+	ibd.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA indData;
+	indData.pSysMem = in;
+
+	gDevice->CreateBuffer(&ibd, &indData, &indexBuffer);
+
+
 }
 
 Pyramid::Pyramid()
@@ -167,9 +104,8 @@ Pyramid::Pyramid(ID3D11Device* gDevice,ID3D11DeviceContext* gDeviceContext, ID3D
 	: Model(gDeviceContext, worldBuffer, worldStruct)
 {
 
-
-	
 	this->createVertices(gDevice);
+
 }
 
 Pyramid::Pyramid(const Pyramid & obj)
@@ -191,7 +127,7 @@ Pyramid::Pyramid(const Pyramid & obj)
 
 Pyramid::~Pyramid()
 {
-	
+	this->indexBuffer->Release();
 
 }
 
@@ -206,8 +142,23 @@ void Pyramid::update()
 }
 
 void Pyramid::render()
+
 {
-	return Model::render();
+
+
+	this->sendToConstantBuffer();
+	this->gDeviceContext->GSSetConstantBuffers(0, 1, &worldBuffer);
+
+	UINT32 vertexSize = sizeof(Vertex);
+	UINT32 offset = 0;
+	this->gDeviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
+	this->gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	this->gDeviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	this->gDeviceContext->DrawIndexed(18, 0, 0);
+
+
+	//return Model::render();
 
 }
 
