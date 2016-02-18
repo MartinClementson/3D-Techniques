@@ -4,27 +4,36 @@
 
 bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 {
+	//declaring the buffer variables for later use
 	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 
+	//First determine the number of vertices and indices needed to construct the terrain with the given dimensions of the height map
+	//Also we will construct triangles instead of quads out of the terrain so we will need six vertices to make two triangles per
+	//quad with each triangle using triangle list.
 	m_vertexCount = (heightMapWidth - 1) *(heightMapHeight - 1) * 6; 
 
-
+	//allocating memory for the size of the indices to be used in the indexBuffer
 	indices = new unsigned long[m_vertexCount];
 	if (!indices)
 		return false;
 
+	//type casting the height and width to be used in for loops as well as calculations
 	int cols = heightMapWidth;
 	int rows = heightMapHeight;
 
+	//Calculating the ammount of memory to allocate when stporing the Vertex points
 	NumVertices = rows * cols;
+
+	//Since rows and cols are the number of vertices for the width and length of our grid,
+	//we need to subtract one from each then multiply them together to get the number of "quads" in our grid
 	NumFaces = (rows - 1)*(cols - 1) * 2;
 
 	std::vector<Vertex> v(NumVertices);
 
-	for (DWORD i = 0; i < rows; i++)
+	for (UINT i = 0; i < rows; i++)
 	{
-		for (DWORD j = 0; j < cols; j++)
+		for (UINT j = 0; j < cols; j++)
 		{
 			v[i*cols + j].x = m_HeightMap[i*cols + j].x;
 			v[i*cols + j].y = m_HeightMap[i*cols + j].y;
@@ -36,9 +45,12 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 	int k = 0;
 	int texUIndex = 0;
 	int texVIndex = 0;
-	for (DWORD i = 0; i < (rows - 1); i++)
+	//creating the uv with a techniques that makes them tile able and
+	//also using the for loop to correctly supply the index buffer with the right order
+	//of the Vertex Points
+	for (UINT i = 0; i < (rows - 1); i++)
 	{
-		for (DWORD j = 0; j < (cols - 1); j++)
+		for (UINT j = 0; j < (cols - 1); j++)
 		{
 			indices[k] = (i+1)*cols + j;  // Top left of quad
 			v[(i+1)*cols + j].u = (texUIndex + 0.0f);
@@ -75,6 +87,7 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 		texVIndex++;
 	}
 
+	//creating the vertex buffer to be based on the size of our terrain grid
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.ByteWidth = sizeof(Vertex) * NumVertices;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -82,6 +95,7 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 	vertexBufferDesc.MiscFlags = 0;
 	vertexBufferDesc.StructureByteStride = 0;
 
+	//When using a vector as the buffers data, you have to supply a pointer to the first element in the vector
 	vertexData.pSysMem = &v[0];
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
@@ -143,6 +157,7 @@ void Terrain::Render(ID3D11DeviceContext * gDeviceContext)
 	stride = sizeof(Vertex);
 	offset = 0;
 
+	//setting the vertex and index buffers
 	gDeviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
 
 	gDeviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
@@ -155,7 +170,7 @@ Terrain::Terrain()
 {
 	heightMapHeight = 512;
 	heightMapWidth = 512;
-	heightScale = 50;
+	heightScale = 50; //control this later with antweakbar
 
 	m_vertexBuffer = nullptr;
 	m_indexBuffer = nullptr;
@@ -175,7 +190,15 @@ bool Terrain::inBounds(int i, int j)
 float Terrain::average(int i, int j)
 {
 	/*This function computes the average height oj the ij element.
-	It does this by averaging with 8 neighbour pixel, If we are at the edges, we take as many as possible*/
+	It does this by averaging with 8 neighbour pixel, If we are at the edges, we take as many as possible
+	using blurfilter
+	
+	| 1 | 2 | 3 |
+	-------------
+	| 4 | ij| 6 |
+	-------------
+	| 7 | 8 | 9 |
+	*/
 	
 	float avg = 0.0f;
 	float num = 0.0f;
@@ -201,15 +224,8 @@ float Terrain::average(int i, int j)
 
 void Terrain::smooth()
 {
-	int i, j;
-
-	for (j = 0; j < heightMapHeight; j++)
-	{
-		for (i = 0; i < heightMapWidth; i++)
-		{
-			m_HeightMap[(heightMapHeight*j) + i].y /= 15.0f;
-		}
-	}
+	
+	//apply average to each heighmap entry
 	std::vector<float> dest(mHeightMap.size());
 	for (UINT i = 0; i < heightMapHeight; i++)
 	{
@@ -222,6 +238,7 @@ void Terrain::smooth()
 		}
 
 	}
+
 	//replace the old heightmap with the new filtered one
 	mHeightMap = dest;
 
@@ -234,30 +251,41 @@ void Terrain::createPoints()
 bool Terrain::init(std::string fileName, ID3D11Device *gDevice, ID3D11DeviceContext *gDeviceContext)
 {
 	bool result;
+
+	//creating a vector to hold the whole .raw file
 	std::vector<unsigned char> in(heightMapHeight * heightMapWidth);
+
+	//opening the heightMap file and setting the ifstream variable to read it in binary form
 	std::ifstream loading;
 	loading.open("terrain.raw", std::ios_base::binary);
 	if (!loading)
 		return false;
 	else
 	{
+		//reading the whole file by starting from 0 and continuing until the size of the vector (which is as big as the file) 
 		loading.read((char*)&in[0], (std::streamsize)in.size());
 
 		loading.close();
 	}
+
+	//Allocating the set memory for a float vector to hold the newly aquired infromation
 	mHeightMap.resize((heightMapHeight * heightMapWidth), 0);
 	for (UINT i = 0; i < (heightMapHeight * heightMapWidth); ++i)
 	{
-
+		//parsing the value of each pixel into the vector and multiplying it with our scale, and also normalizing it
 		mHeightMap.at(i) = (in.at(i) / 255.0f)*heightScale;
 	}
 
+	//allocating new memory to a struct pointer that will hold the information for creating the grid
 	m_HeightMap = new HeightMapType[heightMapHeight * heightMapWidth];
 	if (!m_HeightMap)
 		return false;
 
+	//smoothing the loaded "terrain" for a "less pointy" result
 	smooth();
 
+
+	//Putting the Heightmap infromation into the vector to be used later when creating the grid
 	for (int j = 0; j < heightMapHeight; j++)
 	{
 		for (int i = 0; i < heightMapWidth; i++)
@@ -271,10 +299,10 @@ bool Terrain::init(std::string fileName, ID3D11Device *gDevice, ID3D11DeviceCont
 		}
 	}
 
-	
+	//emptying the variable, that holds the float informtation from the height map
 	mHeightMap.clear();
 
-
+	//initializing the buffers and creating the grid
 	result = initializeBuffers(gDevice);
 	if (!result)
 		return false;
