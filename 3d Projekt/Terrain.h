@@ -23,6 +23,10 @@ private:
 	Vertex* vertices;
 	unsigned long* indices;
 
+	//a different tutorial
+	int NumVertices;
+	int NumFaces;
+
 	std::vector<Vertex> hMapPoints;
 	std::vector<float> mHeightMap;
 	bool inBounds(int i, int j);

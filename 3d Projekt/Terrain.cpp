@@ -22,133 +22,194 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 
 	index = 0;
 
-	for (j = 0; j < (heightMapHeight - 1); j++)
+	//a different tutorial....
+	int cols = heightMapWidth;
+	int rows = heightMapHeight;
+
+	NumVertices = rows * cols;
+	NumFaces = (rows - 1)*(cols - 1) * 2;
+
+	std::vector<Vertex> v(NumVertices);
+
+	for (DWORD i = 0; i < rows; i++)
 	{
-		for (i = 0; i < (heightMapWidth - 1); i++)
+		for (DWORD j = 0; j < cols; j++)
 		{
-			index1 = (heightMapHeight * j) + i;				//bottom left
-			index2 = (heightMapHeight * j) + (i + 1);		//bottom right
-			index3 = (heightMapHeight * (j + 1)) + i;		//Upper Left
-			index4 = (heightMapHeight * (j + 1)) + (i + 1); //Upper Right
+			v[i*cols + j].x = m_HeightMap[i*cols + j].x;
+			v[i*cols + j].y = m_HeightMap[i*cols + j].y;
+			v[i*cols + j].z = m_HeightMap[i*cols + j].z;
 
-			//Upper Left
-			vertices[index].x = m_HeightMap[index3].x;
-			vertices[index].y = m_HeightMap[index3].y;
-			vertices[index].z = m_HeightMap[index3].z;
-			vertices[index].u = 1.0f;
-			vertices[index].v = 1.0f;
-			indices[index] = index;
-			index++;
-
-			//Upper Right
-			vertices[index].x = m_HeightMap[index4].x;
-			vertices[index].y = m_HeightMap[index4].y;
-			vertices[index].z = m_HeightMap[index4].z;
-			vertices[index].u = 1.0f;
-			vertices[index].v = 1.0f;
-			indices[index] = index;
-			index++;
-
-			//Upper Right
-			vertices[index].x = m_HeightMap[index4].x;
-			vertices[index].y = m_HeightMap[index4].y;
-			vertices[index].z = m_HeightMap[index4].z;
-			vertices[index].u = 1.0f;
-			vertices[index].v = 1.0f;
-			indices[index] = index;
-			index++;
-
-			//Bottom left
-			vertices[index].x = m_HeightMap[index1].x;
-			vertices[index].y = m_HeightMap[index1].y;
-			vertices[index].z = m_HeightMap[index1].z;
-			vertices[index].u = 1.0f;
-			vertices[index].v = 1.0f;
-			indices[index] = index;
-			index++;
-
-			//Bottom left
-			vertices[index].x = m_HeightMap[index1].x;
-			vertices[index].y = m_HeightMap[index1].y;
-			vertices[index].z = m_HeightMap[index1].z;
-			vertices[index].u = 1.0f;
-			vertices[index].v = 1.0f;
-			indices[index] = index;
-			index++;
-
-			//Upper Left
-			vertices[index].x = m_HeightMap[index3].x;
-			vertices[index].y = m_HeightMap[index3].y;
-			vertices[index].z = m_HeightMap[index3].z;
-			vertices[index].u = 1.0f;
-			vertices[index].v = 1.0f;
-			indices[index] = index;
-			index++;
-
-			//Bottom Left
-			vertices[index].x = m_HeightMap[index1].x;
-			vertices[index].y = m_HeightMap[index1].y;
-			vertices[index].z = m_HeightMap[index1].z;
-			vertices[index].u = 1.0f;
-			vertices[index].v = 1.0f;
-			indices[index] = index;
-			index++;
-
-			//Upper Right
-			vertices[index].x = m_HeightMap[index4].x;
-			vertices[index].y = m_HeightMap[index4].y;
-			vertices[index].z = m_HeightMap[index4].z;
-			vertices[index].u = 1.0f;
-			vertices[index].v = 1.0f;
-			indices[index] = index;
-			index++;
-
-			//Upper Right
-			vertices[index].x = m_HeightMap[index4].x;
-			vertices[index].y = m_HeightMap[index4].y;
-			vertices[index].z = m_HeightMap[index4].z;
-			vertices[index].u = 1.0f;
-			vertices[index].v = 1.0f;
-			indices[index] = index;
-			index++;
-
-			//Bottom Right
-			vertices[index].x = m_HeightMap[index2].x;
-			vertices[index].y = m_HeightMap[index2].y;
-			vertices[index].z = m_HeightMap[index2].z;
-			vertices[index].u = 1.0f;
-			vertices[index].v = 1.0f;
-			indices[index] = index;
-			index++;
-
-			//Bottom Right
-			vertices[index].x = m_HeightMap[index2].x;
-			vertices[index].y = m_HeightMap[index2].y;
-			vertices[index].z = m_HeightMap[index2].z;
-			vertices[index].u = 1.0f;
-			vertices[index].v = 1.0f;
-			indices[index] = index;
-			index++;
-
-			//Bottom Left
-			vertices[index].x = m_HeightMap[index1].x;
-			vertices[index].y = m_HeightMap[index1].y;
-			vertices[index].z = m_HeightMap[index1].z;
-			vertices[index].u = 1.0f;
-			vertices[index].v = 1.0f;
-			indices[index] = index;
-			index++;
+			//UV här?
 		}
 	}
 
+
+	int k = 0;
+	int texUIndex = 0;
+	int texVIndex = 0;
+	for (DWORD i = 0; i < (rows - 1); i++)
+	{
+		for (DWORD j = 0; j < (cols - 1); j++)
+		{
+			indices[k] = i*cols + j;
+			v[i*cols + j].u = (texUIndex + 0.0f);
+			v[i*cols + j].v = (texVIndex + 1.0f);
+
+			indices[k+1] = i*cols + j+1;
+			v[i*cols + j+1].u = (texUIndex + 1.0f);
+			v[i*cols + j+1].v = (texVIndex + 1.0f);
+
+			indices[k+2] = (i+1)*cols + j;
+			v[(i+1)*cols + j].u = (texUIndex + 0.0f);
+			v[(i+1)*cols + j].v = (texVIndex + 0.0f);
+
+			indices[k + 3] = (i + 1)*cols + j;
+			v[(i + 1)*cols + j].u = (texUIndex + 0.0f);
+			v[(i + 1)*cols + j].v = (texVIndex + 0.0f);
+
+			indices[k + 4] = i*cols + j + 1;
+			v[i*cols + j + 1].u = (texUIndex + 1.0f);
+			v[i*cols + j + 1].v = (texVIndex + 1.0f);
+
+			indices[k + 5] = (i+1)*cols + j + 1;
+			v[(i+1)*cols + j + 1].u = (texUIndex + 1.0f);
+			v[(i+1)*cols + j + 1].v = (texVIndex + 0.0f);
+
+			k += 6;
+
+			texUIndex++;
+		}
+		texUIndex = 0;
+		texVIndex++;
+	}
+
+	//for (j = 0; j < (heightMapHeight - 1); j++)
+	//{
+	//	for (i = 0; i < (heightMapWidth - 1); i++)
+	//	{
+	//		index1 = (heightMapHeight * j) + i;				//bottom left
+	//		index2 = (heightMapHeight * j) + (i + 1);		//bottom right
+	//		index3 = (heightMapHeight * (j + 1)) + i;		//Upper Left
+	//		index4 = (heightMapHeight * (j + 1)) + (i + 1); //Upper Right
+
+	//		//Upper Left
+	//		vertices[index].x = m_HeightMap[index3].x;
+	//		vertices[index].y = m_HeightMap[index3].y;
+	//		vertices[index].z = m_HeightMap[index3].z;
+	//		vertices[index].u = 1.0f;
+	//		vertices[index].v = 1.0f;
+	//		indices[index] = index;
+	//		index++;
+
+	//		//Upper Right
+	//		vertices[index].x = m_HeightMap[index4].x;
+	//		vertices[index].y = m_HeightMap[index4].y;
+	//		vertices[index].z = m_HeightMap[index4].z;
+	//		vertices[index].u = 1.0f;
+	//		vertices[index].v = 1.0f;
+	//		indices[index] = index;
+	//		index++;
+
+	//		//Upper Right
+	//		vertices[index].x = m_HeightMap[index4].x;
+	//		vertices[index].y = m_HeightMap[index4].y;
+	//		vertices[index].z = m_HeightMap[index4].z;
+	//		vertices[index].u = 1.0f;
+	//		vertices[index].v = 1.0f;
+	//		indices[index] = index;
+	//		index++;
+
+	//		//Bottom left
+	//		vertices[index].x = m_HeightMap[index1].x;
+	//		vertices[index].y = m_HeightMap[index1].y;
+	//		vertices[index].z = m_HeightMap[index1].z;
+	//		vertices[index].u = 1.0f;
+	//		vertices[index].v = 1.0f;
+	//		indices[index] = index;
+	//		index++;
+
+	//		//Bottom left
+	//		vertices[index].x = m_HeightMap[index1].x;
+	//		vertices[index].y = m_HeightMap[index1].y;
+	//		vertices[index].z = m_HeightMap[index1].z;
+	//		vertices[index].u = 1.0f;
+	//		vertices[index].v = 1.0f;
+	//		indices[index] = index;
+	//		index++;
+
+	//		//Upper Left
+	//		vertices[index].x = m_HeightMap[index3].x;
+	//		vertices[index].y = m_HeightMap[index3].y;
+	//		vertices[index].z = m_HeightMap[index3].z;
+	//		vertices[index].u = 1.0f;
+	//		vertices[index].v = 1.0f;
+	//		indices[index] = index;
+	//		index++;
+
+	//		//Bottom Left
+	//		vertices[index].x = m_HeightMap[index1].x;
+	//		vertices[index].y = m_HeightMap[index1].y;
+	//		vertices[index].z = m_HeightMap[index1].z;
+	//		vertices[index].u = 1.0f;
+	//		vertices[index].v = 1.0f;
+	//		indices[index] = index;
+	//		index++;
+
+	//		//Upper Right
+	//		vertices[index].x = m_HeightMap[index4].x;
+	//		vertices[index].y = m_HeightMap[index4].y;
+	//		vertices[index].z = m_HeightMap[index4].z;
+	//		vertices[index].u = 1.0f;
+	//		vertices[index].v = 1.0f;
+	//		indices[index] = index;
+	//		index++;
+
+	//		//Upper Right
+	//		vertices[index].x = m_HeightMap[index4].x;
+	//		vertices[index].y = m_HeightMap[index4].y;
+	//		vertices[index].z = m_HeightMap[index4].z;
+	//		vertices[index].u = 1.0f;
+	//		vertices[index].v = 1.0f;
+	//		indices[index] = index;
+	//		index++;
+
+	//		//Bottom Right
+	//		vertices[index].x = m_HeightMap[index2].x;
+	//		vertices[index].y = m_HeightMap[index2].y;
+	//		vertices[index].z = m_HeightMap[index2].z;
+	//		vertices[index].u = 1.0f;
+	//		vertices[index].v = 1.0f;
+	//		indices[index] = index;
+	//		index++;
+
+	//		//Bottom Right
+	//		vertices[index].x = m_HeightMap[index2].x;
+	//		vertices[index].y = m_HeightMap[index2].y;
+	//		vertices[index].z = m_HeightMap[index2].z;
+	//		vertices[index].u = 1.0f;
+	//		vertices[index].v = 1.0f;
+	//		indices[index] = index;
+	//		index++;
+
+	//		//Bottom Left
+	//		vertices[index].x = m_HeightMap[index1].x;
+	//		vertices[index].y = m_HeightMap[index1].y;
+	//		vertices[index].z = m_HeightMap[index1].z;
+	//		vertices[index].u = 1.0f;
+	//		vertices[index].v = 1.0f;
+	//		indices[index] = index;
+	//		index++;
+	//	}
+	//}
+
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(Vertex) * m_vertexCount;
+	vertexBufferDesc.ByteWidth = sizeof(Vertex) * NumVertices; //ändrade här från m_numVertex
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
 	vertexBufferDesc.StructureByteStride = 0;
 
-	vertexData.pSysMem = vertices;
+	vertexData.pSysMem = &v[0]; //vertices
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
@@ -160,13 +221,13 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 	//Setup index buffer
 
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_indexCount;
+	indexBufferDesc.ByteWidth = sizeof(DWORD) * NumFaces * 3; //sizeof(unsigned long) * m_indexCount
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
 	indexBufferDesc.StructureByteStride = 0;
 
-	indexData.pSysMem = indices;
+	indexData.pSysMem = &indices[0]; //indices
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
 
@@ -216,9 +277,9 @@ void Terrain::Render(ID3D11DeviceContext * gDeviceContext)
 
 	gDeviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-	gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+	//gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
-	gDeviceContext->DrawIndexed(m_indexCount,0,0);
+	gDeviceContext->DrawIndexed(NumFaces * 3,0,0);
 
 }
 
