@@ -4,25 +4,16 @@
 
 bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 {
-	int i, j; //maybe not needed
 	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
-	int index1, index2, index3, index4;
 
-	m_vertexCount = (heightMapWidth - 1) *(heightMapHeight - 1) * 12; //because it's going to be a lineList
-	m_indexCount = m_vertexCount;
+	m_vertexCount = (heightMapWidth - 1) *(heightMapHeight - 1) * 6; 
 
-	vertices = new Vertex[m_vertexCount];
-	if (!vertices)
-		return false;
 
-	indices = new unsigned long[m_indexCount];
+	indices = new unsigned long[m_vertexCount];
 	if (!indices)
 		return false;
 
-	index = 0;
-
-	//a different tutorial....
 	int cols = heightMapWidth;
 	int rows = heightMapHeight;
 
@@ -38,8 +29,6 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 			v[i*cols + j].x = m_HeightMap[i*cols + j].x;
 			v[i*cols + j].y = m_HeightMap[i*cols + j].y;
 			v[i*cols + j].z = m_HeightMap[i*cols + j].z;
-
-			//UV här?
 		}
 	}
 
@@ -51,29 +40,32 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 	{
 		for (DWORD j = 0; j < (cols - 1); j++)
 		{
-			indices[k] = i*cols + j;
-			v[i*cols + j].u = (texUIndex + 0.0f);
-			v[i*cols + j].v = (texVIndex + 1.0f);
-
-			indices[k+1] = i*cols + j+1;
-			v[i*cols + j+1].u = (texUIndex + 1.0f);
-			v[i*cols + j+1].v = (texVIndex + 1.0f);
-
-			indices[k+2] = (i+1)*cols + j;
+			indices[k] = (i+1)*cols + j;  // Top left of quad
 			v[(i+1)*cols + j].u = (texUIndex + 0.0f);
 			v[(i+1)*cols + j].v = (texVIndex + 0.0f);
 
-			indices[k + 3] = (i + 1)*cols + j;
+			indices[k+1] = i*cols + j+1; // Bottom right of quad
+			v[i*cols + j+1].u = (texUIndex + 1.0f);
+			v[i*cols + j+1].v = (texVIndex + 1.0f);
+
+			indices[k+2] = i*cols + j;  // Bottom left of quad
+			v[i*cols + j].u = (texUIndex + 0.0f);
+			v[i*cols + j].v = (texVIndex + 1.0f);
+
+
+
+
+			indices[k + 3] = (i + 1)*cols + j; // Top left of quad
 			v[(i + 1)*cols + j].u = (texUIndex + 0.0f);
 			v[(i + 1)*cols + j].v = (texVIndex + 0.0f);
 
-			indices[k + 4] = i*cols + j + 1;
+			indices[k + 4] = (i+1)*cols + j + 1; // Top right of quad
+			v[(i+1)*cols + j + 1].u = (texUIndex + 1.0f);
+			v[(i+1)*cols + j + 1].v = (texVIndex + 0.0f);
+			indices[k + 5] = i*cols + j + 1;// Bottom right of quad
 			v[i*cols + j + 1].u = (texUIndex + 1.0f);
 			v[i*cols + j + 1].v = (texVIndex + 1.0f);
 
-			indices[k + 5] = (i+1)*cols + j + 1;
-			v[(i+1)*cols + j + 1].u = (texUIndex + 1.0f);
-			v[(i+1)*cols + j + 1].v = (texVIndex + 0.0f);
 
 			k += 6;
 
@@ -83,133 +75,14 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 		texVIndex++;
 	}
 
-	//for (j = 0; j < (heightMapHeight - 1); j++)
-	//{
-	//	for (i = 0; i < (heightMapWidth - 1); i++)
-	//	{
-	//		index1 = (heightMapHeight * j) + i;				//bottom left
-	//		index2 = (heightMapHeight * j) + (i + 1);		//bottom right
-	//		index3 = (heightMapHeight * (j + 1)) + i;		//Upper Left
-	//		index4 = (heightMapHeight * (j + 1)) + (i + 1); //Upper Right
-
-	//		//Upper Left
-	//		vertices[index].x = m_HeightMap[index3].x;
-	//		vertices[index].y = m_HeightMap[index3].y;
-	//		vertices[index].z = m_HeightMap[index3].z;
-	//		vertices[index].u = 1.0f;
-	//		vertices[index].v = 1.0f;
-	//		indices[index] = index;
-	//		index++;
-
-	//		//Upper Right
-	//		vertices[index].x = m_HeightMap[index4].x;
-	//		vertices[index].y = m_HeightMap[index4].y;
-	//		vertices[index].z = m_HeightMap[index4].z;
-	//		vertices[index].u = 1.0f;
-	//		vertices[index].v = 1.0f;
-	//		indices[index] = index;
-	//		index++;
-
-	//		//Upper Right
-	//		vertices[index].x = m_HeightMap[index4].x;
-	//		vertices[index].y = m_HeightMap[index4].y;
-	//		vertices[index].z = m_HeightMap[index4].z;
-	//		vertices[index].u = 1.0f;
-	//		vertices[index].v = 1.0f;
-	//		indices[index] = index;
-	//		index++;
-
-	//		//Bottom left
-	//		vertices[index].x = m_HeightMap[index1].x;
-	//		vertices[index].y = m_HeightMap[index1].y;
-	//		vertices[index].z = m_HeightMap[index1].z;
-	//		vertices[index].u = 1.0f;
-	//		vertices[index].v = 1.0f;
-	//		indices[index] = index;
-	//		index++;
-
-	//		//Bottom left
-	//		vertices[index].x = m_HeightMap[index1].x;
-	//		vertices[index].y = m_HeightMap[index1].y;
-	//		vertices[index].z = m_HeightMap[index1].z;
-	//		vertices[index].u = 1.0f;
-	//		vertices[index].v = 1.0f;
-	//		indices[index] = index;
-	//		index++;
-
-	//		//Upper Left
-	//		vertices[index].x = m_HeightMap[index3].x;
-	//		vertices[index].y = m_HeightMap[index3].y;
-	//		vertices[index].z = m_HeightMap[index3].z;
-	//		vertices[index].u = 1.0f;
-	//		vertices[index].v = 1.0f;
-	//		indices[index] = index;
-	//		index++;
-
-	//		//Bottom Left
-	//		vertices[index].x = m_HeightMap[index1].x;
-	//		vertices[index].y = m_HeightMap[index1].y;
-	//		vertices[index].z = m_HeightMap[index1].z;
-	//		vertices[index].u = 1.0f;
-	//		vertices[index].v = 1.0f;
-	//		indices[index] = index;
-	//		index++;
-
-	//		//Upper Right
-	//		vertices[index].x = m_HeightMap[index4].x;
-	//		vertices[index].y = m_HeightMap[index4].y;
-	//		vertices[index].z = m_HeightMap[index4].z;
-	//		vertices[index].u = 1.0f;
-	//		vertices[index].v = 1.0f;
-	//		indices[index] = index;
-	//		index++;
-
-	//		//Upper Right
-	//		vertices[index].x = m_HeightMap[index4].x;
-	//		vertices[index].y = m_HeightMap[index4].y;
-	//		vertices[index].z = m_HeightMap[index4].z;
-	//		vertices[index].u = 1.0f;
-	//		vertices[index].v = 1.0f;
-	//		indices[index] = index;
-	//		index++;
-
-	//		//Bottom Right
-	//		vertices[index].x = m_HeightMap[index2].x;
-	//		vertices[index].y = m_HeightMap[index2].y;
-	//		vertices[index].z = m_HeightMap[index2].z;
-	//		vertices[index].u = 1.0f;
-	//		vertices[index].v = 1.0f;
-	//		indices[index] = index;
-	//		index++;
-
-	//		//Bottom Right
-	//		vertices[index].x = m_HeightMap[index2].x;
-	//		vertices[index].y = m_HeightMap[index2].y;
-	//		vertices[index].z = m_HeightMap[index2].z;
-	//		vertices[index].u = 1.0f;
-	//		vertices[index].v = 1.0f;
-	//		indices[index] = index;
-	//		index++;
-
-	//		//Bottom Left
-	//		vertices[index].x = m_HeightMap[index1].x;
-	//		vertices[index].y = m_HeightMap[index1].y;
-	//		vertices[index].z = m_HeightMap[index1].z;
-	//		vertices[index].u = 1.0f;
-	//		vertices[index].v = 1.0f;
-	//		indices[index] = index;
-	//		index++;
-	//	}
-	//}
-
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(Vertex) * NumVertices; //ändrade här från m_numVertex
+	vertexBufferDesc.ByteWidth = sizeof(Vertex) * NumVertices;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
 	vertexBufferDesc.StructureByteStride = 0;
 
-	vertexData.pSysMem = &v[0]; //vertices
+	vertexData.pSysMem = &v[0];
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
@@ -221,13 +94,13 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 	//Setup index buffer
 
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(DWORD) * NumFaces * 3; //sizeof(unsigned long) * m_indexCount
+	indexBufferDesc.ByteWidth = sizeof(DWORD) * NumFaces * 3; 
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
 	indexBufferDesc.StructureByteStride = 0;
 
-	indexData.pSysMem = &indices[0]; //indices
+	indexData.pSysMem = &indices[0]; 
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
 
@@ -236,8 +109,6 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 	if (FAILED(hr))
 		return false;
 
-	delete[] vertices;
-	vertices = 0;
 
 	delete[] indices;
 	indices = 0;
@@ -261,7 +132,6 @@ void Terrain::Release()
 		m_vertexBuffer = 0;
 	}
 
-	//heightMapRSV->Release();
 	delete m_HeightMap;
 }
 
@@ -277,16 +147,14 @@ void Terrain::Render(ID3D11DeviceContext * gDeviceContext)
 
 	gDeviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-	//gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-
 	gDeviceContext->DrawIndexed(NumFaces * 3,0,0);
 
 }
 
 Terrain::Terrain()
 {
-	heightMapHeight = 1024;
-	heightMapWidth = 1024;
+	heightMapHeight = 512;
+	heightMapWidth = 512;
 	heightScale = 50;
 
 	m_vertexBuffer = nullptr;
@@ -342,20 +210,20 @@ void Terrain::smooth()
 			m_HeightMap[(heightMapHeight*j) + i].y /= 15.0f;
 		}
 	}
-	//std::vector<float> dest(mHeightMap.size());
-	//for (UINT i = 0; i < heightMapHeight; i++)
-	//{
+	std::vector<float> dest(mHeightMap.size());
+	for (UINT i = 0; i < heightMapHeight; i++)
+	{
 
-	//	for (UINT j = 0; j < heightMapWidth; j++)
-	//	{
+		for (UINT j = 0; j < heightMapWidth; j++)
+		{
 
-	//		dest[i * heightMapWidth + j] = average(i, j);
+			dest[i * heightMapWidth + j] = average(i, j);
 
-	//	}
+		}
 
-	//}
-	////replace the old heightmap with the new filtered one
-	//mHeightMap = dest;
+	}
+	//replace the old heightmap with the new filtered one
+	mHeightMap = dest;
 
 }
 
@@ -388,6 +256,8 @@ bool Terrain::init(std::string fileName, ID3D11Device *gDevice, ID3D11DeviceCont
 	if (!m_HeightMap)
 		return false;
 
+	smooth();
+
 	for (int j = 0; j < heightMapHeight; j++)
 	{
 		for (int i = 0; i < heightMapWidth; i++)
@@ -395,16 +265,15 @@ bool Terrain::init(std::string fileName, ID3D11Device *gDevice, ID3D11DeviceCont
 			index = (heightMapHeight * j) + i;
 
 			m_HeightMap[index].x = (float)i;
-			m_HeightMap[index].y = mHeightMap[j + i];
+			m_HeightMap[index].y = mHeightMap[index];
 			m_HeightMap[index].z = (float)j;
 
 		}
 	}
 
-	//delete[] mHeightMap;
+	
 	mHeightMap.clear();
 
-	smooth(); //kolla in denna, kommer inte att fungera
 
 	result = initializeBuffers(gDevice);
 	if (!result)
