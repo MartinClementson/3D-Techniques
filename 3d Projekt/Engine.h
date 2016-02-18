@@ -12,6 +12,7 @@
 #include "SkyBox.h"
 #include "ShaderManager.h"
 #include "DynamicCubeMap.h"
+#include "Terrain.h"
 class DynamicCubeMap; //forward declaration
 #pragma endregion
 
@@ -21,6 +22,7 @@ class Engine
 
 private:
 #pragma region Custom Classes
+	Terrain* heightMap = nullptr;
 	Camera* cam = nullptr; 
 	Input* input = nullptr;
 	SkyBox* sky = nullptr;

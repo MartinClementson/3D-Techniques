@@ -101,6 +101,9 @@
     <ClCompile Include="DynamicCubeMap.cpp">
       <Filter>Classes\Dynamic CubeMap</Filter>
     </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>Classes\Terrain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h">
@@ -161,6 +164,9 @@
     </ClInclude>
     <ClInclude Include="DynamicCubeMap.h">
       <Filter>Classes\Dynamic CubeMap</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>Classes\Terrain</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -232,6 +238,9 @@
     </Filter>
     <Filter Include="Shaders\DynamicCubeMap Shaders">
       <UniqueIdentifier>{609bc833-94a6-4f9d-9df4-d61b64bf443f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Terrain">
+      <UniqueIdentifier>{6be43f9b-7f73-4394-9741-848750b56e03}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -12,7 +12,7 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 		
 	this->cam = new Camera();
 	this->sky = new SkyBox();
-
+	this->heightMap = new Terrain();
 	this->renderTexture = new RenderTexture();
 	this->shaderManager = new ShaderManager();
 	this->dynCubeMap = new DynamicCubeMap();
@@ -71,6 +71,12 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 
 		delete this->dynCubeMap;
 	}
+	if (!heightMap->init("",this->gDevice, this->gDeviceContext))
+	{
+		errorMsg("Failed to initialize the height map");
+		delete heightMap;
+
+	}
 
 
 	//Load the models and get their vertices
@@ -113,6 +119,7 @@ Engine::~Engine()
 	delete renderTexture;
 	delete dynCubeMap;
 	delete sky;
+	delete heightMap;
 	delete modelsTexture;
 	delete modelsColor;
 	delete cubeMapModels;
@@ -160,7 +167,7 @@ void Engine::release()
 	depthState->Release();
 	depthStencilView->Release();
 
-
+	heightMap->Release();
 	worldBuffer->Release();
 	camBuffer->Release();
 	lightBuffer->Release();
@@ -589,6 +596,12 @@ void Engine::renderScene() // This function will render the scene, no matter the
 	}
 	//
 	////////////////////////////////////////////
+
+	/////////////////////////////////////////////
+	//Render the terrain
+	//
+
+	this->heightMap->Render(this->gDeviceContext);
 
 }
 
