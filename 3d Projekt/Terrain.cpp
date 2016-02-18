@@ -151,6 +151,8 @@ void Terrain::Release()
 
 void Terrain::Render(ID3D11DeviceContext * gDeviceContext)
 {
+
+	this->sendToConstantBuffer();
 	unsigned int stride;
 	unsigned int offset;
 
@@ -244,14 +246,76 @@ void Terrain::smooth()
 
 }
 
-void Terrain::createPoints()
+
+
+void Terrain::updateWorldMatrix()
 {
+
+
+	DirectX::XMMATRIX scaleMatrix = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
+
+	//We convert from degrees to radians here. Before this point we work in degrees to make it easier for the programmer and user
+	DirectX::XMMATRIX rotationMatrixX = DirectX::XMMatrixRotationX(toRadian(rotation.x));
+	DirectX::XMMATRIX rotationMatrixY = DirectX::XMMatrixRotationY(toRadian(rotation.y));
+	DirectX::XMMATRIX rotationMatrixZ = DirectX::XMMatrixRotationZ(toRadian(rotation.z));
+
+
+	
+
+
+
+	//Create the rotation matrix
+	DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixMultiply(rotationMatrixZ, rotationMatrixX);
+	rotationMatrix = DirectX::XMMatrixMultiply(rotationMatrix, rotationMatrixY);
+
+
+	//Intoduce the world matrix, multiply rotation and scale. (world translation comes later)
+	DirectX::XMMATRIX world = DirectX::XMMatrixMultiply(rotationMatrix, scaleMatrix);
+
+
+	//Create the world translation matrix
+	DirectX::XMMATRIX translationMatrix = DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z);
+
+	//Multiply the (scale*rotation) matrix with the world translation matrix
+	world = DirectX::XMMatrixMultiply(world, translationMatrix);
+
+	XMVECTOR worldDet = XMMatrixDeterminant(world);
+	XMStoreFloat4x4(&normalWorld, XMMatrixInverse(&worldDet, world));
+
+
+	world = XMMatrixTranspose(world);
+
+
+	XMStoreFloat4x4(&this->worldMatrix, world);
 }
 
-bool Terrain::init(std::string fileName, ID3D11Device *gDevice, ID3D11DeviceContext *gDeviceContext)
+void Terrain::sendToConstantBuffer()
+{
+	this->worldStruct->world = this->worldMatrix;
+	this->worldStruct->normalWorld = this->normalWorld;
+	D3D11_MAPPED_SUBRESOURCE mappedResourceWorld;
+	ZeroMemory(&mappedResourceWorld, sizeof(mappedResourceWorld));
+
+	//mapping to the matrixbuffer
+	this->gDeviceContext->Map(worldBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResourceWorld);
+
+	worldConstantBuffer* temporaryWorld = (worldConstantBuffer*)mappedResourceWorld.pData;
+
+	*temporaryWorld = *worldStruct;
+
+	this->gDeviceContext->Unmap(worldBuffer, 0);
+
+
+
+}
+
+bool Terrain::init(std::string fileName, ID3D11Device *gDevice, ID3D11DeviceContext *gDeviceContext, ID3D11Buffer* worldBuffer)
 {
 	bool result;
 
+	this->worldBuffer = worldBuffer;
+	this->gDeviceContext = gDeviceContext;
+	this->worldStruct = new worldConstantBuffer;
 	//creating a vector to hold the whole .raw file
 	std::vector<unsigned char> in(heightMapHeight * heightMapWidth);
 
@@ -306,10 +370,11 @@ bool Terrain::init(std::string fileName, ID3D11Device *gDevice, ID3D11DeviceCont
 	result = initializeBuffers(gDevice);
 	if (!result)
 		return false;
-
+	this->updateWorldMatrix();
 	return true;
 }
 
 Terrain::~Terrain()
 {
+	delete this->worldStruct;
 }

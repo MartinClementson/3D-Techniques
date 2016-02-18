@@ -14,9 +14,9 @@ protected:
 	float rotationSpeed = 0.2f;
 
 	XMFLOAT3 pivotPoint = { 0.0f,0.0f,0.0f};
-	XMFLOAT3 translation;
+	XMFLOAT3 translation = { 0.0f,0.0f,0.0f};
 	XMFLOAT3 rotation;
-	XMFLOAT3 scale;
+	XMFLOAT3 scale = { 1.0f,1.0f,1.0f };
 
 	XMFLOAT4X4 worldMatrix;
 	XMFLOAT4X4 normalWorld;

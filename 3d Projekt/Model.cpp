@@ -122,7 +122,7 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 	// data() "Returns a direct pointer to the memory array used internally by the vector to store its owned elements."
 
 	gDevice->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
-
+	this->updateWorldMatrix();
 	
 
 //	HRESULT result;

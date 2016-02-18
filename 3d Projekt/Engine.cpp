@@ -71,12 +71,13 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 
 		delete this->dynCubeMap;
 	}
-	if (!heightMap->init("",this->gDevice, this->gDeviceContext))
+	if (!heightMap->init("",this->gDevice, this->gDeviceContext,this->worldBuffer))
 	{
 		errorMsg("Failed to initialize the height map");
 		delete heightMap;
 
 	}
+	heightMap->setTranslation(XMFLOAT3(-285.0f, -6.0f, -210));
 
 
 	//Load the models and get their vertices
@@ -600,7 +601,7 @@ void Engine::renderScene() // This function will render the scene, no matter the
 	/////////////////////////////////////////////
 	//Render the terrain
 	//
-
+	this->shaderManager->setActiveShaders(TERRAINSHADER);
 	this->heightMap->Render(this->gDeviceContext);
 
 }

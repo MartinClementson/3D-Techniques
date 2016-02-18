@@ -37,6 +37,15 @@
     <FxCompile Include="VertexShaderCubeMap.hlsl">
       <Filter>Shaders\DynamicCubeMap Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="PixelShaderTerrain.hlsl">
+      <Filter>Shaders\TerrainShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexShaderTerrain.hlsl">
+      <Filter>Shaders\TerrainShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="GeometryShaderTerrain.hlsl">
+      <Filter>Shaders\TerrainShaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -241,6 +250,9 @@
     </Filter>
     <Filter Include="Classes\Terrain">
       <UniqueIdentifier>{6be43f9b-7f73-4394-9741-848750b56e03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\TerrainShaders">
+      <UniqueIdentifier>{4284a944-05f3-4a50-8ef8-51829377f883}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
