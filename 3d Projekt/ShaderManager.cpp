@@ -46,6 +46,13 @@ void ShaderManager::Release()
 	CUBEMAP_PS->Release();
 	gVertexLayoutCubeMap->Release();
 
+
+
+	TERRAIN_VS->Release();
+	TERRAIN_GS->Release();
+	TERRAIN_PS->Release();
+	gVertexLayoutTerrain->Release();
+
 }
 
 bool ShaderManager::createShaders()
@@ -57,6 +64,8 @@ bool ShaderManager::createShaders()
 	if (!createSkyShader())
 		return false;
 	if (!createCubeMapShader())
+		return false;
+	if (!createTerrainShader())
 		return false;
 
 
@@ -332,6 +341,81 @@ bool ShaderManager::createSkyShader()
 	return true;
 }
 
+bool ShaderManager::createTerrainShader()
+{
+
+	ID3DBlob* pVS = nullptr;
+
+	D3DCompileFromFile(
+		L"VertexShaderTerrain.hlsl",
+		nullptr,
+		nullptr,
+		"VS_main",
+		"vs_4_0",
+		0,
+		0,
+		&pVS,
+		nullptr);
+
+	hr = this->gDevice->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &TERRAIN_VS);
+
+	if (FAILED(hr))
+		return false;
+	//Create input layout (every vertex)
+	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
+		/*{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA,0 }*/ //not in use
+		{ "TEXCOORD",0, DXGI_FORMAT_R32G32_FLOAT, 0,24, D3D11_INPUT_PER_VERTEX_DATA,0 } //We wont use Color here, that's why the offset is 32. were still using the same struct
+																						//Normals?
+
+	};
+
+	this->gDevice->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &gVertexLayoutTerrain);
+	pVS->Release();
+
+
+	ID3DBlob *pPs = nullptr;
+	D3DCompileFromFile(
+		L"PixelShaderTerrain.hlsl",
+		nullptr,
+		nullptr,
+		"PS_main",
+		"ps_4_0",
+		0,
+		0,
+		&pPs,
+		nullptr);
+
+	hr = this->gDevice->CreatePixelShader(pPs->GetBufferPointer(), pPs->GetBufferSize(), nullptr, &TERRAIN_PS);
+	pPs->Release();
+
+	if (FAILED(hr))
+		return false;
+
+
+	//Geometry shader
+	ID3DBlob* pGS = nullptr;
+	D3DCompileFromFile(
+		L"GeometryShaderTerrain.hlsl",
+		nullptr,
+		nullptr,
+		"GS_main",
+		"gs_4_0",
+		0,
+		0,
+		&pGS,
+		nullptr);
+
+	hr = this->gDevice->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &TERRAIN_GS);
+	pGS->Release();
+
+	if (FAILED(hr))
+		return false;
+
+	return true;
+}
+
 bool ShaderManager::createCubeMapShader()
 {
 	ID3DBlob* pVS = nullptr;
@@ -459,6 +543,16 @@ void ShaderManager::setActiveShaders(ShaderTypes shader) {
 		this->gDeviceContext->GSSetShader(CUBEMAP_GS, nullptr, 0);
 		this->gDeviceContext->PSSetShader(CUBEMAP_PS, nullptr, 0);
 		this->gDeviceContext->IASetInputLayout(gVertexLayoutCubeMap);
+		break;
+
+	case TERRAINSHADER:
+
+		this->gDeviceContext->VSSetShader(TERRAIN_VS, nullptr, 0);
+		this->gDeviceContext->HSSetShader(nullptr, nullptr, 0);
+		this->gDeviceContext->DSSetShader(nullptr, nullptr, 0);
+		this->gDeviceContext->GSSetShader(TERRAIN_GS, nullptr, 0);
+		this->gDeviceContext->PSSetShader(TERRAIN_PS, nullptr, 0);
+		this->gDeviceContext->IASetInputLayout(gVertexLayoutTerrain);
 		break;
 
 
