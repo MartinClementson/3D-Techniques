@@ -1,11 +1,13 @@
 #pragma once
 #include "Model.h"
+#include "linker.h"
 class Pyramid :
 	public Model
 {
 
 private:
-
+	UINT indices[18];
+	ID3D11Buffer* indexBuffer;
 	void createVertices(ID3D11Device* gDevice);
 	Pyramid();
 public:
