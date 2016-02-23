@@ -1,6 +1,7 @@
 #pragma once
 
-struct Vertex {
+struct Vertex 
+{
 	//sizeof(float) == 4 byte!!!
 
 	float x, y, z; // 0 byte offset
@@ -10,6 +11,7 @@ struct Vertex {
 	float u, v; // 24 byte offset
 	
 };
+
 
 struct worldConstantBuffer
 {

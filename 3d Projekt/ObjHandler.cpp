@@ -13,34 +13,32 @@ ObjHandler::ObjHandler()
 	
 }
 
-std::string ObjHandler::MtlHandler(std::string &filePath, std::string &material)
+void ObjHandler::MtlHandler(std::string &filePath, std::vector<Material> &objMaterials)
 {
 	string textureID;
 	ifstream loading;
 	loading.open(filePath);
-	string line2, line3;
+	string line2;
+	Material tempMat;
 	if (!loading)
 		std::cout << "\nfailed to load texturefile";
 	else
 	{
 		while (!loading.eof())
 		{
-			if (line2 == material)
+			loading >> line2;
+			if (line2 == "newmtl")
 			{
-				//input materials here later
-				loading >> line3;
-				if (line3 == "map_Kd")
-				{
-					loading >> textureID;
-					line2 = "";
-				}
+				loading >> tempMat.mtlName;
 			}
-			else
-				loading >> line2;
+			if (line2 == "map_Kd")
+			{
+				loading >> tempMat.fileName;
+				objMaterials.push_back(tempMat);
+			}
 		}
 	}
 	loading.close();
-	return textureID;
 }
 
 void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>* modelVerts,
@@ -122,7 +120,6 @@ void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>
 			Coordinates.v = uvCoord->at((testIn->at(offset).y - 1)).y;
 
 
-			//sendCoordinates.push_back(Coordinates);
 			if (sendCoordinates.size() != 0)
 			{
 				for (UINT j = 0; j < sendCoordinates.size(); j++)
@@ -256,7 +253,7 @@ Engine->render()
 	
 	vector<DirectX::XMINT3> testIn;
 	DirectX::XMINT3 index;
-
+	vector<Material> objMaterial;
 
 	std::string mtlLib = "";
 
@@ -282,13 +279,14 @@ Engine->render()
 				if (line2 == "mtllib")
 				{
 					loading >> mtlLib;
+					MtlHandler(mtlLib, objMaterial);
 				}
-				if (line2 == "usemtl")
-				{
-					std::string tempString;
-					loading >> tempString;
-					textureName = MtlHandler(mtlLib, tempString);
-				}
+				//if (line2 == "usemtl")
+				//{
+					//std::string tempString;
+					//loading >> tempString;
+					//textureName = MtlHandler(mtlLib, tempString);
+				//}
 				if (line2 == "v")
 				{
 					loading >> vecIn.x;
