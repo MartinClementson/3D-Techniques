@@ -80,6 +80,7 @@ void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>
 					{
 						existWithinVerts = true;
 						indices.push_back(j);
+						break;
 					}
 				}
 				if (!existWithinVerts)
@@ -132,6 +133,7 @@ void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>
 					{
 						existWithinVerts = true;
 						childIndices.push_back(j);
+						break;
 					}
 				}
 				if (!existWithinVerts)
@@ -281,12 +283,19 @@ Engine->render()
 					loading >> mtlLib;
 					MtlHandler(mtlLib, objMaterial);
 				}
-				//if (line2 == "usemtl")
-				//{
-					//std::string tempString;
-					//loading >> tempString;
-					//textureName = MtlHandler(mtlLib, tempString);
-				//}
+				if (line2 == "usemtl")
+				{
+					std::string tempString;
+					loading >> tempString;
+					for (int i = 0; i < objMaterial.size(); i++)
+					{
+						if (objMaterial.at(i).mtlName == tempString)
+						{
+							textureName = objMaterial.at(i).fileName;
+							break;
+						}
+					}
+				}
 				if (line2 == "v")
 				{
 					loading >> vecIn.x;
@@ -326,6 +335,11 @@ Engine->render()
 								testIn.push_back(index);
 								loading.ignore();
 								count++;
+								if (loading.peek() == 'u')
+								{
+									create(childrenArray, modelVerts, textureName, gDevice, gDeviceContext, worldBuffer,
+										worldStruct, count, &uvCoord, &vCoord, &testIn, offset, father, indices);
+								}
 								if (loading.peek() == 'g' || loading.eof())
 								{
 									create(childrenArray, modelVerts, textureName, gDevice, gDeviceContext, worldBuffer,
