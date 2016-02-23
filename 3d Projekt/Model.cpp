@@ -49,15 +49,16 @@ Model::Model(std::vector<Vertex> *vertArray, std::string * texturePath, ID3D11De
 	D3D11_BUFFER_DESC ibd;
 
 	ibd.Usage = D3D11_USAGE_IMMUTABLE;
-	ibd.ByteWidth = sizeof(Vertex) * vertices->size();
+	ibd.ByteWidth = sizeof(UINT) * indices.size();
 	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	ibd.CPUAccessFlags = 0;
 	ibd.MiscFlags = 0;
 	ibd.StructureByteStride = 0;
 
 	D3D11_SUBRESOURCE_DATA ibdData;
-	ibdData.pSysMem = &indices[0]; //vertex list here &vertices[0]?
+	ibdData.pSysMem = indices.data(); 
 
+	this->indicesCount = indices.size();
 	gDevice->CreateBuffer(&ibd, &ibdData, &indexBuffer);
 
 

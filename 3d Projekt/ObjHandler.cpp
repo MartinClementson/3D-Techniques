@@ -54,40 +54,8 @@ void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>
 	{
 		bool existWithinVerts = false;
 		UINT indexCounter = 0;
-		//for (int i = 0; i < vCoord->size(); i++)
-		//{
-		//	Coordinates.x = vCoord->at(i).x;
-		//	Coordinates.y = vCoord->at(i).y;
-		//	Coordinates.z = vCoord->at(i).z;
-
-		//	Coordinates.u = 1.0f;
-		//	Coordinates.v = 1.0f;
-
-		//	modelVerts->push_back(Coordinates);
-		//}
-		//for (int i = 0; i < testIn->size(); i++)
-		//{
-		//	/*Coordinates.x = vCoord->at((testIn->at(i).x - 1)).x;
-		//	Coordinates.y = vCoord->at((testIn->at(i).x - 1)).y;
-		//	Coordinates.z = vCoord->at((testIn->at(i).x - 1)).z;
-
-
-		//	Coordinates.r = PAD;
-		//	Coordinates.g = PAD;
-		//	Coordinates.b = PAD;
-
-
-		//	Coordinates.u = uvCoord->at((testIn->at(i).y - 1)).x;
-		//	Coordinates.v = uvCoord->at((testIn->at(i).y - 1)).y;*/
-
-
-		//	indices.push_back(testIn->at(i).x-1);
-		//	//modelVerts->push_back(Coordinates);
-		//	offset++;
-		//}
 		for (UINT i = 0; i < testIn->size(); i++)
 		{
-			//testing a theory
 			Coordinates.x = vCoord->at((testIn->at(i).x - 1)).x;
 			Coordinates.y = vCoord->at((testIn->at(i).x - 1)).y;
 			Coordinates.z = vCoord->at((testIn->at(i).x - 1)).z;
@@ -126,7 +94,7 @@ void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>
 			else
 			{
 				modelVerts->push_back(Coordinates);
-				indices.push_back(indexCounter); //have to fix custom index
+				indices.push_back(indexCounter); 
 				indexCounter++;
 			}
 			existWithinVerts = false;
@@ -140,6 +108,9 @@ void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>
 		if (childrenArray[0] == nullptr)
 			childrenArray[0] = new vector<Model*>;
 		std::vector<Vertex> sendCoordinates;
+		bool existWithinVerts = false;
+		UINT indexCounter = 0;
+		std::vector<UINT> childIndices;
 		for (int i = 0; i < count; i++)
 		{
 
@@ -151,12 +122,40 @@ void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>
 			Coordinates.v = uvCoord->at((testIn->at(offset).y - 1)).y;
 
 
-			sendCoordinates.push_back(Coordinates);
+			//sendCoordinates.push_back(Coordinates);
+			if (sendCoordinates.size() != 0)
+			{
+				for (UINT j = 0; j < sendCoordinates.size(); j++)
+				{
+					if (sendCoordinates.at(j).x == Coordinates.x &&
+						sendCoordinates.at(j).y == Coordinates.y &&
+						sendCoordinates.at(j).z == Coordinates.z &&
+						sendCoordinates.at(j).u == Coordinates.u &&
+						sendCoordinates.at(j).v == Coordinates.v) //add the rest of the variables
+					{
+						existWithinVerts = true;
+						childIndices.push_back(j);
+					}
+				}
+				if (!existWithinVerts)
+				{
+					sendCoordinates.push_back(Coordinates);
+					childIndices.push_back(indexCounter);
+					indexCounter++;
+				}
+			}
+			else
+			{
+				sendCoordinates.push_back(Coordinates);
+				childIndices.push_back(indexCounter);
+				indexCounter++;
+			}
+			existWithinVerts = false;
 
 			offset++;
 		}
 
-		childrenArray[0]->push_back(new Model(&sendCoordinates, &textureName, gDevice, gDeviceContext, worldBuffer, worldStruct, indices));
+		childrenArray[0]->push_back(new Model(&sendCoordinates, &textureName, gDevice, gDeviceContext, worldBuffer, worldStruct, childIndices));
 		count = 0;
 	}
 }

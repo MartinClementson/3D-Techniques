@@ -387,19 +387,19 @@ void Engine::loadModels()
 	this->modelsColor->at(4)->setRotateState(true);
 
 
-	//this->addModel(OBJ, "ogre.obj");
-	//this->modelsTexture->at(0)->setTranslation(XMFLOAT3(5.0f, 0.0f, 0.0f));
-	//this->modelsTexture->at(0)->setRotateState(true);
+	this->addModel(OBJ, "ogre.obj");
+	this->modelsTexture->at(0)->setTranslation(XMFLOAT3(5.0f, 0.0f, 0.0f));
+	this->modelsTexture->at(0)->setRotateState(true);
 
 
 	this->addModel(OBJ, "BTHcube.obj");
-	this->modelsTexture->at(0)->setTranslation(XMFLOAT3(0.0f, 1.0f, 5.0f));
-	this->modelsTexture->at(0)->setRotateState(true);
-	this->modelsTexture->at(0)->setRotationSpeed(1.0f);
-	this->modelsTexture->at(0)->setPivotPoint(XMFLOAT3(0.0f, 0.0f, 1.0f));
+	this->modelsTexture->at(1)->setTranslation(XMFLOAT3(0.0f, 1.0f, 5.0f));
+	this->modelsTexture->at(1)->setRotateState(true);
+	this->modelsTexture->at(1)->setRotationSpeed(1.0f);
+	this->modelsTexture->at(1)->setPivotPoint(XMFLOAT3(0.0f, 0.0f, 1.0f));
 
 	this->addModel(OBJ, "plane.obj");
-	this->modelsTexture->at(1)->setTranslation(XMFLOAT3(0.0f, -2.0f, 0.0f));
+	this->modelsTexture->at(2)->setTranslation(XMFLOAT3(0.0f, -2.0f, 0.0f));
 
 	this->addModel(OBJ, "Sphere.obj",CUBEMAPSHADER);
 	this->cubeMapModels->at(0)->setTranslation(XMFLOAT3(0.0f, 1.0f, 1.0f));
