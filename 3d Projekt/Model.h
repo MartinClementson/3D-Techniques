@@ -13,6 +13,7 @@ protected:
 	bool rotate = false;
 	float rotationSpeed = 0.2f;
 
+
 	XMFLOAT3 pivotPoint = { 0.0f,0.0f,0.0f};
 	XMFLOAT3 translation = { 0.0f,0.0f,0.0f};
 	XMFLOAT3 rotation;
@@ -27,7 +28,7 @@ protected:
 	std::vector<Model*>* children = nullptr; //A model can have other models as it's children
 
 	std::vector<Vertex> *vertices = nullptr;
-
+	UINT indicesCount = 0;
 	//This is a pointer to a deviceContext, we will store the adress to the main device here.
 	//since we use it alot, we shall avoid putting it in all the functions.
 	ID3D11DeviceContext* gDeviceContext;
@@ -55,7 +56,7 @@ public:
 
 	//this is the constructor for the children in the obj importer
 	Model(std::vector<Vertex>* vertArray, std::string* texturePath, ID3D11Device* gDevice,
-		ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct);
+		ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct, std::vector<UINT> &indices);
 
 
 	//This is the constructor for the primitives

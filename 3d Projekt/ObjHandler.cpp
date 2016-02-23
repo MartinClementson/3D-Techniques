@@ -46,14 +46,48 @@ std::string ObjHandler::MtlHandler(std::string &filePath, std::string &material)
 void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>* modelVerts,
 	std::string &textureName, ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext,
 	ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct, int &count, std::vector<DirectX::XMFLOAT3> *uvCoord,
-	std::vector<DirectX::XMFLOAT3> *vCoord, std::vector<DirectX::XMINT3> *testIn, int &offset, bool &father)
+	std::vector<DirectX::XMFLOAT3> *vCoord, std::vector<DirectX::XMINT3> *testIn, int &offset, bool &father,  std::vector<UINT> &indices)
 {
 	Vertex Coordinates;
 
 	if (father)
 	{
-		for (int i = 0; i < testIn->size(); i++)
+		bool existWithinVerts = false;
+		UINT indexCounter = 0;
+		//for (int i = 0; i < vCoord->size(); i++)
+		//{
+		//	Coordinates.x = vCoord->at(i).x;
+		//	Coordinates.y = vCoord->at(i).y;
+		//	Coordinates.z = vCoord->at(i).z;
+
+		//	Coordinates.u = 1.0f;
+		//	Coordinates.v = 1.0f;
+
+		//	modelVerts->push_back(Coordinates);
+		//}
+		//for (int i = 0; i < testIn->size(); i++)
+		//{
+		//	/*Coordinates.x = vCoord->at((testIn->at(i).x - 1)).x;
+		//	Coordinates.y = vCoord->at((testIn->at(i).x - 1)).y;
+		//	Coordinates.z = vCoord->at((testIn->at(i).x - 1)).z;
+
+
+		//	Coordinates.r = PAD;
+		//	Coordinates.g = PAD;
+		//	Coordinates.b = PAD;
+
+
+		//	Coordinates.u = uvCoord->at((testIn->at(i).y - 1)).x;
+		//	Coordinates.v = uvCoord->at((testIn->at(i).y - 1)).y;*/
+
+
+		//	indices.push_back(testIn->at(i).x-1);
+		//	//modelVerts->push_back(Coordinates);
+		//	offset++;
+		//}
+		for (UINT i = 0; i < testIn->size(); i++)
 		{
+			//testing a theory
 			Coordinates.x = vCoord->at((testIn->at(i).x - 1)).x;
 			Coordinates.y = vCoord->at((testIn->at(i).x - 1)).y;
 			Coordinates.z = vCoord->at((testIn->at(i).x - 1)).z;
@@ -68,8 +102,34 @@ void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>
 			Coordinates.v = uvCoord->at((testIn->at(i).y - 1)).y;
 
 
-
-			modelVerts->push_back(Coordinates);
+			if (modelVerts != nullptr)
+			{
+				for (UINT j = 0; j < modelVerts->size(); j++)
+				{
+					if (modelVerts->at(j).x == Coordinates.x &&
+						modelVerts->at(j).y == Coordinates.y &&
+						modelVerts->at(j).z == Coordinates.z &&
+						modelVerts->at(j).u == Coordinates.u &&
+						modelVerts->at(j).v == Coordinates.v) //add the rest of the variables
+					{
+						existWithinVerts = true;
+						indices.push_back(j);
+					}
+				}
+				if (!existWithinVerts)
+				{
+					modelVerts->push_back(Coordinates);
+					indices.push_back(indexCounter);
+					indexCounter++;
+				}
+			}
+			else
+			{
+				modelVerts->push_back(Coordinates);
+				indices.push_back(indexCounter); //have to fix custom index
+				indexCounter++;
+			}
+			existWithinVerts = false;
 			offset++;
 		}
 		father = false;
@@ -90,19 +150,21 @@ void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>
 			Coordinates.u = uvCoord->at((testIn->at(offset).y - 1)).x;
 			Coordinates.v = uvCoord->at((testIn->at(offset).y - 1)).y;
 
+
 			sendCoordinates.push_back(Coordinates);
 
 			offset++;
 		}
 
-		childrenArray[0]->push_back(new Model(&sendCoordinates, &textureName, gDevice, gDeviceContext, worldBuffer, worldStruct));
+		childrenArray[0]->push_back(new Model(&sendCoordinates, &textureName, gDevice, gDeviceContext, worldBuffer, worldStruct, indices));
 		count = 0;
 	}
 }
 
 ObjHandler::ObjHandler(std::vector<Model*>** childrenArray,std::string filePath, std::vector<Vertex>* modelVerts, std::string &textureName,
 	ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext,
-	ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct)
+	ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct,
+	 std::vector<UINT> &indices)
 {
 
 #pragma region Description
@@ -270,7 +332,7 @@ Engine->render()
 								if (loading.peek() == 'g' || loading.eof())
 								{
 									create(childrenArray, modelVerts, textureName, gDevice, gDeviceContext, worldBuffer,
-										worldStruct, count, &uvCoord, &vCoord, &testIn, offset, father);
+										worldStruct, count, &uvCoord, &vCoord, &testIn, offset, father, indices);
 								}
 							}
 						}
