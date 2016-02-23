@@ -401,6 +401,8 @@ void Engine::loadModels()
 	this->addModel(OBJ, "plane.obj");
 	this->modelsTexture->at(2)->setTranslation(XMFLOAT3(0.0f, -2.0f, 0.0f));
 
+	this->addModel(OBJ);
+	this->modelsTexture->at(3)->setTranslation(XMFLOAT3(0.0f, 5.0f, 5.0f));
 	this->addModel(OBJ, "Sphere.obj",CUBEMAPSHADER);
 	this->cubeMapModels->at(0)->setTranslation(XMFLOAT3(0.0f, 1.0f, 1.0f));
 
