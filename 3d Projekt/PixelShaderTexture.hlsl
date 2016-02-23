@@ -18,7 +18,7 @@ struct PS_IN
 {
 	float4 pos : SV_POSITION;
 	float2 Texture : TEXCOORD0;
-	float3 normal : NORMAL;
+	float4 normal : NORMAL;
 	float4 wPos: WORLDPOS;
 	float3 camPos : CAMERAPOS;
 
