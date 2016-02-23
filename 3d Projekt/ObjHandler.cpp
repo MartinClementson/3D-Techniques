@@ -121,9 +121,9 @@ void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>
 			Coordinates.u = uvCoord->at((testIn->at(offset).y - 1)).x;
 			Coordinates.v = uvCoord->at((testIn->at(offset).y - 1)).y;
 
-			Coordinates.nx = vNCoord->at((testIn->at(i).z - 1)).x;
-			Coordinates.ny = vNCoord->at((testIn->at(i).z - 1)).y;
-			Coordinates.nz = vNCoord->at((testIn->at(i).z - 1)).z;
+			Coordinates.nx = vNCoord->at((testIn->at(offset).z - 1)).x;
+			Coordinates.ny = vNCoord->at((testIn->at(offset).z - 1)).y;
+			Coordinates.nz = vNCoord->at((testIn->at(offset).z - 1)).z;
 
 			if (sendCoordinates.size() != 0)
 			{
