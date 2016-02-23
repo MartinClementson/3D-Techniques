@@ -12,7 +12,7 @@ cbuffer cameraConstantBuffer  : register(b1)
 	matrix view;
 	float3 camLook;
 	float3 camPos;
-	// normalworld?
+
 };
 
 struct GSinput
@@ -20,7 +20,7 @@ struct GSinput
 
 	float4 pos : SV_POSITION;
 	float2 Texture: TEXCOORD0;
-
+	float3 Normal : NORMALS;
 };
 
 struct GSOutput
@@ -80,7 +80,7 @@ void GS_main(
 			element.Texture = input[i].Texture;
 
 
-			element.normal = mul(faceNormal, normalWorld);
+			element.normal = normalize(mul(input[i].Normal, normalWorld));
 			output.Append(element);
 		}
 	}

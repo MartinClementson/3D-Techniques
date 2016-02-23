@@ -13,63 +13,91 @@ ObjHandler::ObjHandler()
 	
 }
 
-std::string ObjHandler::MtlHandler(std::string &filePath, std::string &material)
+void ObjHandler::MtlHandler(std::string &filePath, std::vector<Material> &objMaterials)
 {
 	string textureID;
 	ifstream loading;
 	loading.open(filePath);
-	string line2, line3;
+	string line2;
+	Material tempMat;
 	if (!loading)
 		std::cout << "\nfailed to load texturefile";
 	else
 	{
 		while (!loading.eof())
 		{
-			if (line2 == material)
+			loading >> line2;
+			if (line2 == "newmtl")
 			{
-				//input materials here later
-				loading >> line3;
-				if (line3 == "map_Kd")
-				{
-					loading >> textureID;
-					line2 = "";
-				}
+				loading >> tempMat.mtlName;
 			}
-			else
-				loading >> line2;
+			if (line2 == "map_Kd")
+			{
+				loading >> tempMat.fileName;
+				objMaterials.push_back(tempMat);
+			}
 		}
 	}
 	loading.close();
-	return textureID;
 }
 
 void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>* modelVerts,
 	std::string &textureName, ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext,
 	ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct, int &count, std::vector<DirectX::XMFLOAT3> *uvCoord,
-	std::vector<DirectX::XMFLOAT3> *vCoord, std::vector<DirectX::XMINT3> *testIn, int &offset, bool &father)
+	std::vector<DirectX::XMFLOAT3> *vCoord, std::vector<DirectX::XMINT3> *testIn, int &offset, bool &father,
+	std::vector<UINT> &indices, std::vector<DirectX::XMFLOAT3> *vNCoord)
 {
 	Vertex Coordinates;
 
 	if (father)
 	{
-		for (int i = 0; i < testIn->size(); i++)
+		bool existWithinVerts = false;
+		UINT indexCounter = 0;
+		for (UINT i = 0; i < testIn->size(); i++)
 		{
 			Coordinates.x = vCoord->at((testIn->at(i).x - 1)).x;
 			Coordinates.y = vCoord->at((testIn->at(i).x - 1)).y;
 			Coordinates.z = vCoord->at((testIn->at(i).x - 1)).z;
 
-
-			Coordinates.r = PAD;
-			Coordinates.g = PAD;
-			Coordinates.b = PAD;
-
-
 			Coordinates.u = uvCoord->at((testIn->at(i).y - 1)).x;
 			Coordinates.v = uvCoord->at((testIn->at(i).y - 1)).y;
 
+			Coordinates.nx = vNCoord->at((testIn->at(i).z - 1)).x;
+			Coordinates.ny = vNCoord->at((testIn->at(i).z - 1)).y;
+			Coordinates.nz = vNCoord->at((testIn->at(i).z - 1)).z;
 
-
-			modelVerts->push_back(Coordinates);
+			if (modelVerts != nullptr)
+			{
+				for (UINT j = 0; j < modelVerts->size(); j++)
+				{
+					if (modelVerts->at(j).x == Coordinates.x &&
+						modelVerts->at(j).y == Coordinates.y &&
+						modelVerts->at(j).z == Coordinates.z &&
+						modelVerts->at(j).u == Coordinates.u &&
+						modelVerts->at(j).v == Coordinates.v &&
+						modelVerts->at(j).nx == Coordinates.nx &&
+						modelVerts->at(j).ny == Coordinates.ny &&
+						modelVerts->at(j).nz == Coordinates.nz) //add the rest of the variables
+					{
+						existWithinVerts = true;
+						indices.push_back(j);
+						break;
+					}
+				}
+				if (!existWithinVerts)
+				{
+					modelVerts->push_back(Coordinates);
+					indices.push_back(indexCounter);
+					indexCounter++;
+				}
+			}
+			else
+			{
+				modelVerts->push_back(Coordinates);
+				indices.push_back(indexCounter); 
+				indexCounter++;
+			}
+			existWithinVerts = false;
 			offset++;
 		}
 		father = false;
@@ -80,6 +108,9 @@ void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>
 		if (childrenArray[0] == nullptr)
 			childrenArray[0] = new vector<Model*>;
 		std::vector<Vertex> sendCoordinates;
+		bool existWithinVerts = false;
+		UINT indexCounter = 0;
+		std::vector<UINT> childIndices;
 		for (int i = 0; i < count; i++)
 		{
 
@@ -90,19 +121,55 @@ void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>
 			Coordinates.u = uvCoord->at((testIn->at(offset).y - 1)).x;
 			Coordinates.v = uvCoord->at((testIn->at(offset).y - 1)).y;
 
-			sendCoordinates.push_back(Coordinates);
+			Coordinates.nx = vNCoord->at((testIn->at(offset).z - 1)).x;
+			Coordinates.ny = vNCoord->at((testIn->at(offset).z - 1)).y;
+			Coordinates.nz = vNCoord->at((testIn->at(offset).z - 1)).z;
+
+			if (sendCoordinates.size() != 0)
+			{
+				for (UINT j = 0; j < sendCoordinates.size(); j++)
+				{
+					if (sendCoordinates.at(j).x == Coordinates.x &&
+						sendCoordinates.at(j).y == Coordinates.y &&
+						sendCoordinates.at(j).z == Coordinates.z &&
+						sendCoordinates.at(j).u == Coordinates.u &&
+						sendCoordinates.at(j).v == Coordinates.v &&
+						sendCoordinates.at(j).nx == Coordinates.nx &&
+						sendCoordinates.at(j).ny == Coordinates.ny &&
+						sendCoordinates.at(j).nz == Coordinates.nz) //add the rest of the variables
+					{
+						existWithinVerts = true;
+						childIndices.push_back(j);
+						break;
+					}
+				}
+				if (!existWithinVerts)
+				{
+					sendCoordinates.push_back(Coordinates);
+					childIndices.push_back(indexCounter);
+					indexCounter++;
+				}
+			}
+			else
+			{
+				sendCoordinates.push_back(Coordinates);
+				childIndices.push_back(indexCounter);
+				indexCounter++;
+			}
+			existWithinVerts = false;
 
 			offset++;
 		}
 
-		childrenArray[0]->push_back(new Model(&sendCoordinates, &textureName, gDevice, gDeviceContext, worldBuffer, worldStruct));
+		childrenArray[0]->push_back(new Model(&sendCoordinates, &textureName, gDevice, gDeviceContext, worldBuffer, worldStruct, childIndices));
 		count = 0;
 	}
 }
 
 ObjHandler::ObjHandler(std::vector<Model*>** childrenArray,std::string filePath, std::vector<Vertex>* modelVerts, std::string &textureName,
 	ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext,
-	ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct)
+	ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct,
+	 std::vector<UINT> &indices)
 {
 
 #pragma region Description
@@ -195,17 +262,15 @@ Engine->render()
 	
 	vector<DirectX::XMINT3> testIn;
 	DirectX::XMINT3 index;
+	vector<Material> objMaterial;
 
-	//big variable that everything goes into
-	std::string mtlLib = "";
+	//std::string mtlLib = "";
 
-	vector<Vertex> vNCoord;
-	vector<DirectX::XMFLOAT3> uvCoord, vCoord;
-	Vertex normIn;
-	DirectX::XMFLOAT3 uvIn, vecIn;
+	vector<DirectX::XMFLOAT3> uvCoord, vCoord, vNCoord;
+	DirectX::XMFLOAT3 uvIn, vecIn, normIn;
 	bool father = true;
-
 	int count = 0, offset = 0;
+
 	string line2;
 	ifstream loading;
 	loading.open(filePath);
@@ -220,20 +285,28 @@ Engine->render()
 				loading >> line2;
 				if (line2 == "mtllib")
 				{
-					loading >> mtlLib;
+					std::string tempString;
+					loading >> tempString;
+					MtlHandler(tempString, objMaterial);
 				}
 				if (line2 == "usemtl")
 				{
 					std::string tempString;
 					loading >> tempString;
-					textureName = MtlHandler(mtlLib, tempString);
+					for (int i = 0; i < objMaterial.size(); i++)
+					{
+						if (objMaterial.at(i).mtlName == tempString)
+						{
+							textureName = objMaterial.at(i).fileName;
+							break;
+						}
+					}
 				}
 				if (line2 == "v")
 				{
 					loading >> vecIn.x;
 					loading >> vecIn.y;
 					loading >> vecIn.z;
-
 					vCoord.push_back(vecIn);
 				}
 				if (line2 == "vt")
@@ -243,14 +316,13 @@ Engine->render()
 					uvIn.z = 1.0f;
 					uvCoord.push_back(uvIn);
 				}
-				/*if (line2 == "vn")
+				if (line2 == "vn")
 				{
 					loading >> normIn.x;
 					loading >> normIn.y;
 					loading >> normIn.z;
 					vNCoord.push_back(normIn);
-					count++;
-				}*/
+				}
 				if (line2 == "f")
 				{
 					loading.ignore();
@@ -267,10 +339,15 @@ Engine->render()
 								testIn.push_back(index);
 								loading.ignore();
 								count++;
+								if (loading.peek() == 'u')
+								{
+									create(childrenArray, modelVerts, textureName, gDevice, gDeviceContext, worldBuffer,
+										worldStruct, count, &uvCoord, &vCoord, &testIn, offset, father, indices, &vNCoord);
+								}
 								if (loading.peek() == 'g' || loading.eof())
 								{
 									create(childrenArray, modelVerts, textureName, gDevice, gDeviceContext, worldBuffer,
-										worldStruct, count, &uvCoord, &vCoord, &testIn, offset, father);
+										worldStruct, count, &uvCoord, &vCoord, &testIn, offset, father, indices, &vNCoord);
 								}
 							}
 						}

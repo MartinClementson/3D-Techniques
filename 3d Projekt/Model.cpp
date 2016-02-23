@@ -14,7 +14,7 @@ Model::Model()
 }
 //this is the constructor for the children in the obj importer
 Model::Model(std::vector<Vertex> *vertArray, std::string * texturePath, ID3D11Device* gDevice,
-	ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct)
+	ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct, std::vector<UINT> &indices)
 {
 	
 	this->vertices = new std::vector<Vertex>;
@@ -44,6 +44,22 @@ Model::Model(std::vector<Vertex> *vertArray, std::string * texturePath, ID3D11De
 	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	bufferDesc.ByteWidth = sizeof(Vertex)* vertices->size();
+
+
+	D3D11_BUFFER_DESC ibd;
+
+	ibd.Usage = D3D11_USAGE_IMMUTABLE;
+	ibd.ByteWidth = sizeof(UINT) * indices.size();
+	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibd.CPUAccessFlags = 0;
+	ibd.MiscFlags = 0;
+	ibd.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA ibdData;
+	ibdData.pSysMem = indices.data(); 
+
+	this->indicesCount = indices.size();
+	gDevice->CreateBuffer(&ibd, &ibdData, &indexBuffer);
 
 
 	D3D11_SUBRESOURCE_DATA data;
@@ -99,8 +115,9 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 	this->pivotPoint = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	//texture file name
 	std::string textureFileName;
+	std::vector<UINT> indices;
 
-	ObjHandler* importer = new ObjHandler(&children,filePath,vertices, textureFileName,gDevice,gDeviceContext,worldBuffer,worldStruct);//Make import
+	ObjHandler* importer = new ObjHandler(&children,filePath,vertices, textureFileName,gDevice,gDeviceContext,worldBuffer,worldStruct,indices);//Make import
 
 	//Load Texture 
 	loadTexture(gDevice, textureFileName);
@@ -115,12 +132,24 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	bufferDesc.ByteWidth = sizeof(Vertex)* vertices->size();
 
+	D3D11_BUFFER_DESC ibd;
 
+	ibd.Usage = D3D11_USAGE_IMMUTABLE;
+	ibd.ByteWidth = sizeof(UINT) * indices.size();
+	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibd.CPUAccessFlags = 0;
+	ibd.MiscFlags = 0;
+	ibd.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA ibdData;
+	ibdData.pSysMem = indices.data(); //vertex list here &vertices[0]?
+
+	gDevice->CreateBuffer(&ibd, &ibdData, &indexBuffer);
 	D3D11_SUBRESOURCE_DATA data;
 	//Send the array of vertices in to pSysMem
 	data.pSysMem = vertices->data();
 	// data() "Returns a direct pointer to the memory array used internally by the vector to store its owned elements."
-
+	this->indicesCount = indices.size();
 	gDevice->CreateBuffer(&bufferDesc, &data, &vertexBuffer);
 	this->updateWorldMatrix();
 	
@@ -339,6 +368,7 @@ void Model::render()
 	this->gDeviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
 	this->gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	this->gDeviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	//IF there is a texture. apply it to the pixel shader
 
 	if (texture != nullptr) {
@@ -346,8 +376,9 @@ void Model::render()
 		this->gDeviceContext->PSSetShaderResources(0, 1, &this->texture);
 	}
 
-
-	this->gDeviceContext->Draw(this->vertices->size(), 0); //This will be dynamic,
+	//fix draw indexed, first place should be the number of indices
+	this->gDeviceContext->DrawIndexed(indicesCount, 0, 0);
+	//this->gDeviceContext->Draw(this->vertices->size(), 0); //This will be dynamic,
 
 
 }
