@@ -12,7 +12,7 @@ struct VS_OUT
 {
 	float4 pos : SV_POSITION;
 	float2 Texture : TEXCOORD0;
-	float4 Normal: NORMALS;
+	float3 Normal: NORMALS;
 	//put normals here later
 };
 
@@ -25,7 +25,7 @@ VS_OUT VS_main( VS_IN input )
 	//setting the attributes
 	output.pos = float4(input.pos, 1.0f);
 	output.Texture = input.Texture;
-	output.Normal = float4(input.Normal,1.0f);
+	output.Normal = input.Normal;
 
 	return output;
 }

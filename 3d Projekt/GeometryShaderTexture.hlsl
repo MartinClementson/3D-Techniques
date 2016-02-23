@@ -20,7 +20,7 @@ struct GSinput
 
 	float4 pos : SV_POSITION;
 	float2 Texture: TEXCOORD0;
-	float4 Normal : NORMALS;
+	float3 Normal : NORMALS;
 };
 
 struct GSOutput
