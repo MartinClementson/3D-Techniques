@@ -32,6 +32,7 @@ protected:
 	//since we use it alot, we shall avoid putting it in all the functions.
 	ID3D11DeviceContext* gDeviceContext;
 	ID3D11Buffer* vertexBuffer = nullptr;
+	ID3D11Buffer* indexBuffer = nullptr;
 
 	worldConstantBuffer* worldStruct = nullptr;
 	ID3D11Buffer* worldBuffer = nullptr; //this is a pointer to the constant buffer, sent from the engine

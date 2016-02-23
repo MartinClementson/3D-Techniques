@@ -115,7 +115,19 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	bufferDesc.ByteWidth = sizeof(Vertex)* vertices->size();
 
+	D3D11_BUFFER_DESC ibd;
 
+	ibd.Usage = D3D11_USAGE_IMMUTABLE;
+	ibd.ByteWidth = sizeof(Vertex) * vertices->size();
+	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibd.CPUAccessFlags = 0;
+	ibd.MiscFlags = 0;
+	ibd.StructureByteStride = 0;
+
+	D3D11_SUBRESOURCE_DATA ibdData;
+	ibdData.pSysMem = in; //vertex list here &vertices[0]?
+
+	gDevice->CreateBuffer(&ibd, &ibdData, &indexBuffer);
 	D3D11_SUBRESOURCE_DATA data;
 	//Send the array of vertices in to pSysMem
 	data.pSysMem = vertices->data();
@@ -339,6 +351,7 @@ void Model::render()
 	this->gDeviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
 	this->gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	this->gDeviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	//IF there is a texture. apply it to the pixel shader
 
 	if (texture != nullptr) {
@@ -346,7 +359,8 @@ void Model::render()
 		this->gDeviceContext->PSSetShaderResources(0, 1, &this->texture);
 	}
 
-
+	//fix draw indexed, first place should be the number of indices
+	this->gDeviceContext->DrawIndexed(sizeof(vertices), 0, 0);
 	this->gDeviceContext->Draw(this->vertices->size(), 0); //This will be dynamic,
 
 

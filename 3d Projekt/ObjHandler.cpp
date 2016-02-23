@@ -196,7 +196,7 @@ Engine->render()
 	vector<DirectX::XMINT3> testIn;
 	DirectX::XMINT3 index;
 
-	//big variable that everything goes into
+
 	std::string mtlLib = "";
 
 	vector<Vertex> vNCoord;

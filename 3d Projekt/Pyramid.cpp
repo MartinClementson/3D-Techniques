@@ -155,7 +155,7 @@ void Pyramid::render()
 	this->gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	this->gDeviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	this->gDeviceContext->DrawIndexed(18, 0, 0);
+	this->gDeviceContext->DrawIndexed(18, 0, 0); //should be 5?
 
 
 	//return Model::render();
