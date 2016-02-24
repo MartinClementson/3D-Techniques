@@ -4,7 +4,7 @@
 #define WINDOWED true
 #define WIREFRAME false
 #define VSYNC 1 //1 == ON, 0 = OFF
-
+#define MAX_TRIANGLES 10000
 
 
 #define PAD 0.0f
