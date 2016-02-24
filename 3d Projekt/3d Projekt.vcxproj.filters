@@ -113,6 +113,9 @@
     <ClCompile Include="Terrain.cpp">
       <Filter>Classes\Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="Frustum.cpp">
+      <Filter>Classes\Frustum</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h">
@@ -176,6 +179,9 @@
     </ClInclude>
     <ClInclude Include="Terrain.h">
       <Filter>Classes\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Frustum.h">
+      <Filter>Classes\Frustum</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -253,6 +259,9 @@
     </Filter>
     <Filter Include="Shaders\TerrainShaders">
       <UniqueIdentifier>{4284a944-05f3-4a50-8ef8-51829377f883}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Frustum">
+      <UniqueIdentifier>{635bf7f7-8155-498b-b068-8bd3793a2649}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
