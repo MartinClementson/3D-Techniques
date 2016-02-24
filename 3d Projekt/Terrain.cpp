@@ -36,15 +36,14 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 	NumFaces = (rows - 1)*(cols - 1) * 2;
 
 	m_vertices = new std::vector<Vertex>(NumVertices);
-	std::vector<Vertex> v(NumVertices);
 
 	for (UINT i = 0; i < rows; i++)
 	{
 		for (UINT j = 0; j < cols; j++)
 		{
-			v[i*cols + j].x = m_HeightMap[i*cols + j].x;
-			v[i*cols + j].y = m_HeightMap[i*cols + j].y;
-			v[i*cols + j].z = m_HeightMap[i*cols + j].z;
+			m_vertices->at(i*cols + j).x = m_HeightMap[i*cols + j].x;
+			m_vertices->at(i*cols + j).y = m_HeightMap[i*cols + j].y;
+			m_vertices->at(i*cols + j).z = m_HeightMap[i*cols + j].z;
 		}
 	}
 
@@ -60,30 +59,30 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 		for (UINT j = 0; j < (cols - 1); j++)
 		{
 			indices[k] = (i+1)*cols + j;  // Top left of quad
-			v[(i+1)*cols + j].u = (texUIndex + 0.0f);
-			v[(i+1)*cols + j].v = (texVIndex + 0.0f);
+			m_vertices->at((i+1)*cols + j).u = (texUIndex + 0.0f);
+			m_vertices->at((i+1)*cols + j).v = (texVIndex + 0.0f);
 
 			indices[k+1] = i*cols + j+1; // Bottom right of quad
-			v[i*cols + j+1].u = (texUIndex + 1.0f);
-			v[i*cols + j+1].v = (texVIndex + 1.0f);
+			m_vertices->at(i*cols + j+1).u = (texUIndex + 1.0f);
+			m_vertices->at(i*cols + j+1).v = (texVIndex + 1.0f);
 
 			indices[k+2] = i*cols + j;  // Bottom left of quad
-			v[i*cols + j].u = (texUIndex + 0.0f);
-			v[i*cols + j].v = (texVIndex + 1.0f);
+			m_vertices->at(i*cols + j).u = (texUIndex + 0.0f);
+			m_vertices->at(i*cols + j).v = (texVIndex + 1.0f);
 
 
 
 
 			indices[k + 3] = (i + 1)*cols + j; // Top left of quad
-			v[(i + 1)*cols + j].u = (texUIndex + 0.0f);
-			v[(i + 1)*cols + j].v = (texVIndex + 0.0f);
+			m_vertices->at((i + 1)*cols + j).u = (texUIndex + 0.0f);
+			m_vertices->at((i + 1)*cols + j).v = (texVIndex + 0.0f);
 
 			indices[k + 4] = (i+1)*cols + j + 1; // Top right of quad
-			v[(i+1)*cols + j + 1].u = (texUIndex + 1.0f);
-			v[(i+1)*cols + j + 1].v = (texVIndex + 0.0f);
+			m_vertices->at((i+1)*cols + j + 1).u = (texUIndex + 1.0f);
+			m_vertices->at((i+1)*cols + j + 1).v = (texVIndex + 0.0f);
 			indices[k + 5] = i*cols + j + 1;// Bottom right of quad
-			v[i*cols + j + 1].u = (texUIndex + 1.0f);
-			v[i*cols + j + 1].v = (texVIndex + 1.0f);
+			m_vertices->at(i*cols + j + 1).u = (texUIndex + 1.0f);
+			m_vertices->at(i*cols + j + 1).v = (texVIndex + 1.0f);
 
 
 			k += 6;
@@ -103,7 +102,7 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 	vertexBufferDesc.StructureByteStride = 0;
 
 	//When using a vector as the buffers data, you have to supply a pointer to the first element in the vector
-	vertexData.pSysMem = &v[0];
+	vertexData.pSysMem = m_vertices->data();
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
 
@@ -139,6 +138,10 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 
 void Terrain::Release()
 {
+	if (m_vertices)
+	{
+		m_vertices->clear();
+	}
 	if (m_indexBuffer)
 	{
 		m_indexBuffer->Release();
