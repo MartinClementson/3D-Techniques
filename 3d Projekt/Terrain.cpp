@@ -2,7 +2,7 @@
 #include <fstream>
 
 
-void Terrain::copyVertexArray(void * vertexList) //see if it works
+void Terrain::copyVertexArray(void * vertexList)
 {
 	memcpy(vertexList, vertices, sizeof(Vertex)*m_vertexCount);
 	return;
@@ -35,6 +35,7 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 	//we need to subtract one from each then multiply them together to get the number of "quads" in our grid
 	NumFaces = (rows - 1)*(cols - 1) * 2;
 
+	m_vertices = new std::vector<Vertex>(NumVertices);
 	std::vector<Vertex> v(NumVertices);
 
 	for (UINT i = 0; i < rows; i++)

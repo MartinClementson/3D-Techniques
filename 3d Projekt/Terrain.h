@@ -48,6 +48,7 @@ private:
 	int NumVertices;
 	int NumFaces;
 
+	std::vector<Vertex> *m_vertices;
 	std::vector<float> mHeightMap;
 	bool inBounds(int i, int j);
 	float average(int i, int j);
