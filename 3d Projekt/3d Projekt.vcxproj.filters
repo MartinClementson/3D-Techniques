@@ -113,6 +113,9 @@
     <ClCompile Include="Terrain.cpp">
       <Filter>Classes\Terrain</Filter>
     </ClCompile>
+    <ClCompile Include="QuadTree.cpp">
+      <Filter>Classes\QuadTree</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h">
@@ -176,6 +179,9 @@
     </ClInclude>
     <ClInclude Include="Terrain.h">
       <Filter>Classes\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="QuadTree.h">
+      <Filter>Classes\QuadTree</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -253,6 +259,9 @@
     </Filter>
     <Filter Include="Shaders\TerrainShaders">
       <UniqueIdentifier>{4284a944-05f3-4a50-8ef8-51829377f883}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\QuadTree">
+      <UniqueIdentifier>{26db1b74-51b4-4950-89a4-991edc82acce}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
