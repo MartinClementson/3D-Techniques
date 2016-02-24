@@ -4,6 +4,11 @@
 using namespace DirectX;
 
 
+// IMPORTANT!!
+// This frustum is build up with having the normals of the planes turned inwards.
+// Some places shows how to test with the normals inwards and some with the normals outwards.
+// Keep this in mind when reading this code (It differs from the lecture example)
+
 class Frustum
 {
 
