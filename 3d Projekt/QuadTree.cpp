@@ -30,6 +30,8 @@ void QuadTree::RenderNode(NodeType * node, ID3D11DeviceContext * gDeviceContext,
 
 QuadTree::QuadTree()
 {
+	m_vertexList = nullptr;
+	m_parentNode = nullptr;
 }
 
 QuadTree::QuadTree(const QuadTree &parent)
@@ -43,7 +45,15 @@ QuadTree::~QuadTree()
 
 bool QuadTree::Initialize(Terrain * terrain, ID3D11Device * gDevice)
 {
+	int vertexCount;
+	float centerX, centerY, width;
 	return false;
+
+	vertexCount = terrain->getVertexCount();
+	if (!m_vertexList)
+		return false;
+
+	terrain->copyVertexArray((void*)m_vertexList);
 }
 
 void QuadTree::Release()

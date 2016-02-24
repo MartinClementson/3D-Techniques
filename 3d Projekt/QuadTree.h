@@ -17,6 +17,7 @@ private:
 
 	//node Attributes
 	int m_triangleCount, m_drawCount;
+	Vertex *m_vertexList;
 	NodeType* m_parentNode;
 
 	//Functions

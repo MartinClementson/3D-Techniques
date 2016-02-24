@@ -2,6 +2,12 @@
 #include <fstream>
 
 
+void Terrain::copyVertexArray(void * vertexList) //see if it works
+{
+	memcpy(vertexList, vertices, sizeof(Vertex)*m_vertexCount);
+	return;
+}
+
 bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 {
 	//declaring the buffer variables for later use
