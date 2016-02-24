@@ -11,7 +11,7 @@ void QuadTree::calculateMeshDimensions(int count, float & x, float & z, float & 
 	for (int i = 0; i < count; i++)
 	{
 		x += m_vertexList[i].x;
-		y += m_vertexList[i].z;
+		z += m_vertexList[i].z;
 	}
 	x = x / (float)count;
 	z = z / (float)count;
