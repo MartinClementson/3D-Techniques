@@ -59,7 +59,7 @@ void QuadTree::ReleaseNode(NodeType * node)
 {
 }
 
-void QuadTree::RenderNode(NodeType * node, ID3D11DeviceContext * gDeviceContext, Terrain *terrain)
+void QuadTree::RenderNode(NodeType * node, ID3D11DeviceContext * gDeviceContext, Terrain *terrain, Frustum* frustum)
 {
 }
 
@@ -76,6 +76,7 @@ QuadTree::QuadTree(const QuadTree &parent)
 
 QuadTree::~QuadTree()
 {
+	delete[] m_vertexList;
 }
 
 bool QuadTree::Initialize(Terrain * terrain, ID3D11Device * gDevice)
@@ -84,12 +85,22 @@ bool QuadTree::Initialize(Terrain * terrain, ID3D11Device * gDevice)
 	float centerX, centerY, width;
 	return false;
 
+	//Get the number of vertices in the terrain
 	vertexCount = terrain->getVertexCount();
+	
+	//Store the total triangle count
+	m_triangleCount = vertexCount / 3;
+	
+	//create a vertex array to hold all of the terrain vertices
+	m_vertexList = new Vertex[vertexCount];
 	if (!m_vertexList)
 		return false;
 
+	//Copy the vertices from the terrain into the vertex list
 	terrain->copyVertexArray((void*)m_vertexList);
 
+	//Calculate the parent node. It's the upper most quad, covering the whole terrain
+	//Calculates center x,z and width
 	calculateMeshDimensions(vertexCount, centerX, centerY, width);
 
 	m_parentNode = new NodeType;
@@ -118,7 +129,7 @@ void QuadTree::Release()
 	return;
 }
 
-void QuadTree::render(ID3D11DeviceContext * gDeviceContext, Terrain * terrain)
+void QuadTree::render(ID3D11DeviceContext * gDeviceContext, Terrain * terrain, Frustum* frustum)
 {
 	//reset the number of triangles drawn for this frame
 	m_drawCount = 0;
