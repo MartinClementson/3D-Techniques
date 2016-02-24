@@ -6,6 +6,7 @@
 class QuadTree
 {
 private:
+	//Node struct
 	struct NodeType
 	{
 		float posX, posY, width;
@@ -13,6 +14,18 @@ private:
 		ID3D11Buffer *vertexBuffer, *indexBuffer;
 		NodeType* nodes[4];
 	};
+
+	//node Attributes
+	int m_triangleCount, m_drawCount;
+	NodeType* m_parentNode;
+
+	//Functions
+	void calculateMeshDimensions(int count, float &x, float &y, float &width);
+	void createTreeNode(NodeType *parent, float x, float y, float width, ID3D11Device *gDevice);
+	int countTriangles(float x, float y, float width);
+	bool isTriangleContained(int count, float x, float y, float width);
+	void ReleaseNode(NodeType *node);
+	void RenderNode(NodeType *node, ID3D11DeviceContext *gDeviceContext, ID3D11Device *gDevice); //supposed to have frustrum aswell
 public:
 	QuadTree();
 	QuadTree(const QuadTree &parent);

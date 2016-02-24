@@ -2,6 +2,32 @@
 
 
 
+void QuadTree::calculateMeshDimensions(int count, float & x, float & y, float & width)
+{
+}
+
+void QuadTree::createTreeNode(NodeType * parent, float x, float y, float width, ID3D11Device * gDevice)
+{
+}
+
+int QuadTree::countTriangles(float x, float y, float width)
+{
+	return 0;
+}
+
+bool QuadTree::isTriangleContained(int count, float x, float y, float width)
+{
+	return false;
+}
+
+void QuadTree::ReleaseNode(NodeType * node)
+{
+}
+
+void QuadTree::RenderNode(NodeType * node, ID3D11DeviceContext * gDeviceContext, ID3D11Device * gDevice)
+{
+}
+
 QuadTree::QuadTree()
 {
 }
