@@ -295,7 +295,7 @@ bool QuadTree::isTriangleContained(int index, float x, float z, float width)
 	if (minZ > (z - radius))
 		return false;
 
-	//Check if the maximum z ciird are inside the node
+	//Check if the maximum z coord are inside the node
 	maxZ = max(z1, max(z2, z3));
 	if (maxZ < (z - radius))
 		return false;
@@ -306,10 +306,99 @@ bool QuadTree::isTriangleContained(int index, float x, float z, float width)
 
 void QuadTree::ReleaseNode(NodeType * node)
 {
+	int i;
+
+	//Go down the tree and release the bottom nodes first
+
+	for (i = 0; i < 4; i++)
+	{
+		if (node->nodes[i] != 0)
+			ReleaseNode(node->nodes[i]);
+
+	}
+
+	//Release the vertex buffer for this node
+
+	if (node->vertexBuffer)
+	{
+		node->vertexBuffer->Release();
+		node->vertexBuffer = 0;
+	}
+	//Release index buffer fopr this node
+	if (node->indexBuffer)
+	{
+		node->indexBuffer->Release();
+		node->indexBuffer = 0;
+	}
+
+	//Release the four child nodes
+	for (i = 0; i < 4; i++)
+	{
+		if (node->nodes[i])
+		{
+			delete node->nodes[i];
+			node->nodes[i] = 0;
+		}
+
+	}
+	return;
 }
 
-void QuadTree::RenderNode(NodeType * node, ID3D11DeviceContext * gDeviceContext, Terrain *terrain, Frustum* frustum)
+void QuadTree::RenderNode(NodeType * node, ID3D11DeviceContext * gDeviceContext, Frustum* frustum)
 {
+
+	/*
+	This function does all the drawing for the visible nodes in the quad tree. It takes as input the frustum to check if the camera can see each quad
+	It is recursive and calls itself for all the child nodes it can see
+	*/
+	bool result;
+	int count, i, indexCount;
+	unsigned int stride, offset;
+
+	//Do a frustum check on the cube
+
+	//Check if the node can be viewed,
+	result = frustum->CheckCube(node->posX, 0.0f, node->posZ, (node->width / 2.0f));
+	
+	//if it can't be seen then none of it's children can either so don't continue
+	if (!result)
+		return;
+
+	//If this node can be seen, recursively call this function for each child node
+
+	count = 0;
+	for (i = 0; i < 4; i++)
+	{
+		if (node->nodes[i] != 0)
+		{
+			count++;
+			RenderNode(node->nodes[i], gDeviceContext, frustum);
+		}
+
+	}
+
+	//If there were any children nodes then there is no need to continue, Parents have nothing to render
+	if (count != 0)
+		return;
+
+	//Render the buffers in this node as normal if they can be seen
+
+	stride = sizeof(Vertex);
+	offset = 0;
+
+	gDeviceContext->IAGetVertexBuffers(0, 1, &node->vertexBuffer, &stride, &offset);
+	
+	gDeviceContext->IASetIndexBuffer(node->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+	gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	gDeviceContext->DrawIndexed(node->triangleCount * 3, 0, 0);
+
+	//increase the count of the numder of polygons that have been rendered during this frame
+	m_drawCount += node->triangleCount;
+
+	return;
+
 }
 
 QuadTree::QuadTree()

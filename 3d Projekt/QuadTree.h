@@ -30,9 +30,9 @@ private:
 	void calculateMeshDimensions(int count, float &x, float &z, float &meshWidth);
 	void createTreeNode(NodeType *parent, float x, float z, float width, ID3D11Device *gDevice);
 	int countTriangles(float x, float z, float width);
-	bool isTriangleContained(int count, float x, float z, float width);
+	bool isTriangleContained(int index, float x, float z, float width);
 	void ReleaseNode(NodeType *node);
-	void RenderNode(NodeType *node, ID3D11DeviceContext *gDeviceContext, Terrain *terrain, Frustum* frustum);
+	void RenderNode(NodeType *node, ID3D11DeviceContext *gDeviceContext, Frustum* frustum);
 public:
 	QuadTree();
 	QuadTree(const QuadTree &parent);
