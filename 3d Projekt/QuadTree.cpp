@@ -131,7 +131,7 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 			}
 			
 		}
-		return
+		return;
 	}
 
 
