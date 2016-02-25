@@ -230,9 +230,27 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 
 }
 
+//This function goes through the list of triangles from the terrain data and determines
+//wich ones are inside the dimensions that are given as input
 int QuadTree::countTriangles(float x, float z, float width)
 {
-	return 0;
+	int count, i;
+	bool result;
+
+	count = 0;
+	//Loop through all the triangles in the entire mesh and check wich ones should be inside this node
+
+	for (i = 0; i < m_triangleCount; i++)
+	{
+		//if the triangle is inside the node then add one to count
+		result = isTriangleContained(i, x, z, width);
+		if (result == true)
+			count++;
+
+	}
+	
+
+	return count;
 }
 
 bool QuadTree::isTriangleContained(int count, float x, float z, float width)
