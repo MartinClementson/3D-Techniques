@@ -4,8 +4,8 @@
 
 void Terrain::copyVertexArray(void * vertexList)
 {
-	memcpy(vertexList, vertices, sizeof(Vertex)*m_vertexCount);
-	return;
+	memcpy(vertexList, (void*)vertices, sizeof(Vertex)*NumVertices);
+	//return;
 }
 
 bool Terrain::initializeBuffers(ID3D11Device *gDevice)
@@ -35,15 +35,15 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 	//we need to subtract one from each then multiply them together to get the number of "quads" in our grid
 	NumFaces = (rows - 1)*(cols - 1) * 2;
 
-	m_vertices = new std::vector<Vertex>(NumVertices);
+	vertices = new Vertex[NumVertices];
 
 	for (UINT i = 0; i < rows; i++)
 	{
 		for (UINT j = 0; j < cols; j++)
 		{
-			m_vertices->at(i*cols + j).x = m_HeightMap[i*cols + j].x;
-			m_vertices->at(i*cols + j).y = m_HeightMap[i*cols + j].y;
-			m_vertices->at(i*cols + j).z = m_HeightMap[i*cols + j].z;
+			vertices[i*cols + j].x = m_HeightMap[i*cols + j].x;
+			vertices[i*cols + j].y = m_HeightMap[i*cols + j].y;
+			vertices[i*cols + j].z = m_HeightMap[i*cols + j].z;
 		}
 	}
 
@@ -59,30 +59,30 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 		for (UINT j = 0; j < (cols - 1); j++)
 		{
 			indices[k] = (i+1)*cols + j;  // Top left of quad
-			m_vertices->at((i+1)*cols + j).u = (texUIndex + 0.0f);
-			m_vertices->at((i+1)*cols + j).v = (texVIndex + 0.0f);
+			vertices[(i+1)*cols + j].u = (texUIndex + 0.0f);
+			vertices[(i+1)*cols + j].v = (texVIndex + 0.0f);
 
 			indices[k+1] = i*cols + j+1; // Bottom right of quad
-			m_vertices->at(i*cols + j+1).u = (texUIndex + 1.0f);
-			m_vertices->at(i*cols + j+1).v = (texVIndex + 1.0f);
+			vertices[i*cols + j+1].u = (texUIndex + 1.0f);
+			vertices[i*cols + j+1].v = (texVIndex + 1.0f);
 
 			indices[k+2] = i*cols + j;  // Bottom left of quad
-			m_vertices->at(i*cols + j).u = (texUIndex + 0.0f);
-			m_vertices->at(i*cols + j).v = (texVIndex + 1.0f);
+			vertices[i*cols + j].u = (texUIndex + 0.0f);
+			vertices[i*cols + j].v = (texVIndex + 1.0f);
 
 
 
 
 			indices[k + 3] = (i + 1)*cols + j; // Top left of quad
-			m_vertices->at((i + 1)*cols + j).u = (texUIndex + 0.0f);
-			m_vertices->at((i + 1)*cols + j).v = (texVIndex + 0.0f);
+			vertices[(i + 1)*cols + j].u = (texUIndex + 0.0f);
+			vertices[(i + 1)*cols + j].v = (texVIndex + 0.0f);
 
 			indices[k + 4] = (i+1)*cols + j + 1; // Top right of quad
-			m_vertices->at((i+1)*cols + j + 1).u = (texUIndex + 1.0f);
-			m_vertices->at((i+1)*cols + j + 1).v = (texVIndex + 0.0f);
+			vertices[(i+1)*cols + j + 1].u = (texUIndex + 1.0f);
+			vertices[(i+1)*cols + j + 1].v = (texVIndex + 0.0f);
 			indices[k + 5] = i*cols + j + 1;// Bottom right of quad
-			m_vertices->at(i*cols + j + 1).u = (texUIndex + 1.0f);
-			m_vertices->at(i*cols + j + 1).v = (texVIndex + 1.0f);
+			vertices[i*cols + j + 1].u = (texUIndex + 1.0f);
+			vertices[i*cols + j + 1].v = (texVIndex + 1.0f);
 
 
 			k += 6;
@@ -93,41 +93,41 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 		texVIndex++;
 	}
 
-	//creating the vertex buffer to be based on the size of our terrain grid
-	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(Vertex) * NumVertices;
-	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.CPUAccessFlags = 0;
-	vertexBufferDesc.MiscFlags = 0;
-	vertexBufferDesc.StructureByteStride = 0;
+	////creating the vertex buffer to be based on the size of our terrain grid
+	//vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	//vertexBufferDesc.ByteWidth = sizeof(Vertex) * NumVertices;
+	//vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	//vertexBufferDesc.CPUAccessFlags = 0;
+	//vertexBufferDesc.MiscFlags = 0;
+	//vertexBufferDesc.StructureByteStride = 0;
 
-	//When using a vector as the buffers data, you have to supply a pointer to the first element in the vector
-	vertexData.pSysMem = m_vertices->data();
-	vertexData.SysMemPitch = 0;
-	vertexData.SysMemSlicePitch = 0;
+	////When using a vector as the buffers data, you have to supply a pointer to the first element in the vector
+	//vertexData.pSysMem = vertices;
+	//vertexData.SysMemPitch = 0;
+	//vertexData.SysMemSlicePitch = 0;
 
-	HRESULT hr;
-	hr = gDevice->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
-	if (FAILED(hr))
-		return false;
+	//HRESULT hr;
+	//hr = gDevice->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
+	//if (FAILED(hr))
+	//	return false;
 
-	//Setup index buffer
+	////Setup index buffer
 
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(DWORD) * NumFaces * 3; 
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = 0;
-	indexBufferDesc.MiscFlags = 0;
-	indexBufferDesc.StructureByteStride = 0;
+	//indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	//indexBufferDesc.ByteWidth = sizeof(DWORD) * NumFaces * 3; 
+	//indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	//indexBufferDesc.CPUAccessFlags = 0;
+	//indexBufferDesc.MiscFlags = 0;
+	//indexBufferDesc.StructureByteStride = 0;
 
-	indexData.pSysMem = &indices[0]; 
-	indexData.SysMemPitch = 0;
-	indexData.SysMemSlicePitch = 0;
+	//indexData.pSysMem = &indices[0]; 
+	//indexData.SysMemPitch = 0;
+	//indexData.SysMemSlicePitch = 0;
 
-	hr = gDevice->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
+	//hr = gDevice->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
 
-	if (FAILED(hr))
-		return false;
+	//if (FAILED(hr))
+	//	return false;
 
 
 	delete[] indices;
@@ -138,23 +138,20 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 
 void Terrain::Release()
 {
-	if (m_vertices)
-	{
-		m_vertices->clear();
-	}
-	if (m_indexBuffer)
-	{
-		m_indexBuffer->Release();
-		m_indexBuffer = 0;
 
-	}
-	if (m_vertexBuffer)
+	//if (m_indexBuffer)
+	//{
+	//	m_indexBuffer->Release();
+	//	m_indexBuffer = 0;
 
-	{
+	//}
+	//if (m_vertexBuffer)
 
-		m_vertexBuffer->Release();
-		m_vertexBuffer = 0;
-	}
+	//{
+
+	//	m_vertexBuffer->Release();
+	//	m_vertexBuffer = 0;
+	//}
 
 	delete m_HeightMap;
 }
@@ -184,6 +181,7 @@ Terrain::Terrain()
 	heightMapWidth = 512;
 	heightScale = 50; //control this later with antweakbar
 
+	vertices = nullptr;
 	m_vertexBuffer = nullptr;
 	m_indexBuffer = nullptr;
 	m_HeightMap = nullptr;
@@ -386,5 +384,6 @@ bool Terrain::init(std::string fileName, ID3D11Device *gDevice, ID3D11DeviceCont
 
 Terrain::~Terrain()
 {
+	delete[] vertices;
 	delete this->worldStruct;
 }

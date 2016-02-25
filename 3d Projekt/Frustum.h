@@ -12,8 +12,8 @@ using namespace DirectX;
 class Frustum
 {
 
-private:
 
+private:
 	struct PLANE
 	{
 		float Distance;
@@ -26,7 +26,7 @@ private:
 public:
 	Frustum();
 	~Frustum();
-	void ConstructFrustum(float screenDepth, XMFLOAT4X4 &projectionMatrix, XMFLOAT4X4 &viewMatrix);
+	void ConstructFrustum(float screenDepth, XMFLOAT4X4 projectionMatrix, XMFLOAT4X4 &viewMatrix);
 
 
 	//Check functions

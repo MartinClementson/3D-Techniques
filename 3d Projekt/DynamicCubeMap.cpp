@@ -68,7 +68,7 @@ void DynamicCubeMap::Render(XMFLOAT3 modelPosition,Engine* engine) // We include
 		gDeviceContext->OMSetRenderTargets(1, renderTargets, dynamicCubemapDSV);
 
 		//Draw the scene with the exception of the object the camera is in
-		//(needs to be implemented)
+		//(needs to be implemented) It's just hardcoded now
 		engine->updateCamera(this->cubeMapCamera[i]);
 		engine->renderScene();
 

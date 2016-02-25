@@ -96,9 +96,15 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 
 	//Count the number of triangles that are inside this node
 	numTriangles = countTriangles(x, z, width);
+	/*
+		PROBLEM!
+
+		numTriangles always get's the same amount!! 
+	*/
+
 
 	//Case 1: If there are no triangles in this node, return it as empty
-	if (numTriangles = 0)
+	if (numTriangles == 0)
 		return;
 	
 	//Case 2: IF there are too many triangles in this node, then split it into four smaller nodes
@@ -119,7 +125,7 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 				offsetZ =  1.0f * (width / 4.0f);
 
 			//See if there are any triangles in the new node
-			count = countTriangles((x + offsetX), (z + offsetZ), (width / 2));
+			count = countTriangles((x + offsetX), (z + offsetZ), (width / 2.0f));
 
 			if (count > 0)
 			{
@@ -196,9 +202,9 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 	vertexData.pSysMem = vertices;
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
-	
+	HRESULT hr;
 	//Create the vertex buffer
-	gDevice->CreateBuffer(&vertexBufferDesc, &vertexData, &parent->vertexBuffer);
+	hr = gDevice->CreateBuffer(&vertexBufferDesc, &vertexData, &parent->vertexBuffer);
 
 	//Set up the description of the index buffer
 
@@ -215,7 +221,7 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 	indexData.SysMemSlicePitch = 0;
 
 	//Create index buffer
-	gDevice->CreateBuffer(&indexBufferDesc, &indexData, &parent->indexBuffer);
+	hr = gDevice->CreateBuffer(&indexBufferDesc, &indexData, &parent->indexBuffer);
 
 	//Delete the vertices and indices arrays, as they are now stored in the buffers
 
@@ -245,7 +251,9 @@ int QuadTree::countTriangles(float x, float z, float width)
 		//if the triangle is inside the node then add one to count
 		result = isTriangleContained(i, x, z, width);
 		if (result == true)
+		{
 			count++;
+		}
 
 	}
 	
@@ -292,7 +300,7 @@ bool QuadTree::isTriangleContained(int index, float x, float z, float width)
 
 	//check if the minimum of the z coords is inside the node
 	minZ = min(z1, min(z2, z3));
-	if (minZ > (z - radius))
+	if (minZ > (z + radius))
 		return false;
 
 	//Check if the maximum z coord are inside the node
@@ -346,7 +354,7 @@ void QuadTree::ReleaseNode(NodeType * node)
 
 void QuadTree::RenderNode(NodeType * node, ID3D11DeviceContext * gDeviceContext, Frustum* frustum)
 {
-
+	
 	/*
 	This function does all the drawing for the visible nodes in the quad tree. It takes as input the frustum to check if the camera can see each quad
 	It is recursive and calls itself for all the child nodes it can see
@@ -426,7 +434,7 @@ QuadTree::~QuadTree()
 bool QuadTree::Initialize(Terrain * terrain, ID3D11Device * gDevice)
 {
 	int vertexCount;
-	float centerX, centerY, width;
+	float centerX, centerZ, width;
 	
 
 	//Get the number of vertices in the terrain
@@ -445,7 +453,7 @@ bool QuadTree::Initialize(Terrain * terrain, ID3D11Device * gDevice)
 
 	//Calculate the parent node. It's the upper most quad, covering the whole terrain
 	//Calculates center x,z and width
-	calculateMeshDimensions(vertexCount, centerX, centerY, width);
+	calculateMeshDimensions(vertexCount, centerX, centerZ, width);
 
 	//Create the parent node of the mesh
 	m_parentNode = new NodeType;
@@ -453,7 +461,7 @@ bool QuadTree::Initialize(Terrain * terrain, ID3D11Device * gDevice)
 		return false;
 
 	//Recursively build the quad tree, based on the vertex list and mesh dimensions
-	createTreeNode(m_parentNode, centerX, centerY, width, gDevice);
+	createTreeNode(m_parentNode, centerX, centerZ, width, gDevice);
 
 	//Now the vertex list is no longer needed
 	if (m_vertexList)

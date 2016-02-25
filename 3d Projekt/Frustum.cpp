@@ -4,6 +4,15 @@
 
 Frustum::Frustum()
 {
+	for (int i = 0; i < 6; i++)
+	{
+		planes[i].Normal.x = 0.0f;
+		planes[i].Normal.y = 0.0f;
+		planes[i].Normal.z = 0.0f;
+
+		planes[i].Distance = 0.0f;
+	}
+	
 }
 
 
@@ -11,7 +20,7 @@ Frustum::~Frustum()
 {
 }
 
-void Frustum::ConstructFrustum(float screenDepth, XMFLOAT4X4 &projectionMatrix, XMFLOAT4X4 &viewMatrix)
+void Frustum::ConstructFrustum(float screenDepth, XMFLOAT4X4 projectionMatrix, XMFLOAT4X4 &viewMatrix)
 {
 	//This is called every frame
 
@@ -19,7 +28,7 @@ void Frustum::ConstructFrustum(float screenDepth, XMFLOAT4X4 &projectionMatrix, 
 	XMMATRIX matrixTemp; //Needed to multiply
 
 	//Calculate the minimum z distance in the frustum.
-	zMinimum = -projectionMatrix._14 + projectionMatrix._33;
+	zMinimum = -projectionMatrix._43 / projectionMatrix._33;
 	r = screenDepth / (screenDepth -  zMinimum);
 	projectionMatrix._33 = r;
 	projectionMatrix._43 = -r*zMinimum;
@@ -27,6 +36,8 @@ void Frustum::ConstructFrustum(float screenDepth, XMFLOAT4X4 &projectionMatrix, 
 	//Create the frustum matrix from the view and projection matrix
 	
 	matrixTemp = XMMatrixMultiply(XMLoadFloat4x4(&viewMatrix), XMLoadFloat4x4(&projectionMatrix));
+
+	XMMatrixTranspose(matrixTemp);// <--- maybe transpose????!?!
 
 	XMFLOAT4X4 M;
 	XMStoreFloat4x4(&M, matrixTemp); //4x4 needed to be able to access individual components

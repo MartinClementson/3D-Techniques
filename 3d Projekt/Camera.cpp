@@ -57,19 +57,28 @@ Camera::Camera()
 	viewLookAt = { 0.0f, 0.0f, 1.0f };
 	viewRightDirection = viewPosition + XMFLOAT3{ 1.0f, 0.0f, 0 };
 	viewUpDirection = XMFLOAT3{ 0, 1.0f, 0 };
-	updateView();
+	m_frustum = new Frustum();
+
 	
+	
+
 	//creating the projection matrix
 	DirectX::XMMATRIX tempProjection;
-	tempProjection = DirectX::XMMatrixPerspectiveFovLH((DirectX::XM_PI*0.45f), (WINDOW_WIDTH / WINDOW_HEIGHT), 0.1f, 10000.0f);
+	tempProjection = DirectX::XMMatrixPerspectiveFovLH((DirectX::XM_PI*0.45f), (WINDOW_WIDTH / WINDOW_HEIGHT), 0.1f, SCREEN_DEPTH);
+	
+
 	tempProjection = DirectX::XMMatrixTranspose(tempProjection);
 	DirectX::XMStoreFloat4x4(&projection, tempProjection);
+	updateView();
 	
 
 }
 
 Camera::~Camera()
 {
+
+	if (m_frustum != nullptr)
+		delete m_frustum;
 }
 
 void Camera::setViewPosition(DirectX::XMFLOAT3 nViewPos)
@@ -272,10 +281,18 @@ void Camera::updateView()
 			);
 
 
+	DirectX::XMFLOAT4X4 viewConvert;
+	DirectX::XMStoreFloat4x4(&viewConvert, viewMatrix);
+	XMMATRIX tempProj = XMLoadFloat4x4(&this->projection);
+	tempProj = XMMatrixTranspose(tempProj);
+	XMFLOAT4X4 projConvert;
+	XMStoreFloat4x4(&projConvert, tempProj);
+	DirectX::XMStoreFloat4x4(&viewConvert, viewMatrix);
 
-	//converting the view matrix into an XMFLOAT4X4, for simpler use
+	m_frustum->ConstructFrustum(SCREEN_DEPTH, projConvert, viewConvert);
 	viewMatrix = DirectX::XMMatrixTranspose(viewMatrix);
 
+	//converting the view matrix into an XMFLOAT4X4, for simpler use
 	DirectX::XMStoreFloat4x4(&this->view, viewMatrix);
 
 

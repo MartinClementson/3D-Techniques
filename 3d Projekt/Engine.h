@@ -13,6 +13,7 @@
 #include "ShaderManager.h"
 #include "DynamicCubeMap.h"
 #include "Terrain.h"
+#include "QuadTree.h"
 class DynamicCubeMap; //forward declaration
 #pragma endregion
 
@@ -29,6 +30,7 @@ private:
 	ShaderManager* shaderManager = nullptr;
 	DynamicCubeMap* dynCubeMap = nullptr;
 	RenderTexture* renderTexture;
+	QuadTree* quadTreeTerrain;
 
 #pragma endregion
 
