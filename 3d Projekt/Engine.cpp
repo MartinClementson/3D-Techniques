@@ -520,7 +520,7 @@ void Engine::render()
 			//this->shaderManager->setActiveShaders(SKYBOXSHADER);
 			
 			
-			renderScene();
+			//renderScene();
 			
 		}
 

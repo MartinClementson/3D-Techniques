@@ -40,7 +40,7 @@ public:
 
 	bool Initialize(Terrain *terrain, ID3D11Device *gDevice);
 	void Release();
-	void render(ID3D11DeviceContext *gDeviceContext, Terrain *terrain, Frustum * frustum); 
+	void render(ID3D11DeviceContext *gDeviceContext, Frustum * frustum); 
 
 	int GetDrawCount();
 };

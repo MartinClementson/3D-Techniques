@@ -350,6 +350,12 @@ void QuadTree::RenderNode(NodeType * node, ID3D11DeviceContext * gDeviceContext,
 	/*
 	This function does all the drawing for the visible nodes in the quad tree. It takes as input the frustum to check if the camera can see each quad
 	It is recursive and calls itself for all the child nodes it can see
+
+
+
+	IMPORTANT!
+	The terrain shader has to be set as the active shader in engine before this is called.
+
 	*/
 	bool result;
 	int count, i, indexCount;
@@ -471,13 +477,18 @@ void QuadTree::Release()
 	return;
 }
 
-void QuadTree::render(ID3D11DeviceContext * gDeviceContext, Terrain * terrain, Frustum* frustum)
+void QuadTree::render(ID3D11DeviceContext * gDeviceContext, Frustum* frustum)
 {
+	/*
+	IMPORTANT!
+	The terrain shader has to be set as the active shader in engine before this is called
+	*/
+
 	//reset the number of triangles drawn for this frame
 	m_drawCount = 0;
 
 	//Render each node that is visible, starting at the parent node and moving down the tree
-	RenderNode(m_parentNode, gDeviceContext, terrain, frustum); 
+	RenderNode(m_parentNode, gDeviceContext, frustum); 
 }
 
 int QuadTree::GetDrawCount() //THis returns the number of triangles that were drawn in the previous render function call
