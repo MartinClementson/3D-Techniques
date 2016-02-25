@@ -6,16 +6,21 @@ void QuadTree::calculateMeshDimensions(int count, float & x, float & z, float & 
 {
 	float maxWidth, maxDepth, minWidth, minDepth, width, depth, maxX, maxZ;
 
+	//Center position of the mesh, Start at zero
 	x = 0.0f;
 	z = 0.0f;
+
+	//Sum all the vertices in the mesh
 	for (int i = 0; i < count; i++)
 	{
 		x += m_vertexList[i].x;
 		z += m_vertexList[i].z;
 	}
+	//Divide the sum with the number of vertices to find the mid point in the mesh
 	x = x / (float)count;
 	z = z / (float)count;
 
+	//Init the max and min size of the mesh
 	maxWidth = 0.0f;
 	maxDepth = 0.0f;
 
@@ -24,6 +29,7 @@ void QuadTree::calculateMeshDimensions(int count, float & x, float & z, float & 
 
 	for (int i = 0; i < count; i++)
 	{
+		//fabsf Return the absolute value of the argument as FLOAT
 		width = fabsf(m_vertexList[i].x - x);
 		depth = fabsf(m_vertexList[i].z - z);
 
