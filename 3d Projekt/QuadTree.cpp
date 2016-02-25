@@ -83,7 +83,7 @@ bool QuadTree::Initialize(Terrain * terrain, ID3D11Device * gDevice)
 {
 	int vertexCount;
 	float centerX, centerY, width;
-	return false;
+	
 
 	//Get the number of vertices in the terrain
 	vertexCount = terrain->getVertexCount();
@@ -103,12 +103,15 @@ bool QuadTree::Initialize(Terrain * terrain, ID3D11Device * gDevice)
 	//Calculates center x,z and width
 	calculateMeshDimensions(vertexCount, centerX, centerY, width);
 
+	//Create the parent node of the mesh
 	m_parentNode = new NodeType;
 	if (!m_parentNode)
 		return false;
 
+	//Recursively build the quad tree, based on the vertex list and mesh dimensions
 	createTreeNode(m_parentNode, centerX, centerY, width, gDevice);
 
+	//Now the vertex list is no longer needed
 	if (m_vertexList)
 	{
 		delete []m_vertexList;
@@ -120,6 +123,7 @@ bool QuadTree::Initialize(Terrain * terrain, ID3D11Device * gDevice)
 
 void QuadTree::Release()
 {
+	//Recursively release the quad tree data
 	if (m_parentNode)
 	{
 		ReleaseNode(m_parentNode);
@@ -134,10 +138,11 @@ void QuadTree::render(ID3D11DeviceContext * gDeviceContext, Terrain * terrain, F
 	//reset the number of triangles drawn for this frame
 	m_drawCount = 0;
 
-	RenderNode(m_parentNode, gDeviceContext, terrain); //shoulde also sen frustrum
+	//Render each node that is visible, starting at the parent node and moving down the tree
+	RenderNode(m_parentNode, gDeviceContext, terrain, frustum); 
 }
 
-int QuadTree::GetDrawCount()
+int QuadTree::GetDrawCount() //THis returns the number of triangles that were drawn in the previous render function call
 {
 	return m_drawCount;
 }
