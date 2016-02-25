@@ -125,10 +125,13 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 			{
 				//If there are triangles inside where this new node would be, then we create the child node
 				parent->nodes[i] = new NodeType;
+
+				//Extend the tree starting from this new child node
+				createTreeNode(parent->nodes[i], (x + offsetX), (z + offsetZ), (width / 2));
 			}
 			
 		}
-
+		return
 	}
 
 
