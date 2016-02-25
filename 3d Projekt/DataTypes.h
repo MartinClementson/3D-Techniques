@@ -11,6 +11,29 @@ struct Vertex
 	float u, v; // 24 byte offset
 
 	float nx, ny, nz; // 32 byte offset
+
+	Vertex& operator=(const Vertex& other) //operator = overload
+	{
+		x = other.x;
+		y = other.y;
+		z = other.z;
+		
+		r = other.r;
+		g = other.g;
+		b = other.b;
+
+		u = other.u;
+		v = other.v;
+
+		nx = other.nx;
+		ny = other.ny;
+		nz = other.nz;
+
+		return *this;
+
+
+	}
+
 	
 };
 

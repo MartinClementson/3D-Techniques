@@ -127,23 +127,64 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 				parent->nodes[i] = new NodeType;
 
 				//Extend the tree starting from this new child node
-				createTreeNode(parent->nodes[i], (x + offsetX), (z + offsetZ), (width / 2));
+				createTreeNode(parent->nodes[i], (x + offsetX), (z + offsetZ), (width / 2),gDevice);
 			}
 			
 		}
 		return;
 	}
 
+	//Case 3: If there are the right number of triangles, then create and load the vertex and index buffer
+	//from the terrain list into this node.. (We have determined that this is a leaf node)
+
+	parent->triangleCount = numTriangles;
+
+	//Calculate the number of vertices
+	vertexCount = numTriangles * 3;
+
+	//Create vertex array
+	vertices = new Vertex[vertexCount];
+
+	//Create the index array
+	indices = new unsigned long[vertexCount];
+
+	//Initialize the index
+	index = 0;
+
+	//Loop through all the triangles in the vertex list
+
+	for (i = 0; i < m_triangleCount; i++)
+	{
+		//If the triangle is inside this node then add it to the vertex array
+		result = isTriangleContained(i, x, z, width);
+
+		if (result == true)
+		{
+			//Calculate the index into the terrain vertex list
+			vertexIndex = i * 3;
+
+			//Get the three vertices of this triangle from the vertex list.
+			vertices[index] = m_vertexList[vertexIndex]; //a operator= overload was made to minimize the code. (check struct definition)
+			indices[index] = index;
+			index++;
+			
+
+
+		}
+
+
+	}
+
 
 
 }
 
-int QuadTree::countTriangles(float x, float y, float width)
+int QuadTree::countTriangles(float x, float z, float width)
 {
 	return 0;
 }
 
-bool QuadTree::isTriangleContained(int count, float x, float y, float width)
+bool QuadTree::isTriangleContained(int count, float x, float z, float width)
 {
 	return false;
 }

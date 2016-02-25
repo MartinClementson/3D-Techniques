@@ -29,8 +29,8 @@ private:
 	//Functions
 	void calculateMeshDimensions(int count, float &x, float &z, float &meshWidth);
 	void createTreeNode(NodeType *parent, float x, float z, float width, ID3D11Device *gDevice);
-	int countTriangles(float x, float y, float width);
-	bool isTriangleContained(int count, float x, float y, float width);
+	int countTriangles(float x, float z, float width);
+	bool isTriangleContained(int count, float x, float z, float width);
 	void ReleaseNode(NodeType *node);
 	void RenderNode(NodeType *node, ID3D11DeviceContext *gDeviceContext, Terrain *terrain, Frustum* frustum);
 public:
