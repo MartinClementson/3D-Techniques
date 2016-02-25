@@ -253,9 +253,55 @@ int QuadTree::countTriangles(float x, float z, float width)
 	return count;
 }
 
-bool QuadTree::isTriangleContained(int count, float x, float z, float width)
+//This function Calulates if the given tirangle is completely inside the input cube dimensions or not
+bool QuadTree::isTriangleContained(int index, float x, float z, float width)
 {
-	return false;
+	float radius;
+	int vertexIndex;
+	float x1, z1, x2, z2, x3, z3;
+	float minX, maxX, minZ, maxZ;
+
+	//Calculate radius of this node
+	radius = width / 2.0f;
+
+	//Get the index into the vertex list
+	vertexIndex = index * 3;
+
+	//Get the three vertices of this triangle from the vertex list
+	x1 = m_vertexList[vertexIndex].x;
+	z1 = m_vertexList[vertexIndex].z;
+	vertexIndex++;
+
+	x2 = m_vertexList[vertexIndex].x;
+	z2 = m_vertexList[vertexIndex].z;
+	vertexIndex++;
+	
+	x3 = m_vertexList[vertexIndex].x;
+	z3 = m_vertexList[vertexIndex].z;
+	
+	//Check if the minimum of the x coords of the triangle is inside the node
+	minX = min(x1, min(x2, x3));
+	if (minX > (x + radius))
+		return false;
+
+	//Check if the maximum of the x coords is inside the node
+	maxX = max(x1, max(x2, x3));
+	if (maxX < (x - radius))
+		return false;
+
+
+	//check if the minimum of the z coords is inside the node
+	minZ = min(z1, min(z2, z3));
+	if (minZ > (z - radius))
+		return false;
+
+	//Check if the maximum z ciird are inside the node
+	maxZ = max(z1, max(z2, z3));
+	if (maxZ < (z - radius))
+		return false;
+
+	
+	return true;
 }
 
 void QuadTree::ReleaseNode(NodeType * node)
