@@ -15,7 +15,7 @@ private:
 	//Node struct
 	struct NodeType
 	{
-		float posX, posY, width;
+		float posX, posZ, width;
 		int triangleCount;
 		ID3D11Buffer *vertexBuffer, *indexBuffer;
 		NodeType* nodes[4];
@@ -28,7 +28,7 @@ private:
 
 	//Functions
 	void calculateMeshDimensions(int count, float &x, float &z, float &meshWidth);
-	void createTreeNode(NodeType *parent, float x, float y, float width, ID3D11Device *gDevice);
+	void createTreeNode(NodeType *parent, float x, float z, float width, ID3D11Device *gDevice);
 	int countTriangles(float x, float y, float width);
 	bool isTriangleContained(int count, float x, float y, float width);
 	void ReleaseNode(NodeType *node);
