@@ -70,7 +70,7 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 	unsigned long* indices;
 
 	bool result;
-	D3D11_BUFFER_DESC vertexBufferDesc, inderBufferDesc;
+	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 
 	//Initialize the node and set it's position in the world
@@ -168,12 +168,63 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 			indices[index] = index;
 			index++;
 			
+			vertexIndex++;
+			vertices[index] = m_vertexList[vertexIndex];
+			indices[index] = index;
+			index++;
+
+			vertexIndex++;
+			vertices[index] = m_vertexList[vertexIndex];
+			indices[index] = index;
+			index++;
 
 
 		}
 
 
 	}
+
+	//Set up the description for the vertex buffer
+	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	vertexBufferDesc.ByteWidth = sizeof(Vertex)* vertexCount;
+	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexBufferDesc.CPUAccessFlags = 0;
+	vertexBufferDesc.MiscFlags = 0;
+	vertexBufferDesc.StructureByteStride = 0;
+
+	//Give the subresource structure a pointer to the vertex data
+	vertexData.pSysMem = vertices;
+	vertexData.SysMemPitch = 0;
+	vertexData.SysMemSlicePitch = 0;
+	
+	//Create the vertex buffer
+	gDevice->CreateBuffer(&vertexBufferDesc, &vertexData, &parent->vertexBuffer);
+
+	//Set up the description of the index buffer
+
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth = sizeof(unsigned long) * vertexCount;
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+	indexBufferDesc.StructureByteStride = 0;
+
+	//Give the subresource structure a pointer to the index data
+	indexData.pSysMem = indices;
+	indexData.SysMemPitch = 0;
+	indexData.SysMemSlicePitch = 0;
+
+	//Create index buffer
+	gDevice->CreateBuffer(&indexBufferDesc, &indexData, &parent->indexBuffer);
+
+	//Delete the vertices and indices arrays, as they are now stored in the buffers
+
+	delete[] vertices;
+	vertices = 0;
+	delete[] indices;
+	indices = 0;
+
+	return;
 
 
 
