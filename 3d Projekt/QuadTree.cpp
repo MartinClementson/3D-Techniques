@@ -24,12 +24,14 @@ void QuadTree::calculateMeshDimensions(int count, float & x, float & z, float & 
 	maxWidth = 0.0f;
 	maxDepth = 0.0f;
 
+	//fabsf Return the absolute value of the argument as FLOAT
 	minWidth = fabsf(m_vertexList[0].x - x);
 	minDepth = fabsf(m_vertexList[0].z - z);
 
+	//Loop through all the vertices and find the max/min width and depth
 	for (int i = 0; i < count; i++)
 	{
-		//fabsf Return the absolute value of the argument as FLOAT
+		
 		width = fabsf(m_vertexList[i].x - x);
 		depth = fabsf(m_vertexList[i].z - z);
 
@@ -39,16 +41,98 @@ void QuadTree::calculateMeshDimensions(int count, float & x, float & z, float & 
 		if (depth < minDepth) { minDepth = depth; }
 	}
 
+	//Find the absolute max calue between the min and max depth and width
 	maxX = (float)max(fabs(minWidth), fabs(maxWidth));
 	maxZ = (float)max(fabs(minDepth), fabs(maxDepth));
+	
 
+	//Calculate the maximum diameter of the mesh
 	meshWidth = max(maxX, maxZ) * 2.0f;
 
 	return;
 }
 
-void QuadTree::createTreeNode(NodeType * parent, float x, float y, float width, ID3D11Device * gDevice)
+
+
+void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, ID3D11Device * gDevice)
 {
+	/* This function Builds the quad tree. It is recursive and therefore it will call itself numerous times
+	   It starts with the parent, Then goes down.
+	   When it reaches a leaf node, it loads the vertex data into that node
+	*/
+
+	int numTriangles, i, count, vertexCount, index, vertexIndex;
+
+	float offsetX, offsetZ;
+
+	Vertex* vertices;
+
+	unsigned long* indices;
+
+	bool result;
+	D3D11_BUFFER_DESC vertexBufferDesc, inderBufferDesc;
+	D3D11_SUBRESOURCE_DATA vertexData, indexData;
+
+	//Initialize the node and set it's position in the world
+
+	//Store the node position and size
+	parent->posX = x;
+	parent->posZ = z;
+	parent->width = width;
+
+	//Set triangle count to Zero
+
+	parent->triangleCount = 0;
+
+	//Set index and vertex buffers to null;
+	parent->indexBuffer = 0;
+	parent->vertexBuffer = 0;
+
+	//Set the children nodes of this node to null
+	parent->nodes[0] = 0;
+	parent->nodes[1] = 0;
+	parent->nodes[2] = 0;
+	parent->nodes[3] = 0;
+
+	//Count the number of triangles that are inside this node
+	numTriangles = countTriangles(x, z, width);
+
+	//Case 1: If there are no triangles in this node, return it as empty
+	if (numTriangles = 0)
+		return;
+	
+	//Case 2: IF there are too many triangles in this node, then split it into four smaller nodes
+	if (numTriangles > maxTriangles)
+	{
+		for (i = 0; i < 4; i++)
+		{
+			//Calculate position offset for the new child node
+			if ((i % 2) < 1)							//
+				offsetX = -1.0f * (width / 4.0f);		// c-style representation would be
+			else                                        // offsetX = (((i % 2) < 1) ? -1.0f : 1.0f) * (width / 4.0f);
+				offsetX = 1.0f * (width / 4.0f);        // condition ? valueIfTrue : valueIfFalse
+														// Changed to c++ if statement for easier understanding
+
+			if ((i % 4) < 2)
+				offsetZ = -1.0f * (width / 4.0f);
+			else
+				offsetZ =  1.0f * (width / 4.0f);
+
+			//See if there are any triangles in the new node
+			count = countTriangles((x + offsetX), (z + offsetZ), (width / 2));
+
+			if (count > 0)
+			{
+				//If there are triangles inside where this new node would be, then we create the child node
+				parent->nodes[i] = new NodeType;
+			}
+			
+		}
+
+	}
+
+
+
 }
 
 int QuadTree::countTriangles(float x, float y, float width)
