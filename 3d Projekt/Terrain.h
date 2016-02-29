@@ -60,7 +60,7 @@ private:
 public:
 
 	void copyVertexArray(void* vertexList);
-	int getVertexCount() { return m_vertexCount; }
+	int getVertexCount() { return NumVertices; }
 	bool initializeBuffers(ID3D11Device *gDevice);
 	void Release();
 	void Render(ID3D11DeviceContext *gDeviceContext);

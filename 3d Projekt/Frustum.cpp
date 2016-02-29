@@ -37,7 +37,7 @@ void Frustum::ConstructFrustum(float screenDepth, XMFLOAT4X4 projectionMatrix, X
 	
 	matrixTemp = XMMatrixMultiply(XMLoadFloat4x4(&viewMatrix), XMLoadFloat4x4(&projectionMatrix));
 
-	XMMatrixTranspose(matrixTemp);// <--- maybe transpose????!?!
+	//XMMatrixTranspose(matrixTemp);// <--- maybe transpose????!?!
 
 	XMFLOAT4X4 M;
 	XMStoreFloat4x4(&M, matrixTemp); //4x4 needed to be able to access individual components

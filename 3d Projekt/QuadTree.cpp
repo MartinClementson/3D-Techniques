@@ -100,6 +100,10 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 		PROBLEM!
 
 		numTriangles always get's the same amount!! 
+
+		Update: 29/2.
+		Now it seems like it splits the vertices up like it should, and stops when it goes below 10k. 
+		However it is hard to see what nodes are being processed. But this does not seem to be the problem no more. Might still be something fishy though.
 	*/
 
 
@@ -372,7 +376,7 @@ void QuadTree::RenderNode(NodeType * node, ID3D11DeviceContext * gDeviceContext,
 	//Do a frustum check on the cube
 
 	//Check if the node can be viewed,
-	result = frustum->CheckCube(node->posX, 0.0f, node->posZ, (node->width / 2.0f));
+	result = true;//frustum->CheckCube(node->posX, 0.0f, node->posZ, (node->width / 2.0f));
 	
 	//if it can't be seen then none of it's children can either so don't continue
 	if (!result)
