@@ -2,6 +2,11 @@
 #include <fstream>
 
 
+void Terrain::copyIndexArray(void * indexList)
+{
+	memcpy(indexList, (void*)indices, sizeof(unsigned long)*m_vertexCount);
+}
+
 void Terrain::copyVertexArray(void * vertexList)
 {
 	memcpy(vertexList, (void*)vertices, sizeof(Vertex)*NumVertices);
@@ -129,9 +134,9 @@ bool Terrain::initializeBuffers(ID3D11Device *gDevice)
 	//if (FAILED(hr))
 	//	return false;
 
-
-	delete[] indices;
-	indices = 0;
+	//put in the DESTRUCTOR later
+	//delete[] indices;
+	//indices = 0;
 
 	return true;
 }

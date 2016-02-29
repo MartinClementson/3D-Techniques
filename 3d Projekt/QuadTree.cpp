@@ -13,8 +13,8 @@ void QuadTree::calculateMeshDimensions(int count, float & x, float & z, float & 
 	//Sum all the vertices in the mesh
 	for (int i = 0; i < count; i++)
 	{
-		x += m_vertexList[i].x;
-		z += m_vertexList[i].z;
+		x += m_vertexList[m_indexList[i]].x;
+		z += m_vertexList[m_indexList[i]].z;
 	}
 	//Divide the sum with the number of vertices to find the mid point in the mesh
 	x = x / (float)count;
@@ -25,15 +25,15 @@ void QuadTree::calculateMeshDimensions(int count, float & x, float & z, float & 
 	maxDepth = 0.0f;
 
 	//fabsf Return the absolute value of the argument as FLOAT
-	minWidth = fabsf(m_vertexList[0].x - x);
-	minDepth = fabsf(m_vertexList[0].z - z);
+	minWidth = fabsf(m_vertexList[m_indexList[0]].x - x);
+	minDepth = fabsf(m_vertexList[m_indexList[0]].z - z);
 
 	//Loop through all the vertices and find the max/min width and depth
 	for (int i = 0; i < count; i++)
 	{
 		
-		width = fabsf(m_vertexList[i].x - x);
-		depth = fabsf(m_vertexList[i].z - z);
+		width = fabsf(m_vertexList[m_indexList[i]].x - x);
+		depth = fabsf(m_vertexList[m_indexList[i]].z - z);
 
 		if (width > maxWidth) { maxWidth = width; }
 		if (depth > maxDepth) { maxDepth = depth; }
@@ -117,16 +117,19 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 		for (i = 0; i < 4; i++)
 		{
 			//Calculate position offset for the new child node
-			if ((i % 2) < 1)							//
-				offsetX = -1.0f * (width / 4.0f);		// c-style representation would be
-			else                                        // offsetX = (((i % 2) < 1) ? -1.0f : 1.0f) * (width / 4.0f);
-				offsetX = 1.0f * (width / 4.0f);        // condition ? valueIfTrue : valueIfFalse
-														// Changed to c++ if statement for easier understanding
+			//if (float(i % 2) < 1)							//
+			//	offsetX = -1.0f * (width / 4.0f);		// c-style representation would be
+			//else                                        // offsetX = (((i % 2) < 1) ? -1.0f : 1.0f) * (width / 4.0f);
+			//	offsetX = 1.0f * (width / 4.0f);        // condition ? valueIfTrue : valueIfFalse
+			//											// Changed to c++ if statement for easier understanding
 
-			if ((i % 4) < 2)
-				offsetZ = -1.0f * (width / 4.0f);
-			else
-				offsetZ =  1.0f * (width / 4.0f);
+			//if (float(i % 4) < 2)
+			//	offsetZ = -1.0f * (width / 4.0f);
+			//else
+			//	offsetZ =  1.0f * (width / 4.0f);
+			offsetX = (((i % 2) < 1) ? -1.0f : 1.0f) * (width / 4.0f);
+			offsetZ = (((i % 4) < 2) ? -1.0f : 1.0f) * (width / 4.0f);
+
 
 			//See if there are any triangles in the new node
 			count = countTriangles((x + offsetX), (z + offsetZ), (width / 2.0f));
@@ -174,17 +177,17 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 			vertexIndex = i * 3;
 
 			//Get the three vertices of this triangle from the vertex list.
-			vertices[index] = m_vertexList[vertexIndex]; //a operator= overload was made to minimize the code. (check struct definition)
+			vertices[index] = m_vertexList[m_indexList[vertexIndex]]; //a operator= overload was made to minimize the code. (check struct definition)
 			indices[index] = index;
 			index++;
 			
 			vertexIndex++;
-			vertices[index] = m_vertexList[vertexIndex];
+			vertices[index] = m_vertexList[m_indexList[vertexIndex]];
 			indices[index] = index;
 			index++;
 
 			vertexIndex++;
-			vertices[index] = m_vertexList[vertexIndex];
+			vertices[index] = m_vertexList[m_indexList[vertexIndex]];
 			indices[index] = index;
 			index++;
 
@@ -280,16 +283,16 @@ bool QuadTree::isTriangleContained(int index, float x, float z, float width)
 	vertexIndex = index * 3;
 
 	//Get the three vertices of this triangle from the vertex list
-	x1 = m_vertexList[vertexIndex].x;
-	z1 = m_vertexList[vertexIndex].z;
+	x1 = m_vertexList[m_indexList[vertexIndex]].x;
+	z1 = m_vertexList[m_indexList[vertexIndex]].z;
 	vertexIndex++;
 
-	x2 = m_vertexList[vertexIndex].x;
-	z2 = m_vertexList[vertexIndex].z;
+	x2 = m_vertexList[m_indexList[vertexIndex]].x;
+	z2 = m_vertexList[m_indexList[vertexIndex]].z;
 	vertexIndex++;
 	
-	x3 = m_vertexList[vertexIndex].x;
-	z3 = m_vertexList[vertexIndex].z;
+	x3 = m_vertexList[m_indexList[vertexIndex]].x;
+	z3 = m_vertexList[m_indexList[vertexIndex]].z;
 	
 	//Check if the minimum of the x coords of the triangle is inside the node
 	minX = min(x1, min(x2, x3));
@@ -356,7 +359,7 @@ void QuadTree::ReleaseNode(NodeType * node)
 	return;
 }
 
-void QuadTree::RenderNode(NodeType * node, ID3D11DeviceContext * gDeviceContext, Frustum* frustum)
+void QuadTree::RenderNode(NodeType * node, ID3D11DeviceContext * gDeviceContext, Frustum* frustum, ID3D11Buffer* worldBuffer)
 {
 	
 	/*
@@ -376,7 +379,8 @@ void QuadTree::RenderNode(NodeType * node, ID3D11DeviceContext * gDeviceContext,
 	//Do a frustum check on the cube
 
 	//Check if the node can be viewed,
-	result = true;//frustum->CheckCube(node->posX, 0.0f, node->posZ, (node->width / 2.0f));
+	result = true;
+	//result = frustum->CheckCube(node->posX, 0.0f, node->posZ, (node->width / 2.0f));
 	
 	//if it can't be seen then none of it's children can either so don't continue
 	if (!result)
@@ -390,7 +394,7 @@ void QuadTree::RenderNode(NodeType * node, ID3D11DeviceContext * gDeviceContext,
 		if (node->nodes[i] != 0)
 		{
 			count++;
-			RenderNode(node->nodes[i], gDeviceContext, frustum);
+			RenderNode(node->nodes[i], gDeviceContext, frustum,worldBuffer);
 		}
 
 	}
@@ -404,7 +408,24 @@ void QuadTree::RenderNode(NodeType * node, ID3D11DeviceContext * gDeviceContext,
 	stride = sizeof(Vertex);
 	offset = 0;
 
-	gDeviceContext->IAGetVertexBuffers(0, 1, &node->vertexBuffer, &stride, &offset);
+
+	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
+	DirectX::XMFLOAT4X4 worldFloat;
+
+	DirectX::XMStoreFloat4x4(&worldFloat, world);
+	D3D11_MAPPED_SUBRESOURCE mappedResourceWorld;
+	ZeroMemory(&mappedResourceWorld, sizeof(mappedResourceWorld));
+
+	//mapping to the matrixbuffer
+	gDeviceContext->Map(worldBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResourceWorld);
+
+	worldConstantBuffer* temporaryWorld = (worldConstantBuffer*)mappedResourceWorld.pData;
+
+	temporaryWorld->world = worldFloat;
+
+	gDeviceContext->Unmap(worldBuffer, 0);
+
+	gDeviceContext->IASetVertexBuffers(0, 1, &node->vertexBuffer, &stride, &offset);
 	
 	gDeviceContext->IASetIndexBuffer(node->indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
@@ -433,20 +454,25 @@ QuadTree::QuadTree(const QuadTree &parent)
 QuadTree::~QuadTree()
 {
 	delete[] m_vertexList;
+	delete[] m_indexList;
 }
 
 bool QuadTree::Initialize(Terrain * terrain, ID3D11Device * gDevice)
 {
-	int vertexCount;
+	int vertexCount, indexCount;
 	float centerX, centerZ, width;
 	
 
 	//Get the number of vertices in the terrain
 	vertexCount = terrain->getVertexCount();
+	this->indexCount = terrain->getIndexCount();
+
+	//Store the total triangle countW
+	m_triangleCount = this->indexCount / 3;
 	
-	//Store the total triangle count
-	m_triangleCount = vertexCount / 3;
-	
+	m_indexList = new unsigned long[this->indexCount];
+	if (!m_indexList)
+		return false;
 	//create a vertex array to hold all of the terrain vertices
 	m_vertexList = new Vertex[vertexCount];
 	if (!m_vertexList)
@@ -454,6 +480,7 @@ bool QuadTree::Initialize(Terrain * terrain, ID3D11Device * gDevice)
 
 	//Copy the vertices from the terrain into the vertex list
 	terrain->copyVertexArray((void*)m_vertexList);
+	terrain->copyIndexArray((void*)m_indexList); //<-- this could be wrong
 
 	//Calculate the parent node. It's the upper most quad, covering the whole terrain
 	//Calculates center x,z and width
@@ -473,6 +500,11 @@ bool QuadTree::Initialize(Terrain * terrain, ID3D11Device * gDevice)
 		delete []m_vertexList;
 		m_vertexList = 0;
 	}
+	if (m_indexList)
+	{
+		delete[]m_indexList;
+		m_indexList = 0;
+	}
 
 	return true;
 }
@@ -489,7 +521,7 @@ void QuadTree::Release()
 	return;
 }
 
-void QuadTree::render(ID3D11DeviceContext * gDeviceContext, Frustum* frustum)
+void QuadTree::render(ID3D11DeviceContext * gDeviceContext, Frustum* frustum, ID3D11Buffer* worldBuffer)
 {
 	/*
 	IMPORTANT!
@@ -500,7 +532,7 @@ void QuadTree::render(ID3D11DeviceContext * gDeviceContext, Frustum* frustum)
 	m_drawCount = 0;
 
 	//Render each node that is visible, starting at the parent node and moving down the tree
-	RenderNode(m_parentNode, gDeviceContext, frustum); 
+	RenderNode(m_parentNode, gDeviceContext, frustum,worldBuffer); 
 }
 
 int QuadTree::GetDrawCount() //THis returns the number of triangles that were drawn in the previous render function call

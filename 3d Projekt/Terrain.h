@@ -59,15 +59,17 @@ private:
 
 public:
 
+	int getIndexCount() { return m_vertexCount; }
+	void copyIndexArray(void* indexList);
 	void copyVertexArray(void* vertexList);
-	int getVertexCount() { return NumVertices; }
+	int getVertexCount() { return NumFaces; }
 	bool initializeBuffers(ID3D11Device *gDevice);
 	void Release();
 	void Render(ID3D11DeviceContext *gDeviceContext);
 	Terrain();
 	bool init(std::string fileName, ID3D11Device *gDevice, ID3D11DeviceContext *gDeviceContext, ID3D11Buffer* worldBuffer);
 	~Terrain();
-	int getIndexCount() { return m_indexCount; }
+	//int getIndexCount() { return m_indexCount; }
 
 	void setTranslation(XMFLOAT3 translate) { this->translation = translate; updateWorldMatrix(); };
 };

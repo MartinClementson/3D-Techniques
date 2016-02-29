@@ -607,7 +607,7 @@ void Engine::renderScene() // This function will render the scene, no matter the
 
 	
 	this->shaderManager->setActiveShaders(TERRAINSHADER);
-	this->quadTreeTerrain->render(this->gDeviceContext, this->cam->getFrustum());
+	this->quadTreeTerrain->render(this->gDeviceContext, this->cam->getFrustum(),this->worldBuffer);
 
 	//OLD
 //	this->shaderManager->setActiveShaders(TERRAINSHADER);

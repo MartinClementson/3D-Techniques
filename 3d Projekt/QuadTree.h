@@ -12,6 +12,9 @@ const int maxTriangles = 10000; //The maximum amount of triangles in a node
 class QuadTree
 {
 private:
+	
+	ID3D11Buffer* worldBuffer = nullptr;
+
 	//Node struct
 	struct NodeType
 	{
@@ -25,14 +28,15 @@ private:
 	int m_triangleCount, m_drawCount;
 	Vertex *m_vertexList; // This is the vertices from the Terrain
 	NodeType* m_parentNode;
-
+	unsigned long *m_indexList;
+	int indexCount;
 	//Functions
 	void calculateMeshDimensions(int count, float &x, float &z, float &meshWidth);
 	void createTreeNode(NodeType *parent, float x, float z, float width, ID3D11Device *gDevice);
 	int countTriangles(float x, float z, float width);
 	bool isTriangleContained(int index, float x, float z, float width);
 	void ReleaseNode(NodeType *node);
-	void RenderNode(NodeType *node, ID3D11DeviceContext *gDeviceContext, Frustum* frustum);
+	void RenderNode(NodeType *node, ID3D11DeviceContext *gDeviceContext, Frustum* frustum, ID3D11Buffer* worldBuffer);
 public:
 	QuadTree();
 	QuadTree(const QuadTree &parent);
@@ -40,7 +44,7 @@ public:
 
 	bool Initialize(Terrain *terrain, ID3D11Device *gDevice);
 	void Release();
-	void render(ID3D11DeviceContext *gDeviceContext, Frustum * frustum); 
+	void render(ID3D11DeviceContext *gDeviceContext, Frustum * frustum, ID3D11Buffer* worldBuffer);
 
 	int GetDrawCount();
 };
