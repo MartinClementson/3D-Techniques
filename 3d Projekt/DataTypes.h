@@ -38,7 +38,6 @@ struct Vertex
 		tangent.y = temp.y / sharedTangents.size();
 		tangent.z = temp.z / sharedTangents.size();
 		sharedTangents.clear();
-	
 	}
 
 	Vertex& operator=(const Vertex& other) //operator = overload

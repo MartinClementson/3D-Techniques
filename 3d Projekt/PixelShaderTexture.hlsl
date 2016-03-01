@@ -21,6 +21,7 @@ struct PS_IN
 	float3 normal : NORMAL;
 	float4 wPos: WORLDPOS;
 	float3 camPos : CAMERAPOS;
+	float3 Tangent:TANGENT;
 
 };
 
@@ -86,6 +87,6 @@ finalCol = finalCol + specularLight; // + specular
 //finalCol.z = min(finalCol.z, 1.0f);
 
 
-float4 col = { finalCol,1.0 };
+float4 col = { input.Tangent,1.0 };
 return col;
 }

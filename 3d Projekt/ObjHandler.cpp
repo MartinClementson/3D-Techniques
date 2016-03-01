@@ -159,6 +159,7 @@ void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>
 			existWithinVerts = false;
 			offset++;
 		}
+		calculateOBJTangents(*modelVerts, indices);
 		father = false;
 		count = 0;
 	}
