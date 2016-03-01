@@ -7,15 +7,71 @@
 #include "DataTypes.h"
 
 using namespace std;
-void ObjHandler::calculateOBJTangents(std::vector<Vertex> &vertices, std::vector<UINT> &indices)
-{
-}
 ObjHandler::ObjHandler()
 {
 	
 	
 }
+//calculating the tangent for the normal map
+void ObjHandler::calculateOBJTangents(std::vector<Vertex> &vertices, std::vector<UINT> &indices)
+{
+	for (int i = 0; i < indices.size(); i += 3)
+	{
+		//making temporary variables for simpler use
+		int i0 = indices.at(i);
+		int i1 = indices.at(i + 1);
+		int i2 = indices.at(i + 2);
 
+		//Calculating the edges of the triangle
+		DirectX::XMFLOAT3 edge1 = 
+		{
+			(vertices.at(i1).x - vertices.at(i0).x),
+			(vertices.at(i1).y - vertices.at(i0).y),
+			(vertices.at(i1).z - vertices.at(i0).z) 
+		};
+		DirectX::XMFLOAT3 edge2 =
+		{
+			(vertices.at(i2).x - vertices.at(i0).x),
+			(vertices.at(i2).y - vertices.at(i0).y),
+			(vertices.at(i2).z - vertices.at(i0).z)
+		};
+
+		//calculating delta values for the multiplication
+		float deltaU1 = vertices.at(i1).u - vertices.at(i0).u;
+		float deltaV1 = vertices.at(i1).v - vertices.at(i0).v;
+		float deltaU2 = vertices.at(i2).u - vertices.at(i0).u;
+		float deltaV2 = vertices.at(i2).v - vertices.at(i0).v;
+
+		//calculating denominator
+		float den = 1.0f / (deltaU1*deltaV2 - deltaU2*deltaV1);
+
+		Vertex temp;
+		temp.tangent.x = (den * (deltaV2*edge1.x - deltaV1*edge2.x));
+		temp.tangent.y = (den * (deltaV2*edge1.y - deltaV1*edge2.y));
+		temp.tangent.z = (den * (deltaV2*edge1.z - deltaV1*edge2.z));
+
+		vertices.at(i0).sharedTangents.push_back(temp.tangent);
+		vertices.at(i1).sharedTangents.push_back(temp.tangent);
+		vertices.at(i2).sharedTangents.push_back(temp.tangent);
+	}
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		//interpolating all the tangents that share the same vertex
+		vertices.at(i).interpolateTangents();
+		DirectX::XMVECTOR temp;
+		DirectX::XMVECTOR tempTangent = { (vertices.at(i).tangent.x), (vertices.at(i).tangent.y), (vertices.at(i).tangent.z) };
+		DirectX::XMVECTOR tempNormal = { (vertices.at(i).nx), (vertices.at(i).ny), (vertices.at(i).nz) };
+
+		//calculating using the Gram-schmidt thing, to orthonormalize
+		temp = (tempTangent - tempNormal * DirectX::XMVector3Dot(tempNormal, tempTangent));
+		temp = DirectX::XMVector3Normalize(temp);
+
+		//returning the recalculated tangent to its rightful owner
+		vertices.at(i).tangent.x = temp.m128_f32[0];
+		vertices.at(i).tangent.y = temp.m128_f32[1];
+		vertices.at(i).tangent.z = temp.m128_f32[2];
+	}
+}
 void ObjHandler::MtlHandler(std::string &filePath, std::vector<Material> &objMaterials)
 {
 	string textureID;

@@ -12,7 +12,6 @@ struct Vertex
 
 	float nx, ny, nz; // 32 byte offset
 
-	
 
 	struct vertexTangent { // 44 byte offset
 		float x, y, z;
@@ -38,7 +37,7 @@ struct Vertex
 		tangent.x = temp.x / sharedTangents.size();
 		tangent.y = temp.y / sharedTangents.size();
 		tangent.z = temp.z / sharedTangents.size();
-
+		sharedTangents.clear();
 	
 	}
 
