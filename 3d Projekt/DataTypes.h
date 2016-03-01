@@ -12,14 +12,35 @@ struct Vertex
 
 	float nx, ny, nz; // 32 byte offset
 
-	struct tangent { // 44 byte offset
-		float x, y, z;
-	};
+	
 
-	struct biTangent { // 56 byte offset
-
+	struct vertexTangent { // 44 byte offset
 		float x, y, z;
+		vertexTangent& operator+(const vertexTangent& other)
+		{
+			x += other.x;
+			y += other.y;
+			z += other.z;
+			return *this;
+		}
 	};
+	vertexTangent tangent;
+
+	std::vector<vertexTangent> sharedTangents;
+	void interpolateTangents()
+	{
+		vertexTangent temp;
+		temp.x = 0.0f;
+		temp.y = 0.0f;
+		temp.z = 0.0f;
+		for (int i = 0; i < sharedTangents.size(); i++)
+			temp = temp + sharedTangents.at(i);
+		tangent.x = temp.x / sharedTangents.size();
+		tangent.y = temp.y / sharedTangents.size();
+		tangent.z = temp.z / sharedTangents.size();
+
+	
+	}
 
 	Vertex& operator=(const Vertex& other) //operator = overload
 	{

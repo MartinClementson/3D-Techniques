@@ -5,9 +5,6 @@ struct VS_IN
 	float2 Texture: TEXCOORD0;
 	float3 Normal: NORMALS;
 	float3 Tangent:TANGENT;
-	float3 BiTangent:BITANGENT;
-
-	//normals?
 };
 
 struct VS_OUT
@@ -15,7 +12,7 @@ struct VS_OUT
 	float4 pos : SV_POSITION;
 	float2 Texture : TEXCOORD0;
 	float3 Normal: NORMALS;
-	//put normals here later
+	float3 Tangent:TANGENT;
 };
 
 
@@ -28,6 +25,7 @@ VS_OUT VS_main( VS_IN input )
 	output.pos = float4(input.pos, 1.0f);
 	output.Texture = input.Texture;
 	output.Normal = input.Normal;
+	output.Tangent = input.Tangent;
 
 	return output;
 }

@@ -7,6 +7,9 @@
 #include "DataTypes.h"
 
 using namespace std;
+void ObjHandler::calculateOBJTangents(std::vector<Vertex> &vertices, std::vector<UINT> &indices)
+{
+}
 ObjHandler::ObjHandler()
 {
 	
@@ -160,7 +163,7 @@ void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>
 
 			offset++;
 		}
-
+		
 		childrenArray[0]->push_back(new Model(&sendCoordinates, &textureName, gDevice, gDeviceContext, worldBuffer, worldStruct, childIndices));
 		count = 0;
 	}
