@@ -492,14 +492,14 @@ void Engine::render()
 	//The first pass (added after the comment above) is the dynamic cubeMap
 	//This is independant from the later passes, as this renders from a whole set of different cameras and not the player camera
 
-	//for (int j = 0; j < cubeMapModels->size(); j++)					//looping is a little overkill, since we only have one object that uses this.
-	//																//also, there is no support for multiple objects yet.
-	//																//for multiple objects, we need to implement multiple textures in the class
-	//{
-	//	XMFLOAT3 position = cubeMapModels->at(j)->getTranslation(); //Get the position of the reflective object
-	//	this->dynCubeMap->Render(position, this);					//this function will set the viewport,depthbuffer,backbuffer, back to normal when it's done
-	//}
-	//
+	for (int j = 0; j < cubeMapModels->size(); j++)					//looping is a little overkill, since we only have one object that uses this.
+																	//also, there is no support for multiple objects yet.
+																	//for multiple objects, we need to implement multiple textures in the class
+	{
+		XMFLOAT3 position = cubeMapModels->at(j)->getTranslation(); //Get the position of the reflective object
+		this->dynCubeMap->Render(position, this);					//this function will set the viewport,depthbuffer,backbuffer, back to normal when it's done
+	}
+	
 	this->updateCamera(this->cam);									//this sets the camera to the const buffer, Replacing the cameras
 																	// used with dynamic cube mapping
 

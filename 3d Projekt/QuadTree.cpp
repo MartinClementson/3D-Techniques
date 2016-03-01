@@ -218,8 +218,8 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 	vertices = new Vertex[vertexCount];
 
 	//Create the index array
-	//indices = new unsigned long[vertexCount];
-	std::vector<UINT> indices2;
+	indices = new unsigned long[vertexCount];
+	//std::vector<UINT> indices2;
 
 	//Initialize the index
 	index = 0;
@@ -238,71 +238,24 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 			vertexIndex = i * 3;
 
 			//Get the three vertices of this triangle from the vertex list.
-			for (int j = 0; j < index; j++)
-			{
-				if (vertices[j] == m_vertexList[m_indexList[vertexIndex]]) // fill with more
-				{
-					alreadyExist = true;
-					//indices[index] = j;
-					indices2.push_back(j);
-					//index++;
-					break;
-				}
-			}
-			if (!alreadyExist)
-			{
-				vertices[index] = m_vertexList[m_indexList[vertexIndex]]; //a operator= overload was made to minimize the code. (check struct definition)
-				indices2.push_back(index);
-				index++;
-			}
-			alreadyExist = false;
+			vertices[index] = m_vertexList[m_indexList[vertexIndex]];
+			indices[index] = index;
+			index++;
 			indexCount++;
 			vertexIndex++;
 			
 			
-			for (int j = 0; j < index; j++)
-			{
-				if (vertices[j] == m_vertexList[m_indexList[vertexIndex]]) // fill with more
-				{
-					alreadyExist = true;
-					indices2.push_back(j);
-					//index++;
-					break;
-				}
-			}
-			if (!alreadyExist)
-			{
-				vertices[index] = m_vertexList[m_indexList[vertexIndex]]; //a operator= overload was made to minimize the code. (check struct definition)
-				indices2.push_back(index);
-				index++;
-			}
-			alreadyExist = false;
+			vertices[index] = m_vertexList[m_indexList[vertexIndex]];
+			indices[index] = index;
+			index++;
 			indexCount++;
 			vertexIndex++;
 
-			for (int j = 0; j < index; j++)
-			{
-				if (vertices[j] == m_vertexList[m_indexList[vertexIndex]]) // fill with more
-				{
-					alreadyExist = true;
-					indices2.push_back(j);
-					//index++
-					break;
-				}
-			}
-			if (!alreadyExist)
-			{
-				vertices[index] = m_vertexList[m_indexList[vertexIndex]]; //a operator= overload was made to minimize the code. (check struct definition)
-				indices2.push_back(index);
-				index++;
-			}
-			alreadyExist = false;
+			
+			vertices[index] = m_vertexList[m_indexList[vertexIndex]];
+			indices[index] = index;
+			index++;
 			indexCount++;
-			//vertexIndex++;
-			/*vertices[index] = m_vertexList[m_indexList[vertexIndex]];
-			indices[index] = index;*/
-			//index++;
-			//indexCount++;
 
 
 		}
@@ -329,14 +282,14 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 	//Set up the description of the index buffer
 
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(unsigned long) * indices2.size(); //changed here!!!
+	indexBufferDesc.ByteWidth = sizeof(unsigned long) * vertexCount; 
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
 	indexBufferDesc.StructureByteStride = 0;
 
 	//Give the subresource structure a pointer to the index data
-	indexData.pSysMem = indices2.data(); //changed here!!!
+	indexData.pSysMem = indices; 
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
 
@@ -347,8 +300,8 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 
 	delete[] vertices;
 	vertices = 0;
-	//delete[] indices;
-	//indices = 0; changed here!!!!!!!!!!!!!!!!!!!!
+	delete[] indices;
+	indices = 0;
 
 	return;
 
