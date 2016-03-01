@@ -10,7 +10,7 @@
 #define _CRTDBG_MAP_ALLOC
 HWND InitWindow(HINSTANCE hInstance);
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-void CalculateFPS(HWND& window, GameTimer& time);
+void CalculateFPS(HWND& window, GameTimer& time, int QTDrawCount);
 
 
 
@@ -41,7 +41,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			else
 			{
 				mTimer->Tick();
-				CalculateFPS(wndHandle, *mTimer);
+				CalculateFPS(wndHandle, *mTimer, engine->getQTdrawCount());
 				engine->run();
 			}
 		}

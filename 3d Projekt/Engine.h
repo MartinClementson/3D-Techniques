@@ -13,6 +13,7 @@
 #include "ShaderManager.h"
 #include "DynamicCubeMap.h"
 #include "Terrain.h"
+#include "QuadTree.h"
 class DynamicCubeMap; //forward declaration
 #pragma endregion
 
@@ -29,13 +30,14 @@ private:
 	ShaderManager* shaderManager = nullptr;
 	DynamicCubeMap* dynCubeMap = nullptr;
 	RenderTexture* renderTexture;
+	QuadTree* quadTreeTerrain;
 
 #pragma endregion
 
 	int vertexAmount;
 	int modelAmount;
 	int lightAmount;
-
+	UINT drawCount;
 
 #pragma region Model arrays
 	std::vector<Model*>* modelsColor;
@@ -95,7 +97,7 @@ public:
 	Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input);
 	
 
-	void renderScene();
+	void renderScene(Camera *Camera);
 	virtual ~Engine();
 
 
@@ -115,7 +117,7 @@ public:
 	void addLight(lightTypes type);
 	
 
-
+	int getQTdrawCount() { return this->drawCount; }//this->quadTreeTerrain->GetDrawCount(); }
 	D3D11_VIEWPORT getViewPort() { return this->vp; };
 	ID3D11RenderTargetView* getRenderTargetView() { return this->gBackbufferRTV; };
 	ID3D11DepthStencilView* getDepthStencilView() { return this->depthStencilView; };

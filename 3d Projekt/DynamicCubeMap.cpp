@@ -68,9 +68,9 @@ void DynamicCubeMap::Render(XMFLOAT3 modelPosition,Engine* engine) // We include
 		gDeviceContext->OMSetRenderTargets(1, renderTargets, dynamicCubemapDSV);
 
 		//Draw the scene with the exception of the object the camera is in
-		//(needs to be implemented)
+		//(needs to be implemented) It's just hardcoded now
 		engine->updateCamera(this->cubeMapCamera[i]);
-		engine->renderScene();
+		engine->renderScene(this->cubeMapCamera[i]);
 
 	}
 
@@ -104,6 +104,7 @@ bool DynamicCubeMap::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceC
 	for (int i = 0; i < 6; i++)
 	{
 		cubeMapCamera[i] = new Camera();
+		
 	}
 
 	//Create the cube map texture:
@@ -243,7 +244,7 @@ void DynamicCubeMap::BuildCubeFaceCamera(XMFLOAT3 position)
 		cubeMapCamera[i]->setViewLookAt(targets[i]);
 		cubeMapCamera[i]->setViewPosition(position);
 		cubeMapCamera[i]->setViewUpDirection(ups[i]);
-		cubeMapCamera[i]->setCameraLens(0.5f*PI, 1.0f, 0.1f, 1000.0f);
+		cubeMapCamera[i]->setCameraLens(0.5f*PI, 1.0f, 0.1f, 10.0f);
 		cubeMapCamera[i]->updateView();
 
 

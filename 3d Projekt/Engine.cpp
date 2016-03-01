@@ -16,8 +16,10 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	this->renderTexture = new RenderTexture();
 	this->shaderManager = new ShaderManager();
 	this->dynCubeMap = new DynamicCubeMap();
+	this->quadTreeTerrain = new QuadTree();
 	this->input = input;
 	this->wndHandle = winHandle;
+	drawCount = 0;
 
 	bool inputResult = input->initialize(hInstance, winHandle,this->cam);
 	if (!inputResult)
@@ -77,8 +79,13 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 		delete heightMap;
 
 	}
-	heightMap->setTranslation(XMFLOAT3(-285.0f, -6.0f, -210));
+	//heightMap->setTranslation(XMFLOAT3(-285.0f, -6.0f, -210));
 
+	if (!quadTreeTerrain->Initialize(heightMap, this->gDevice,this->gDeviceContext,this->worldBuffer))
+	{
+		errorMsg("Failed to initialize the Quad Tree");
+		delete quadTreeTerrain;
+	}
 
 	//Load the models and get their vertices
 	this->modelsColor = new std::vector<Model*>; 
@@ -116,6 +123,7 @@ Engine::~Engine()
 		delete cubeMapModels->at(i);
 
 	}
+	delete quadTreeTerrain;
 	delete shaderManager;
 	delete renderTexture;
 	delete dynCubeMap;
@@ -132,24 +140,13 @@ Engine::~Engine()
 void Engine::release()
 {
 	
-	////Release Color shaders
-	//gVertexLayoutColor->Release();
-	//gVertexShaderColor->Release();
-	//gPixelShaderColor->Release();
-	//gGeometryShaderColor->Release();
+	
 
-	//Release Texture shaders
-	//if(gVertexLayoutTexture != NULL)
-	//	gVertexLayoutTexture->Release(); //If this crashes on shut down, is because there is no layout for texture yet
-	//
+	
 	if (gSampleState != nullptr)
 		gSampleState->Release();
 		
-	/*gVertexShaderTexture->Release();
-	gPixelShaderTexture->Release();
-	gGeometryShaderTexture->Release();
-	*/
-
+	
 	input->Shutdown();
 	dynCubeMap->Release();
 	shaderManager->Release();
@@ -168,6 +165,8 @@ void Engine::release()
 	depthState->Release();
 	depthStencilView->Release();
 
+
+	quadTreeTerrain->Release();
 	heightMap->Release();
 	worldBuffer->Release();
 	camBuffer->Release();
@@ -401,8 +400,8 @@ void Engine::loadModels()
 	this->addModel(OBJ, "plane.obj");
 	this->modelsTexture->at(2)->setTranslation(XMFLOAT3(0.0f, -2.0f, 0.0f));
 
-	this->addModel(OBJ);
-	this->modelsTexture->at(3)->setTranslation(XMFLOAT3(0.0f, 5.0f, 5.0f));
+	//this->addModel(OBJ);
+	//this->modelsTexture->at(3)->setTranslation(XMFLOAT3(0.0f, 5.0f, 5.0f));
 	this->addModel(OBJ, "Sphere.obj",CUBEMAPSHADER);
 	this->cubeMapModels->at(0)->setTranslation(XMFLOAT3(0.0f, 1.0f, 1.0f));
 
@@ -482,7 +481,7 @@ void Engine::updateLight()
 
 void Engine::render()
 {
-
+	drawCount = 0;
 
 	//In this function different render passes will be made.
 	//The scene is rendered in the renderScene() function
@@ -500,7 +499,7 @@ void Engine::render()
 		XMFLOAT3 position = cubeMapModels->at(j)->getTranslation(); //Get the position of the reflective object
 		this->dynCubeMap->Render(position, this);					//this function will set the viewport,depthbuffer,backbuffer, back to normal when it's done
 	}
-
+	
 	this->updateCamera(this->cam);									//this sets the camera to the const buffer, Replacing the cameras
 																	// used with dynamic cube mapping
 
@@ -520,7 +519,7 @@ void Engine::render()
 			//this->shaderManager->setActiveShaders(SKYBOXSHADER);
 			
 			
-			renderScene();
+			//renderScene();
 			
 		}
 
@@ -536,7 +535,7 @@ void Engine::render()
 			this->gDeviceContext->PSSetShaderResources(2, 1, &shaderResourceViewz);
 			//////////////////////////////////
 
-			renderScene();											//Render scene
+			renderScene(this->cam);											//Render scene
 			this->shaderManager->setActiveShaders(CUBEMAPSHADER);	//Apply dynamic cube map shader
 			this->cubeMapModels->at(0)->render();					//Render the model using the dynamix cube map
 
@@ -558,11 +557,14 @@ void Engine::render()
 }
 
 
-void Engine::renderScene() // This function will render the scene, no matter the render pass used
-{
+void Engine::renderScene(Camera *camera) // This function will render the scene, no matter the render pass used
+{						//Camera Parameter, is for the frustum culling
+						//Because we have 6+ cameras with dynamic cube mapping
+
+	
 	//Render skybox
 	this->shaderManager->setActiveShaders(SKYBOXSHADER);
-	sky->update(this->cam->getCamPos()); //Send in the position of the camera. The skybox needs to be centered around the camera
+	sky->update(camera->getCamPos()); //Send in the position of the camera. The skybox needs to be centered around the camera
 	sky->render();
 
 
@@ -603,8 +605,14 @@ void Engine::renderScene() // This function will render the scene, no matter the
 	/////////////////////////////////////////////
 	//Render the terrain
 	//
+
+	
 	this->shaderManager->setActiveShaders(TERRAINSHADER);
-	this->heightMap->Render(this->gDeviceContext);
+	this->quadTreeTerrain->render(this->gDeviceContext, camera->getFrustum(),this->worldBuffer);
+	drawCount += this->quadTreeTerrain->GetDrawCount();
+	//OLD
+//	this->shaderManager->setActiveShaders(TERRAINSHADER);
+	//this->heightMap->Render(this->gDeviceContext);
 
 }
 
