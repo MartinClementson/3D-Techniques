@@ -12,6 +12,15 @@ struct Vertex
 
 	float nx, ny, nz; // 32 byte offset
 
+	struct tangent { // 44 byte offset
+		float x, y, z;
+	};
+
+	struct biTangent { // 56 byte offset
+
+		float x, y, z;
+	};
+
 	Vertex& operator=(const Vertex& other) //operator = overload
 	{
 		x = other.x;

@@ -43,6 +43,8 @@ protected:
 #pragma endregion
 
 #pragma region Private functions
+	void calculateVertVectors();
+	void calculateTangentBinormal(Vertex vertex1, Vertex vertex2, Vertex vertex3, DirectX::XMFLOAT3 &tangent, DirectX::XMFLOAT3 &biNormal);
 	void sendToConstantBuffer();
 	virtual void createVertices(ID3D11Device* gDevice);
 	void loadTexture(ID3D11Device* gDevice, std::string filePath);

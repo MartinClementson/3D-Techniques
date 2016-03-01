@@ -198,6 +198,69 @@ void Model::setVertex(Vertex nVertex)
 	this->vertices->push_back(nVertex);
 }
 
+
+
+void Model::calculateVertVectors()
+{
+
+
+
+}
+
+//calculate the tangents and binormals
+void Model::calculateTangentBinormal(Vertex vertex1, Vertex vertex2, Vertex vertex3, DirectX::XMFLOAT3 & tangent, DirectX::XMFLOAT3 & biNormal)
+{
+	DirectX::XMFLOAT3 vector1, vector2;
+	DirectX::XMFLOAT2 tuVector, tvVector;
+	float den;
+	float length;
+
+	//Calculating the two vectors for this face
+	vector1.x = vertex2.x - vertex1.x;
+	vector1.y = vertex2.y - vertex1.y;
+	vector1.z = vertex2.z - vertex1.z;
+
+	vector2.x = vertex3.x - vertex1.x;
+	vector2.y = vertex3.y - vertex1.y;
+	vector2.z = vertex3.z - vertex1.z;
+
+	//calculating the tu and tv texture space vectors
+	tuVector.x = vertex2.u - vertex1.u;
+	tvVector.x = vertex2.v - vertex1.v;
+
+	tuVector.y = vertex3.u - vertex1.u;
+	tvVector.y = vertex3.v - vertex1.v;
+
+	//calculate the denominator
+	den = 1.0f / (tuVector.x*tvVector.y*-tuVector.y*tvVector.x);
+
+	//calculating the cross products and multiply by the coefficient
+	tangent.x = (tvVector.y * vector1.x - tvVector.x * vector2.x)*den;
+	tangent.y = (tvVector.y * vector1.y - tvVector.x * vector2.y)*den;
+	tangent.z = (tvVector.y * vector1.z - tvVector.x * vector2.z)*den;
+
+	biNormal.x = (tuVector.x * vector2.x - tuVector.y * vector1.x)*den;
+	biNormal.y = (tuVector.x * vector2.y - tuVector.y * vector1.y)*den;
+	biNormal.z = (tuVector.x * vector2.z - tuVector.y * vector1.z)*den;
+
+	//calculate the length of the tangent
+	length = sqrt((tangent.x * tangent.x) + (tangent.y * tangent.y) + (tangent.z * tangent.z));
+
+	//normalizing
+	tangent.x = tangent.x / length;
+	tangent.y = tangent.y / length;
+	tangent.z = tangent.z / length;
+
+	//calculate the length of the biNormal
+	length = sqrt((biNormal.x * biNormal.x)+(biNormal.y * biNormal.y)+(biNormal.z * biNormal.z));
+
+	//normalizing
+	biNormal.x = biNormal.x / length;
+	biNormal.y = biNormal.y / length;
+	biNormal.z = biNormal.z / length;
+
+}
+
 void Model::sendToConstantBuffer()
 {
 

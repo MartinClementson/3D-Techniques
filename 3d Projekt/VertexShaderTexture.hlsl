@@ -4,6 +4,8 @@ struct VS_IN
 	float3 pos : POSITION;
 	float2 Texture: TEXCOORD0;
 	float3 Normal: NORMALS;
+	float3 Tangent:TANGENT;
+	float3 BiTangent:BITANGENT;
 
 	//normals?
 };
