@@ -100,7 +100,7 @@ finalCol = textureSample* finalCol; // texture * (diffuse + ambient)
 //finalCol.z = min(finalCol.z, 1.0f);
 
 
-    float4 col = { 1.0, 0.0, 0.0, 1.0 };    //{ finalCol,1.0 };
+    float4 col = { finalCol,1.0 };
 
 
 //fogging (linear interpolation)

@@ -33,6 +33,17 @@ struct Vertex
 
 
 	}
+	bool operator==(const Vertex& other)
+	{
+		if (x == other.x &&
+			y == other.y &&
+			z == other.z &&
+			u == other.u &&
+			v == other.v)
+			return true;
+		else
+			return false;
+	}
 
 	
 };

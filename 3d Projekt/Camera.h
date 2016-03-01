@@ -18,6 +18,7 @@ private:
 	DirectX::XMFLOAT3 viewLookAt;
 
 	Frustum *m_frustum;
+	float farPlaneDistance;
 	
 
 public:
@@ -46,7 +47,8 @@ public:
 	DirectX::XMFLOAT4X4 getView();
 	DirectX::XMFLOAT4X4 getProjection();
 	DirectX::XMFLOAT3 getCamPos();
-	Frustum* getFrustum() { return this->m_frustum; };
+	Frustum* getFrustum() { this->updateView(); return this->m_frustum; };
+	
 
 
 

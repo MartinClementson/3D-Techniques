@@ -13,7 +13,26 @@ class QuadTree
 {
 private:
 	
-	ID3D11Buffer* worldBuffer = nullptr;
+	ID3D11DeviceContext* gDeviceContext;
+
+
+	XMFLOAT3 translation = { -285.0f, -6.0f, -210 };
+	XMFLOAT3 rotation;
+	XMFLOAT3 scale = { 1.0f,1.0f,1.0f };
+
+	worldConstantBuffer* worldStruct;
+
+
+	XMFLOAT4X4 worldMatrix;
+	XMFLOAT4X4 normalWorld;
+
+
+	ID3D11Buffer* worldBuffer = nullptr; //this is a pointer to the constant buffer, sent from the engine
+
+	void updateWorldMatrix();
+
+	void sendToConstantBuffer();
+
 
 	//Node struct
 	struct NodeType
@@ -42,7 +61,7 @@ public:
 	QuadTree(const QuadTree &parent);
 	~QuadTree();
 
-	bool Initialize(Terrain *terrain, ID3D11Device *gDevice);
+	bool Initialize(Terrain *terrain, ID3D11Device *gDevice, ID3D11DeviceContext *gDeviceContext, ID3D11Buffer* worldBuffer);
 	void Release();
 	void render(ID3D11DeviceContext *gDeviceContext, Frustum * frustum, ID3D11Buffer* worldBuffer);
 

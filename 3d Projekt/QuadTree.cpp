@@ -2,6 +2,65 @@
 
 
 
+void QuadTree::updateWorldMatrix()
+{
+
+
+	DirectX::XMMATRIX scaleMatrix = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
+
+	//We convert from degrees to radians here. Before this point we work in degrees to make it easier for the programmer and user
+	DirectX::XMMATRIX rotationMatrixX = DirectX::XMMatrixRotationX(toRadian(rotation.x));
+	DirectX::XMMATRIX rotationMatrixY = DirectX::XMMatrixRotationY(toRadian(rotation.y));
+	DirectX::XMMATRIX rotationMatrixZ = DirectX::XMMatrixRotationZ(toRadian(rotation.z));
+
+
+
+
+
+
+	//Create the rotation matrix
+	DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixMultiply(rotationMatrixZ, rotationMatrixX);
+	rotationMatrix = DirectX::XMMatrixMultiply(rotationMatrix, rotationMatrixY);
+
+
+	//Intoduce the world matrix, multiply rotation and scale. (world translation comes later)
+	DirectX::XMMATRIX world = DirectX::XMMatrixMultiply(rotationMatrix, scaleMatrix);
+
+
+	//Create the world translation matrix
+	DirectX::XMMATRIX translationMatrix = DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z);
+
+	//Multiply the (scale*rotation) matrix with the world translation matrix
+	world = DirectX::XMMatrixMultiply(world, translationMatrix);
+
+	XMVECTOR worldDet = XMMatrixDeterminant(world);
+	XMStoreFloat4x4(&normalWorld, XMMatrixInverse(&worldDet, world));
+
+
+	world = XMMatrixTranspose(world);
+
+
+	XMStoreFloat4x4(&this->worldMatrix, world);
+}
+
+void QuadTree::sendToConstantBuffer()
+{
+
+	this->worldStruct->world = this->worldMatrix;
+	this->worldStruct->normalWorld = this->normalWorld;
+	D3D11_MAPPED_SUBRESOURCE mappedResourceWorld;
+	ZeroMemory(&mappedResourceWorld, sizeof(mappedResourceWorld));
+
+	//mapping to the matrixbuffer
+	this->gDeviceContext->Map(worldBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResourceWorld);
+
+	worldConstantBuffer* temporaryWorld = (worldConstantBuffer*)mappedResourceWorld.pData;
+
+	*temporaryWorld = *worldStruct;
+
+	this->gDeviceContext->Unmap(worldBuffer, 0);
+}
+
 void QuadTree::calculateMeshDimensions(int count, float & x, float & z, float & meshWidth)
 {
 	float maxWidth, maxDepth, minWidth, minDepth, width, depth, maxX, maxZ;
@@ -159,11 +218,13 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 	vertices = new Vertex[vertexCount];
 
 	//Create the index array
-	indices = new unsigned long[vertexCount];
+	//indices = new unsigned long[vertexCount];
+	std::vector<UINT> indices2;
 
 	//Initialize the index
 	index = 0;
-
+	UINT indexCount = 0;
+	bool alreadyExist = false;
 	//Loop through all the triangles in the vertex list
 
 	for (i = 0; i < m_triangleCount; i++)
@@ -177,19 +238,71 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 			vertexIndex = i * 3;
 
 			//Get the three vertices of this triangle from the vertex list.
-			vertices[index] = m_vertexList[m_indexList[vertexIndex]]; //a operator= overload was made to minimize the code. (check struct definition)
-			indices[index] = index;
-			index++;
+			for (int j = 0; j < index; j++)
+			{
+				if (vertices[j] == m_vertexList[m_indexList[vertexIndex]]) // fill with more
+				{
+					alreadyExist = true;
+					//indices[index] = j;
+					indices2.push_back(j);
+					//index++;
+					break;
+				}
+			}
+			if (!alreadyExist)
+			{
+				vertices[index] = m_vertexList[m_indexList[vertexIndex]]; //a operator= overload was made to minimize the code. (check struct definition)
+				indices2.push_back(index);
+				index++;
+			}
+			alreadyExist = false;
+			indexCount++;
+			vertexIndex++;
 			
+			
+			for (int j = 0; j < index; j++)
+			{
+				if (vertices[j] == m_vertexList[m_indexList[vertexIndex]]) // fill with more
+				{
+					alreadyExist = true;
+					indices2.push_back(j);
+					//index++;
+					break;
+				}
+			}
+			if (!alreadyExist)
+			{
+				vertices[index] = m_vertexList[m_indexList[vertexIndex]]; //a operator= overload was made to minimize the code. (check struct definition)
+				indices2.push_back(index);
+				index++;
+			}
+			alreadyExist = false;
+			indexCount++;
 			vertexIndex++;
-			vertices[index] = m_vertexList[m_indexList[vertexIndex]];
-			indices[index] = index;
-			index++;
 
-			vertexIndex++;
-			vertices[index] = m_vertexList[m_indexList[vertexIndex]];
-			indices[index] = index;
-			index++;
+			for (int j = 0; j < index; j++)
+			{
+				if (vertices[j] == m_vertexList[m_indexList[vertexIndex]]) // fill with more
+				{
+					alreadyExist = true;
+					indices2.push_back(j);
+					//index++
+					break;
+				}
+			}
+			if (!alreadyExist)
+			{
+				vertices[index] = m_vertexList[m_indexList[vertexIndex]]; //a operator= overload was made to minimize the code. (check struct definition)
+				indices2.push_back(index);
+				index++;
+			}
+			alreadyExist = false;
+			indexCount++;
+			//vertexIndex++;
+			/*vertices[index] = m_vertexList[m_indexList[vertexIndex]];
+			indices[index] = index;*/
+			//index++;
+			//indexCount++;
 
 
 		}
@@ -216,14 +329,14 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 	//Set up the description of the index buffer
 
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(unsigned long) * vertexCount;
+	indexBufferDesc.ByteWidth = sizeof(unsigned long) * indices2.size(); //changed here!!!
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
 	indexBufferDesc.StructureByteStride = 0;
 
 	//Give the subresource structure a pointer to the index data
-	indexData.pSysMem = indices;
+	indexData.pSysMem = indices2.data(); //changed here!!!
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
 
@@ -234,8 +347,8 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 
 	delete[] vertices;
 	vertices = 0;
-	delete[] indices;
-	indices = 0;
+	//delete[] indices;
+	//indices = 0; changed here!!!!!!!!!!!!!!!!!!!!
 
 	return;
 
@@ -379,8 +492,8 @@ void QuadTree::RenderNode(NodeType * node, ID3D11DeviceContext * gDeviceContext,
 	//Do a frustum check on the cube
 
 	//Check if the node can be viewed,
-	result = true;
-	//result = frustum->CheckCube(node->posX, 0.0f, node->posZ, (node->width / 2.0f));
+	//result = true;
+	result = frustum->CheckCube(node->posX, 0.0f, node->posZ, (node->width / 2.0f));
 	
 	//if it can't be seen then none of it's children can either so don't continue
 	if (!result)
@@ -409,21 +522,21 @@ void QuadTree::RenderNode(NodeType * node, ID3D11DeviceContext * gDeviceContext,
 	offset = 0;
 
 
-	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
-	DirectX::XMFLOAT4X4 worldFloat;
+	//DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
+	//DirectX::XMFLOAT4X4 worldFloat;
 
-	DirectX::XMStoreFloat4x4(&worldFloat, world);
-	D3D11_MAPPED_SUBRESOURCE mappedResourceWorld;
-	ZeroMemory(&mappedResourceWorld, sizeof(mappedResourceWorld));
+	//DirectX::XMStoreFloat4x4(&worldFloat, world);
+	//D3D11_MAPPED_SUBRESOURCE mappedResourceWorld;
+	//ZeroMemory(&mappedResourceWorld, sizeof(mappedResourceWorld));
 
-	//mapping to the matrixbuffer
-	gDeviceContext->Map(worldBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResourceWorld);
+	////mapping to the matrixbuffer
+	//gDeviceContext->Map(worldBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResourceWorld);
 
-	worldConstantBuffer* temporaryWorld = (worldConstantBuffer*)mappedResourceWorld.pData;
+	//worldConstantBuffer* temporaryWorld = (worldConstantBuffer*)mappedResourceWorld.pData;
 
-	temporaryWorld->world = worldFloat;
+	//temporaryWorld->world = worldFloat;
 
-	gDeviceContext->Unmap(worldBuffer, 0);
+	//gDeviceContext->Unmap(worldBuffer, 0);
 
 	gDeviceContext->IASetVertexBuffers(0, 1, &node->vertexBuffer, &stride, &offset);
 	
@@ -455,10 +568,17 @@ QuadTree::~QuadTree()
 {
 	delete[] m_vertexList;
 	delete[] m_indexList;
+	delete worldStruct;
 }
 
-bool QuadTree::Initialize(Terrain * terrain, ID3D11Device * gDevice)
+bool QuadTree::Initialize(Terrain * terrain, ID3D11Device * gDevice, ID3D11DeviceContext *gDeviceContext, ID3D11Buffer* worldBuffer)
 {
+
+	this->worldBuffer = worldBuffer;
+	this->gDeviceContext = gDeviceContext;
+	this->worldStruct = new worldConstantBuffer;
+	this->updateWorldMatrix();
+
 	int vertexCount, indexCount;
 	float centerX, centerZ, width;
 	
@@ -530,6 +650,7 @@ void QuadTree::render(ID3D11DeviceContext * gDeviceContext, Frustum* frustum, ID
 
 	//reset the number of triangles drawn for this frame
 	m_drawCount = 0;
+	//sendToConstantBuffer();
 
 	//Render each node that is visible, starting at the parent node and moving down the tree
 	RenderNode(m_parentNode, gDeviceContext, frustum,worldBuffer); 

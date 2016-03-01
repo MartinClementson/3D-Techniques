@@ -5,7 +5,7 @@
 #define WIREFRAME false
 #define VSYNC 1 //1 == ON, 0 = OFF
 #define MAX_TRIANGLES 10000
-#define SCREEN_DEPTH 1000000.0f
+#define SCREEN_DEPTH 10000.0f
 
 
 #define PAD 0.0f

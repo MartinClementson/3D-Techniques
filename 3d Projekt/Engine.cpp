@@ -19,7 +19,7 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	this->quadTreeTerrain = new QuadTree();
 	this->input = input;
 	this->wndHandle = winHandle;
-
+	drawCount = 0;
 
 	bool inputResult = input->initialize(hInstance, winHandle,this->cam);
 	if (!inputResult)
@@ -81,7 +81,7 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	}
 	//heightMap->setTranslation(XMFLOAT3(-285.0f, -6.0f, -210));
 
-	if (!quadTreeTerrain->Initialize(heightMap, this->gDevice))
+	if (!quadTreeTerrain->Initialize(heightMap, this->gDevice,this->gDeviceContext,this->worldBuffer))
 	{
 		errorMsg("Failed to initialize the Quad Tree");
 		delete quadTreeTerrain;
@@ -481,7 +481,7 @@ void Engine::updateLight()
 
 void Engine::render()
 {
-
+	drawCount = 0;
 
 	//In this function different render passes will be made.
 	//The scene is rendered in the renderScene() function
@@ -492,14 +492,14 @@ void Engine::render()
 	//The first pass (added after the comment above) is the dynamic cubeMap
 	//This is independant from the later passes, as this renders from a whole set of different cameras and not the player camera
 
-	for (int j = 0; j < cubeMapModels->size(); j++)					//looping is a little overkill, since we only have one object that uses this.
-																	//also, there is no support for multiple objects yet.
-																	//for multiple objects, we need to implement multiple textures in the class
-	{
-		XMFLOAT3 position = cubeMapModels->at(j)->getTranslation(); //Get the position of the reflective object
-		this->dynCubeMap->Render(position, this);					//this function will set the viewport,depthbuffer,backbuffer, back to normal when it's done
-	}
-
+	//for (int j = 0; j < cubeMapModels->size(); j++)					//looping is a little overkill, since we only have one object that uses this.
+	//																//also, there is no support for multiple objects yet.
+	//																//for multiple objects, we need to implement multiple textures in the class
+	//{
+	//	XMFLOAT3 position = cubeMapModels->at(j)->getTranslation(); //Get the position of the reflective object
+	//	this->dynCubeMap->Render(position, this);					//this function will set the viewport,depthbuffer,backbuffer, back to normal when it's done
+	//}
+	//
 	this->updateCamera(this->cam);									//this sets the camera to the const buffer, Replacing the cameras
 																	// used with dynamic cube mapping
 
@@ -535,7 +535,7 @@ void Engine::render()
 			this->gDeviceContext->PSSetShaderResources(2, 1, &shaderResourceViewz);
 			//////////////////////////////////
 
-			renderScene();											//Render scene
+			renderScene(this->cam);											//Render scene
 			this->shaderManager->setActiveShaders(CUBEMAPSHADER);	//Apply dynamic cube map shader
 			this->cubeMapModels->at(0)->render();					//Render the model using the dynamix cube map
 
@@ -557,13 +557,14 @@ void Engine::render()
 }
 
 
-void Engine::renderScene() // This function will render the scene, no matter the render pass used
-{
+void Engine::renderScene(Camera *camera) // This function will render the scene, no matter the render pass used
+{						//Camera Parameter, is for the frustum culling
+						//Because we have 6+ cameras with dynamic cube mapping
 
 	
 	//Render skybox
 	this->shaderManager->setActiveShaders(SKYBOXSHADER);
-	sky->update(this->cam->getCamPos()); //Send in the position of the camera. The skybox needs to be centered around the camera
+	sky->update(camera->getCamPos()); //Send in the position of the camera. The skybox needs to be centered around the camera
 	sky->render();
 
 
@@ -607,8 +608,8 @@ void Engine::renderScene() // This function will render the scene, no matter the
 
 	
 	this->shaderManager->setActiveShaders(TERRAINSHADER);
-	this->quadTreeTerrain->render(this->gDeviceContext, this->cam->getFrustum(),this->worldBuffer);
-
+	this->quadTreeTerrain->render(this->gDeviceContext, camera->getFrustum(),this->worldBuffer);
+	drawCount += this->quadTreeTerrain->GetDrawCount();
 	//OLD
 //	this->shaderManager->setActiveShaders(TERRAINSHADER);
 	//this->heightMap->Render(this->gDeviceContext);

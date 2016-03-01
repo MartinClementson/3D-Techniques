@@ -99,7 +99,9 @@ void Camera::setViewUpDirection(XMFLOAT3 nViewUpDirection)
 
 void Camera::setCameraLens(float angle, float ratio, float nearPlane, float farPlane)
 {
+	this->farPlaneDistance = farPlane;
 	DirectX::XMMATRIX tempProjection;
+	
 	tempProjection = DirectX::XMMatrixPerspectiveFovLH(angle, ratio, nearPlane, farPlane);
 	tempProjection = DirectX::XMMatrixTranspose(tempProjection);
 	DirectX::XMStoreFloat4x4(&projection, tempProjection);
@@ -289,7 +291,7 @@ void Camera::updateView()
 	XMStoreFloat4x4(&projConvert, tempProj);
 	DirectX::XMStoreFloat4x4(&viewConvert, viewMatrix);
 
-	m_frustum->ConstructFrustum(SCREEN_DEPTH, projConvert, viewConvert);
+	m_frustum->ConstructFrustum(this->farPlaneDistance, projConvert, viewConvert);
 	viewMatrix = DirectX::XMMatrixTranspose(viewMatrix);
 
 	//converting the view matrix into an XMFLOAT4X4, for simpler use

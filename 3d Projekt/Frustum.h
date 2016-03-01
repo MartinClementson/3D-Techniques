@@ -18,6 +18,7 @@ private:
 	{
 		float Distance;
 		XMFLOAT3 Normal;
+		//Ax+By+Cz+D =0
 	};
 
 	PLANE planes[6];

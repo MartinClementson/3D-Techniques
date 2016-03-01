@@ -59,7 +59,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hWnd, message, wParam, lParam);
 }
 
-void CalculateFPS(HWND& window, GameTimer& time)
+void CalculateFPS(HWND& window, GameTimer& time,int QTDrawCount)
 
 {
 	// Code computes the average frames per second, and also the 
@@ -89,7 +89,7 @@ void CalculateFPS(HWND& window, GameTimer& time)
 		outs.precision(6);
 
 		outs << L"   " << L"FPS: " << fps << L"   "
-			<< L"Time Per Frame: " << mspf << L" (ms)";
+			<< L"Time Per Frame: " << mspf << L" (ms)"<< L" QT Draw Count: " << QTDrawCount ;
 		SetWindowText(window, outs.str().c_str()); //update the window bar text
 
 
