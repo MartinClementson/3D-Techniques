@@ -50,9 +50,16 @@ void ObjHandler::calculateOBJTangents(std::vector<Vertex> &vertices, std::vector
 		temp.tangent.y = (den * (deltaV2*edge1.y - deltaV1*edge2.y));
 		temp.tangent.z = (den * (deltaV2*edge1.z - deltaV1*edge2.z));
 
-		vertices.at(i0).sharedTangents.push_back(temp.tangent);
-		vertices.at(i1).sharedTangents.push_back(temp.tangent);
-		vertices.at(i2).sharedTangents.push_back(temp.tangent);
+		for (int j = i0; j <= i2; j++)
+		{
+			if (vertices.at(j).sharedTangents != nullptr)
+				vertices.at(j).sharedTangents->push_back(temp.tangent);
+			else
+			{
+				vertices.at(j).createTangent();
+				vertices.at(j).sharedTangents->push_back(temp.tangent);
+			}
+		}
 	}
 	for (int i = 0; i < vertices.size(); i++)
 	{

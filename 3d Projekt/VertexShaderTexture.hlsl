@@ -13,6 +13,7 @@ struct VS_OUT
 	float2 Texture : TEXCOORD0;
 	float3 Normal: NORMALS;
 	float3 Tangent:TANGENT;
+	
 };
 
 
@@ -26,6 +27,7 @@ VS_OUT VS_main( VS_IN input )
 	output.Texture = input.Texture;
 	output.Normal = input.Normal;
 	output.Tangent = input.Tangent;
+	
 
 	return output;
 }

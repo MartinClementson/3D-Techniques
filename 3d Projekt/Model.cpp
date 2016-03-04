@@ -100,6 +100,35 @@ void Model::loadTexture(ID3D11Device* gDevice, std::string filePath)
 	
 }
 
+void Model::loadNormal(ID3D11Device* gDevice, std::string filePath)
+{
+
+
+
+	//Convert filepath to wString
+	if (filePath == "")
+		filePath = "FloorsMixedSize0031_M_normal.jpg";
+
+	std::wstring widestr = std::wstring(filePath.begin(), filePath.end());
+
+	//Convert the wString to wchar_t* (Needed by the texture loader)
+	const wchar_t* fileName = widestr.c_str();
+
+	//load Texture
+	HRESULT hr = CoInitialize((LPVOID)0);
+
+	//The function will also create a subresource and bind it to the gpu
+	hr = CreateWICTextureFromFile(gDevice, fileName, nullptr, &this->normalMap);
+
+
+	//Create an error if texture is not loaded
+	/*if (!SUCCEEDED(hr))
+	MessageBox(*winHandle, L"Cannot intialize input device", L"Error", MB_OK);
+
+	*/
+
+}
+
 //This is the constructor for OBJ import
 Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct)
 {
@@ -367,6 +396,10 @@ Model::~Model()
 		delete children;
 
 	}
+	if (texture != nullptr)
+		texture->Release();
+	if (normalMap != nullptr)
+		normalMap->Release();
 	if (vertices != nullptr)
 	{
 		delete vertices;
@@ -434,11 +467,11 @@ void Model::render()
 	this->gDeviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	//IF there is a texture. apply it to the pixel shader
 
-	if (texture != nullptr) {
-
+	if (texture != nullptr)
 		this->gDeviceContext->PSSetShaderResources(0, 1, &this->texture);
-	}
 
+	if (normalMap != nullptr)
+		this->gDeviceContext->PSSetShaderResources(2, 1, &this->normalMap);
 	//fix draw indexed, first place should be the number of indices
 	this->gDeviceContext->DrawIndexed(indicesCount, 0, 0);
 	//this->gDeviceContext->Draw(this->vertices->size(), 0); //This will be dynamic,

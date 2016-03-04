@@ -25,20 +25,64 @@ struct Vertex
 	};
 	vertexTangent tangent;
 
-	std::vector<vertexTangent> sharedTangents;
+	std::vector<vertexTangent> *sharedTangents = nullptr;
+
+	void createTangent()
+	{
+		sharedTangents = new std::vector<vertexTangent>;
+	}
+
 	void interpolateTangents()
 	{
 		vertexTangent temp;
 		temp.x = 0.0f;
 		temp.y = 0.0f;
 		temp.z = 0.0f;
-		for (int i = 0; i < sharedTangents.size(); i++)
-			temp = temp + sharedTangents.at(i);
-		tangent.x = temp.x / sharedTangents.size();
-		tangent.y = temp.y / sharedTangents.size();
-		tangent.z = temp.z / sharedTangents.size();
-		sharedTangents.clear();
+		for (int i = 0; i < sharedTangents->size(); i++)
+			temp = temp + sharedTangents->at(i);
+		tangent.x = temp.x / sharedTangents->size();
+		tangent.y = temp.y / sharedTangents->size();
+		tangent.z = temp.z / sharedTangents->size();
+		sharedTangents->clear();
+		if (sharedTangents != nullptr)
+		{
+			delete sharedTangents;
+			sharedTangents = nullptr;
+		}
 	}
+
+
+	Vertex(float x,float y,float z,float r,float g,float b) {
+		this->x = x;
+		this->y = y;
+		this->z = z;
+
+		this->r = r;
+		this->g = g;
+		this->b = b;
+	};
+	Vertex(float x, float y, float z, float r, float g, float b,float u, float v) {
+		this->x = x;
+		this->y = y;
+		this->z = z;
+
+		this->r = r;
+		this->g = g;
+		this->b = b;
+
+		this->u = u;
+		this->v = v;
+	};
+
+	Vertex() {
+		this->x = 0;
+		this->y = 0;
+		this->z = 0;
+
+		this->r = 1;
+		this->g = 1;
+		this->b = 1;
+	};
 
 	Vertex& operator=(const Vertex& other) //operator = overload
 	{

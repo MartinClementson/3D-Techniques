@@ -40,6 +40,7 @@ protected:
 	
 										 //Texture
 	ID3D11ShaderResourceView* texture = nullptr; //If multitextures are to be supported. this will be an array
+	ID3D11ShaderResourceView* normalMap = nullptr;
 #pragma endregion
 
 #pragma region Private functions
@@ -77,6 +78,7 @@ public:
 	virtual void update();
 	virtual void render();
 
+	void loadNormal(ID3D11Device* gDevice, std::string filePath);
 	void renderChildren();
 
 	virtual void updateWorldMatrix();

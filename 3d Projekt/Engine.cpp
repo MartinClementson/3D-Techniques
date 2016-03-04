@@ -399,6 +399,7 @@ void Engine::loadModels()
 
 	this->addModel(OBJ, "plane.obj");
 	this->modelsTexture->at(2)->setTranslation(XMFLOAT3(0.0f, -2.0f, 0.0f));
+	this->modelsTexture->at(2)->loadNormal(gDevice, "");
 
 	//this->addModel(OBJ);
 	//this->modelsTexture->at(3)->setTranslation(XMFLOAT3(0.0f, 5.0f, 5.0f));
