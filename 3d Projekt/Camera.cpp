@@ -73,6 +73,25 @@ Camera::Camera()
 	
 
 }
+Camera::Camera(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 lookat)
+{
+	this->viewPosition = pos;
+	this->viewLookAt = lookat;
+	viewRightDirection = viewPosition + XMFLOAT3{ 1.0f, 0.0f, 0 };
+	viewUpDirection = XMFLOAT3{ 1.0f, 0.0f, 0 };
+	m_frustum = new Frustum();
+
+	//creating the projection matrix
+	DirectX::XMMATRIX tempProjection;
+	tempProjection = DirectX::XMMatrixPerspectiveFovLH((DirectX::XM_PI*0.45f), (WINDOW_WIDTH / WINDOW_HEIGHT), 0.1f, SCREEN_DEPTH);
+
+
+	tempProjection = DirectX::XMMatrixTranspose(tempProjection);
+	DirectX::XMStoreFloat4x4(&projection, tempProjection);
+	updateView();
+
+
+}
 
 Camera::~Camera()
 {

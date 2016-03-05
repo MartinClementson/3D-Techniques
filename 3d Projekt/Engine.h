@@ -14,7 +14,9 @@
 #include "DynamicCubeMap.h"
 #include "Terrain.h"
 #include "QuadTree.h"
+#include "Overlay.h"
 class DynamicCubeMap; //forward declaration
+
 #pragma endregion
 
 
@@ -25,12 +27,16 @@ private:
 #pragma region Custom Classes
 	Terrain* heightMap = nullptr;
 	Camera* cam = nullptr; 
+	Camera* miniMapCam = nullptr;
 	Input* input = nullptr;
 	SkyBox* sky = nullptr;
 	ShaderManager* shaderManager = nullptr;
 	DynamicCubeMap* dynCubeMap = nullptr;
 	RenderTexture* renderTexture;
 	QuadTree* quadTreeTerrain;
+	
+	Overlay* ui;
+	bool miniMap = true;
 
 #pragma endregion
 
@@ -78,7 +84,13 @@ private:
 
 	lightConstantBuffer lightStruct;
 	ID3D11Buffer* lightBuffer = nullptr;
+
+	pixelShaderConstants pixelStateStruct;
+	ID3D11Buffer* pixelStateBuffer =nullptr; //This buffer is for the booleans in the pixel shader, normal= on/off, etc
+	
+	
 	D3D11_VIEWPORT vp; //Viewport
+	D3D11_VIEWPORT miniMapVP;
 
 	HWND* wndHandle;
 #pragma endregion
@@ -86,7 +98,7 @@ private:
 #pragma region Private functions
 	HRESULT CreateDirect3DContext(HWND* wndHandle);
 	void setViewPort();
-	
+	void sendPixelStateToBuffer();
 	void createRasterizerState();
 	void createConstantBuffers();
 	void errorMsg(std::string msg); //a function to show errors
@@ -111,6 +123,7 @@ public:
 	void addModel(Primitives type, std::string filename); //overload, for OBJ
 	void addModel(Primitives type, std::string filename, ShaderTypes shaderToBeUsed); //overload, for OBJ
 #pragma endregion
+	void updatePixelShaderState();
 	void updateCamera(Camera* cameraToRender);
 	void updateLight();
 	void loadLights();
@@ -122,5 +135,9 @@ public:
 	ID3D11RenderTargetView* getRenderTargetView() { return this->gBackbufferRTV; };
 	ID3D11DepthStencilView* getDepthStencilView() { return this->depthStencilView; };
 
+
+	void setDistanceFog(BOOL x) { this->pixelStateStruct.distanceFog = x; sendPixelStateToBuffer(); };
+	void setNormalMap(BOOL x) { this->pixelStateStruct.normalMap = x; sendPixelStateToBuffer(); };
+	void setMiniMap(BOOL x) { this->pixelStateStruct.miniMap = x; sendPixelStateToBuffer(); };
 };
 

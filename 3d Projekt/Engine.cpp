@@ -11,7 +11,10 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 {
 		
 	this->cam = new Camera();
+	this->miniMapCam = new Camera(XMFLOAT3(0.0,100.0,0.0),XMFLOAT3(0.0,-1.0,0.0));
 	this->sky = new SkyBox();
+	
+
 	this->heightMap = new Terrain();
 	this->renderTexture = new RenderTexture();
 	this->shaderManager = new ShaderManager();
@@ -21,7 +24,13 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	this->wndHandle = winHandle;
 	drawCount = 0;
 
-	bool inputResult = input->initialize(hInstance, winHandle,this->cam);
+	this->pixelStateStruct.distanceFog = TRUE;
+	this->pixelStateStruct.miniMap = FALSE;
+	this->pixelStateStruct.normalMap = FALSE;
+
+
+
+	bool inputResult = input->initialize(hInstance, winHandle,this->cam,&this->miniMap);
 	if (!inputResult)
 	{	//If there is a problem creating the input, show a warning
 		
@@ -41,7 +50,7 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 
 	setViewPort();
 
-	//createShaders();
+
 
 	//create all the shaders
 	if (!shaderManager->Init(this->gDevice,this->gDeviceContext))
@@ -88,6 +97,9 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	}
 
 	//Load the models and get their vertices
+	
+
+	this->ui = new Overlay(this->gDevice, this->gDeviceContext);
 	this->modelsColor = new std::vector<Model*>; 
 	this->modelsTexture = new std::vector<Model*>;
 	this->cubeMapModels = new std::vector<Model*>;
@@ -134,6 +146,9 @@ Engine::~Engine()
 	delete cubeMapModels;
 	delete lights;
 	delete cam;
+	delete miniMapCam;
+	
+	delete ui;
 	
 }
 
@@ -157,9 +172,6 @@ void Engine::release()
 	
 
 	
-	gDeviceContext->ClearState();
-	gDeviceContext->Release();
-	gDevice->Release();
 	
 	depthBuffer->Release();
 	depthState->Release();
@@ -171,8 +183,13 @@ void Engine::release()
 	worldBuffer->Release();
 	camBuffer->Release();
 	lightBuffer->Release();
+	pixelStateBuffer->Release();
 	sky->Release();
+	ui->Release();
 
+	gDeviceContext->ClearState();
+	gDeviceContext->Release();
+	gDevice->Release();
 	//debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 
 }
@@ -220,6 +237,24 @@ void Engine::createConstantBuffers()
 	hr = this->gDevice->CreateBuffer(&bufferDescLight, nullptr, &lightBuffer);
 	if (SUCCEEDED(hr))
 		this->gDeviceContext->PSSetConstantBuffers(0, 1, &lightBuffer);
+
+	//Pixelshader booleans
+	CD3D11_BUFFER_DESC bufferDescPixelBools;
+	ZeroMemory(&bufferDescPixelBools, sizeof(bufferDescPixelBools));
+	bufferDescPixelBools.ByteWidth = sizeof(pixelShaderConstants);
+	bufferDescPixelBools.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDescPixelBools.Usage = D3D11_USAGE_DYNAMIC;
+	bufferDescPixelBools.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bufferDescPixelBools.MiscFlags = 0;
+	bufferDescPixelBools.StructureByteStride = 0;
+
+	hr = this->gDevice->CreateBuffer(&bufferDescPixelBools, nullptr, &pixelStateBuffer);
+	if (SUCCEEDED(hr))
+	{
+
+		this->gDeviceContext->PSSetConstantBuffers(1, 1, &pixelStateBuffer);
+		this->sendPixelStateToBuffer();
+	}
 
 
 }
@@ -434,6 +469,10 @@ void Engine::update()
 
 
 	this->updateCamera(this->cam); //This needs to be moved
+
+	//get and set the position of the player cam to the minimap cam
+	this->miniMapCam->setViewPosition(XMFLOAT3(cam->getCamPos().x, 100.0, cam->getCamPos().z));
+	this->miniMapCam->setViewLookAt(XMFLOAT3(cam->getCamPos().x, -100.0, cam->getCamPos().z));
 	//update all the models
 	for (int i = 0; i < this->modelsColor->size(); i++)
 	{
@@ -454,7 +493,7 @@ void Engine::update()
 	
 	
 	this->updateLight();
-
+	this->updatePixelShaderState();
 }
 void Engine::updateLight()
 {
@@ -475,7 +514,7 @@ void Engine::updateLight()
 
 		this->gDeviceContext->Unmap(lightBuffer, 0);
 
-		this->gDeviceContext->PSSetConstantBuffers(1, 1, &lightBuffer);
+		this->gDeviceContext->PSSetConstantBuffers(0, 1, &lightBuffer);
 	}
 }
 
@@ -500,31 +539,41 @@ void Engine::render()
 		this->dynCubeMap->Render(position, this);					//this function will set the viewport,depthbuffer,backbuffer, back to normal when it's done
 	}
 	
-	this->updateCamera(this->cam);									//this sets the camera to the const buffer, Replacing the cameras
-																	// used with dynamic cube mapping
+	
 
 	float clearColor[] = { 0, 0, 0, 1 };
 
-	this->gDeviceContext->ClearRenderTargetView(gBackbufferRTV, clearColor);
-	this->gDeviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
+	
 
 
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 4; i++)
 	{
 
-		if (i == 0) //Render to texture. first loop
+		if (i == 0 && this->miniMap == true) //Render to texture (minimap). first loop
 		{
+			
+
+			
+			this->updateCamera(this->miniMapCam);
 			renderTexture->SetRenderTarget(&*gDeviceContext, depthStencilView);
-			renderTexture->ClearRenderTarget(gDeviceContext, depthStencilView, 0, 1, 0, 0);
+			renderTexture->ClearRenderTarget(gDeviceContext, depthStencilView, 0, 0, 0, 0);
 			//this->shaderManager->setActiveShaders(SKYBOXSHADER);
 			
 			
-			//renderScene();
+			renderScene(this->cam);
+			this->shaderManager->setActiveShaders(CUBEMAPSHADER);	//Apply dynamic cube map shader
+			this->cubeMapModels->at(0)->render();					//Render the model using the dynamix cube map
 			
 		}
 
-		else //render to backbuffer/screen. next loop
+		else if( i == 1) //render to backbuffer/screen. next loop
 		{
+			this->gDeviceContext->ClearRenderTargetView(gBackbufferRTV, clearColor);
+			this->gDeviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
+
+
+			this->updateCamera(this->cam);									//this sets the camera to the const buffer, Replacing the cameras
+														// used with dynamic cube mapping and render to texture
 
 			this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, depthStencilView);	//Set backbuffer as render target
 			
@@ -532,21 +581,41 @@ void Engine::render()
 			//Set the renderToTexture as a subresource
 			ID3D11ShaderResourceView* shaderResourceViewz = renderTexture->GetShaderResourceView();
 			//Applu the renderTexture to the pixel shader
-			this->gDeviceContext->PSSetShaderResources(2, 1, &shaderResourceViewz);
+			this->gDeviceContext->PSSetShaderResources(4, 1, &shaderResourceViewz);
 			//////////////////////////////////
 
 			renderScene(this->cam);											//Render scene
 			this->shaderManager->setActiveShaders(CUBEMAPSHADER);	//Apply dynamic cube map shader
 			this->cubeMapModels->at(0)->render();					//Render the model using the dynamix cube map
 
+
+
+			
+
+			
+		}
+
+		else if (i == 2 && this->miniMap == true)//Render UI, (Put minimap on screen, etc.)
+		{
+			this->shaderManager->setActiveShaders(OVERLAYSHADER);
+			this->ui->Render();
+
+		}
+		
+		else 
+		{
+			
+
+
 			//The render texture needs to be taken of as a shader resource
 			//This is so that we can write to it again in the next frame
 			//When we were not doing this, DirectX debug mode sent alot of warnings
 			ID3D11ShaderResourceView * tab[1];
 			tab[0] = NULL;
-			this->gDeviceContext->PSSetShaderResources(2, 1, tab);
+			this->gDeviceContext->PSSetShaderResources(4, 1, tab);
 
 		}
+
 
 
 
@@ -711,6 +780,10 @@ void Engine::addModel(Primitives type, std::string filename,ShaderTypes shaderTo
 
 void Engine::updateCamera(Camera* cameraToRender)
 {
+
+	
+	cameraToRender->updateView();
+
 	camStruct.view = cameraToRender->getView();
 	camStruct.projection = cameraToRender->getProjection();
 	camStruct.camPos = cameraToRender->getCamPos();
@@ -728,11 +801,42 @@ void Engine::updateCamera(Camera* cameraToRender)
 
 	this->gDeviceContext->Unmap(camBuffer, 0);
 
-	//&this->gDeviceContext->GSSetConstantBuffers(1, 1, &camBuffer); <--- im not sure why it works with this commented
+	this->gDeviceContext->GSSetConstantBuffers(1, 1, &camBuffer);// <--- im not sure why it works with this commented
 
 
 }
+void Engine::updatePixelShaderState()
+{
 
+	static pixelShaderConstants previousValue;
+
+	if (previousValue == this->pixelStateStruct)
+		return;
+	else
+	{
+
+		previousValue = this->pixelStateStruct;
+
+		this->sendPixelStateToBuffer();
+	}
+
+}
+void Engine::sendPixelStateToBuffer()
+{
+
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	ZeroMemory(&mappedResource, sizeof(mappedResource));
+
+	//mapping to the matrixbuffer
+	this->gDeviceContext->Map(pixelStateBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+
+	pixelShaderConstants* temporary = (pixelShaderConstants*)mappedResource.pData;
+
+	*temporary = pixelStateStruct;
+
+	this->gDeviceContext->Unmap(pixelStateBuffer, 0);
+
+}
 
 void Engine::addLight(lightTypes type)
 {

@@ -176,18 +176,18 @@ void QuadTree::createTreeNode(NodeType * parent, float x, float z, float width, 
 		for (i = 0; i < 4; i++)
 		{
 			//Calculate position offset for the new child node
-			//if (float(i % 2) < 1)							//
-			//	offsetX = -1.0f * (width / 4.0f);		// c-style representation would be
-			//else                                        // offsetX = (((i % 2) < 1) ? -1.0f : 1.0f) * (width / 4.0f);
-			//	offsetX = 1.0f * (width / 4.0f);        // condition ? valueIfTrue : valueIfFalse
-			//											// Changed to c++ if statement for easier understanding
+			if (float(i % 2) < 1)							//
+				offsetX = -1.0f * (width / 4.0f);		// c-style representation would be
+			else                                        // offsetX = (((i % 2) < 1) ? -1.0f : 1.0f) * (width / 4.0f);
+				offsetX = 1.0f * (width / 4.0f);        // condition ? valueIfTrue : valueIfFalse
+														// Changed to c++ if statement for easier understanding
 
-			//if (float(i % 4) < 2)
-			//	offsetZ = -1.0f * (width / 4.0f);
-			//else
-			//	offsetZ =  1.0f * (width / 4.0f);
-			offsetX = (((i % 2) < 1) ? -1.0f : 1.0f) * (width / 4.0f);
-			offsetZ = (((i % 4) < 2) ? -1.0f : 1.0f) * (width / 4.0f);
+			if (float(i % 4) < 2)
+				offsetZ = -1.0f * (width / 4.0f);
+			else
+				offsetZ =  1.0f * (width / 4.0f);
+			//offsetX = (((i % 2) < 1) ? -1.0f : 1.0f) * (width / 4.0f);
+			//offsetZ = (((i % 4) < 2) ? -1.0f : 1.0f) * (width / 4.0f);
 
 
 			//See if there are any triangles in the new node
