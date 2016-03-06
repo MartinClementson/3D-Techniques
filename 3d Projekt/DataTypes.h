@@ -32,6 +32,9 @@ struct Vertex
 		sharedTangents = new std::vector<vertexTangent>;
 	}
 
+	//some vertices recieve more than one tangents (because that specific vertex
+	//is connected to more than one face), because of that we interpolate between
+	//them for a smother look on the resulting normal map
 	void interpolateTangents()
 	{
 		vertexTangent temp;
