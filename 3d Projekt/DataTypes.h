@@ -161,32 +161,30 @@ struct pixelShaderConstants //hlsl uses 4 byte bools, c++ bools are 1 byte //Eve
   */
 
 
-	BOOL miniMap;     // 4 bytes
-
 	BOOL normalMap;   // 4 bytes
 	
 	BOOL distanceFog; // 4 bytes
 
-	BOOL Padding;	  // 4 bytes
+	BOOL Padding[2];	  // 8 bytes
 
 
 	pixelShaderConstants(BOOL normalMap, BOOL fog, BOOL miniMap)
 	{
-		this->miniMap = miniMap;
+		
 		this->normalMap = normalMap;
 		this->distanceFog = fog;
 	};
 
 	pixelShaderConstants()
 	{
-		this->miniMap = FALSE;
+		
 		this->normalMap = FALSE;
 		this->distanceFog = TRUE;
 	};
 
 	bool operator==(const pixelShaderConstants& other)
 	{
-		if (this->miniMap == other.miniMap &&
+		if (
 			this->distanceFog == other.distanceFog &&
 			this->normalMap == other.normalMap)
 			return true;
@@ -198,7 +196,6 @@ struct pixelShaderConstants //hlsl uses 4 byte bools, c++ bools are 1 byte //Eve
 	pixelShaderConstants& operator=(const pixelShaderConstants& other) //operator = overload
 	{
 		this->distanceFog = other.distanceFog;
-		this->miniMap = other.miniMap;
 		this->normalMap = other.normalMap;
 		return *this;
 	}

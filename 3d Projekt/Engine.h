@@ -138,6 +138,6 @@ public:
 
 	void setDistanceFog(BOOL x) { this->pixelStateStruct.distanceFog = x; sendPixelStateToBuffer(); };
 	void setNormalMap(BOOL x) { this->pixelStateStruct.normalMap = x; sendPixelStateToBuffer(); };
-	void setMiniMap(BOOL x) { this->pixelStateStruct.miniMap = x; sendPixelStateToBuffer(); };
+	
 };
 

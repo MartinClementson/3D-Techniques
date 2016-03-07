@@ -25,7 +25,7 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	drawCount = 0;
 
 	this->pixelStateStruct.distanceFog = TRUE;
-	this->pixelStateStruct.miniMap = FALSE;
+	
 	this->pixelStateStruct.normalMap = FALSE;
 
 
