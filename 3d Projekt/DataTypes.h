@@ -12,6 +12,81 @@ struct Vertex
 
 	float nx, ny, nz; // 32 byte offset
 
+
+	struct vertexTangent { // 44 byte offset
+		float x, y, z;
+		vertexTangent& operator+(const vertexTangent& other)
+		{
+			x += other.x;
+			y += other.y;
+			z += other.z;
+			return *this;
+		}
+	};
+	vertexTangent tangent;
+
+	std::vector<vertexTangent> *sharedTangents = nullptr;
+
+	void createTangent()
+	{
+		sharedTangents = new std::vector<vertexTangent>;
+	}
+
+	//some vertices recieve more than one tangents (because that specific vertex
+	//is connected to more than one face), because of that we interpolate between
+	//them for a smother look on the resulting normal map
+	void interpolateTangents()
+	{
+		vertexTangent temp;
+		temp.x = 0.0f;
+		temp.y = 0.0f;
+		temp.z = 0.0f;
+		for (int i = 0; i < sharedTangents->size(); i++)
+			temp = temp + sharedTangents->at(i);
+		tangent.x = temp.x / sharedTangents->size();
+		tangent.y = temp.y / sharedTangents->size();
+		tangent.z = temp.z / sharedTangents->size();
+		sharedTangents->clear();
+		if (sharedTangents != nullptr)
+		{
+			delete sharedTangents;
+			sharedTangents = nullptr;
+		}
+	}
+
+
+	Vertex(float x,float y,float z,float r,float g,float b) {
+		this->x = x;
+		this->y = y;
+		this->z = z;
+
+		this->r = r;
+		this->g = g;
+		this->b = b;
+	};
+	Vertex(float x, float y, float z, float r, float g, float b,float u, float v) {
+		this->x = x;
+		this->y = y;
+		this->z = z;
+
+		this->r = r;
+		this->g = g;
+		this->b = b;
+
+		this->u = u;
+		this->v = v;
+	};
+
+	Vertex() {
+		this->x = 0;
+		this->y = 0;
+		this->z = 0;
+
+		this->r = 1;
+		this->g = 1;
+		this->b = 1;
+	};
+
 	Vertex& operator=(const Vertex& other) //operator = overload
 	{
 		x = other.x;
@@ -72,4 +147,60 @@ struct lightConstantBuffer
 	DirectX::XMFLOAT4 lightColor;
 	float intensity;
 	DirectX::XMFLOAT3 pad;
+};
+
+struct pixelShaderConstants //hlsl uses 4 byte bools, c++ bools are 1 byte //Every register in hlsl is 16 byte (four floats)
+{ /*
+	WINDOWs booleans use 4 bytes, so we will use them instead
+
+	c++ : sizeof(bool) = 1.0
+	WINDOWS : sizeof(BOOL) = 4.0
+
+	The struct needs to be a multiple of 16 bytes
+
+  */
+
+
+	BOOL miniMap;     // 4 bytes
+
+	BOOL normalMap;   // 4 bytes
+	
+	BOOL distanceFog; // 4 bytes
+
+	BOOL Padding;	  // 4 bytes
+
+
+	pixelShaderConstants(BOOL normalMap, BOOL fog, BOOL miniMap)
+	{
+		this->miniMap = miniMap;
+		this->normalMap = normalMap;
+		this->distanceFog = fog;
+	};
+
+	pixelShaderConstants()
+	{
+		this->miniMap = FALSE;
+		this->normalMap = FALSE;
+		this->distanceFog = TRUE;
+	};
+
+	bool operator==(const pixelShaderConstants& other)
+	{
+		if (this->miniMap == other.miniMap &&
+			this->distanceFog == other.distanceFog &&
+			this->normalMap == other.normalMap)
+			return true;
+		else
+			return false;
+
+	};
+
+	pixelShaderConstants& operator=(const pixelShaderConstants& other) //operator = overload
+	{
+		this->distanceFog = other.distanceFog;
+		this->miniMap = other.miniMap;
+		this->normalMap = other.normalMap;
+		return *this;
+	}
+
 };

@@ -21,7 +21,8 @@ Plane::Plane(ID3D11Device* gDevice, ID3D11DeviceContext* gDeviceContext, ID3D11B
 
 void Plane::createVertices(ID3D11Device* gDevice)
 {
-	//First tris
+	
+	////First tris
 	this->vertices->push_back(Vertex
 	{
 		//first Vert
@@ -106,7 +107,15 @@ void Plane::update()
 
 void Plane::render()
 {
-	return Model::render();
+	this->sendToConstantBuffer();
+	this->gDeviceContext->GSSetConstantBuffers(0, 1, &worldBuffer);
+
+	UINT32 vertexSize = sizeof(Vertex);
+	UINT32 offset = 0;
+	this->gDeviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
+	this->gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	this->gDeviceContext->Draw(this->vertices->size(), 0); //This will be dynamic,
+	//return Model::render();
 }
 
 Plane::Plane(const Plane & obj) //Copy constructor

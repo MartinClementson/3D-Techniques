@@ -21,15 +21,18 @@ struct GSinput
 	float4 pos : SV_POSITION;
 	float2 Texture: TEXCOORD0;
 	float3 Normal : NORMALS;
+	float3 Tangent:TANGENT;
+	
 };
 
 struct GSOutput
 {
 	float4 pos : SV_POSITION;
 	float2 Texture: TEXCOORD0;
-	float3 normal : NORMAL;
+	float3 Normal : NORMAL;
 	float4 wPos : WORLDPOS;
 	float3 camPos: CAMERAPOS;
+	float3 Tangent:TANGENT;
 };
 
 [maxvertexcount(3)]
@@ -80,7 +83,12 @@ void GS_main(
 			element.Texture = input[i].Texture;
 
 
-			element.normal = normalize(mul(input[i].Normal, normalWorld));
+			
+			//element.BiTangent = normalize(mul(input[i].BiTangent,normalWorld);
+
+			element.Tangent = mul(input[i].Tangent, world); //Transform tangent into world space  
+			element.Normal = normalize(mul(input[i].Normal, normalWorld)); //Transform normal into world space
+
 			output.Append(element);
 		}
 	}

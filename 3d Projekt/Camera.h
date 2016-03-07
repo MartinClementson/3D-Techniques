@@ -25,6 +25,7 @@ public:
 	void walk(float d);
 	void strafe(float d);
 	Camera();
+	Camera(DirectX::XMFLOAT3 pos, DirectX::XMFLOAT3 lookat);
 	virtual ~Camera();
 
 	void rotateYaw(float angle); // yaw == around y axis

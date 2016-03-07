@@ -62,6 +62,12 @@ private:
 	ID3D11PixelShader* TERRAIN_PS = nullptr;
 	ID3D11InputLayout* gVertexLayoutTerrain = nullptr;
 
+	//Shaders for the Overlay
+	ID3D11VertexShader* OVERLAY_VS = nullptr;
+	ID3D11GeometryShader* OVERLAY_GS = nullptr;
+	ID3D11PixelShader* OVERLAY_PS = nullptr;
+	ID3D11InputLayout* gVertexLayoutOverlay = nullptr;
+
 
 
 
@@ -76,6 +82,7 @@ private:
 	bool createSkyShader();
 	bool createTerrainShader();
 	bool createCubeMapShader();
+	bool createOverlayShader();
 public:
 	ShaderManager();
 	~ShaderManager();

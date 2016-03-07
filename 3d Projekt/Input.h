@@ -7,8 +7,9 @@ class Input
 private:
 
 	bool mouseHidden;
-
+	bool* miniMap;
 	Camera* camera;
+	
 	LPDIRECTINPUT8 input;
 	LPDIRECTINPUTDEVICE8 keyboard;
 	LPDIRECTINPUTDEVICE8 mouse;
@@ -23,7 +24,7 @@ private:
 public:
 	Input();
 	
-	bool initialize(HINSTANCE* hinstance, HWND* hwnd, Camera* camera);
+	bool initialize(HINSTANCE* hinstance, HWND* hwnd, Camera* camera,bool* miniMap);
 	void Shutdown();
 	bool frame();
 	~Input();

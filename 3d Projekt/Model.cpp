@@ -100,6 +100,35 @@ void Model::loadTexture(ID3D11Device* gDevice, std::string filePath)
 	
 }
 
+void Model::loadNormal(ID3D11Device* gDevice, std::string filePath)
+{
+
+
+
+	//Convert filepath to wString
+	if (filePath == "")
+		filePath = "FloorsMixedSize0031_M_normal.jpg";
+
+	std::wstring widestr = std::wstring(filePath.begin(), filePath.end());
+
+	//Convert the wString to wchar_t* (Needed by the texture loader)
+	const wchar_t* fileName = widestr.c_str();
+
+	//load Texture
+	HRESULT hr = CoInitialize((LPVOID)0);
+
+	//The function will also create a subresource and bind it to the gpu
+	hr = CreateWICTextureFromFile(gDevice, fileName, nullptr, &this->normalMap);
+
+
+	//Create an error if texture is not loaded
+	/*if (!SUCCEEDED(hr))
+	MessageBox(*winHandle, L"Cannot intialize input device", L"Error", MB_OK);
+
+	*/
+
+}
+
 //This is the constructor for OBJ import
 Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct)
 {
@@ -196,6 +225,69 @@ Model::Model(const Model &obj) //Copy Constructor
 void Model::setVertex(Vertex nVertex)
 {
 	this->vertices->push_back(nVertex);
+}
+
+
+
+void Model::calculateVertVectors()
+{
+
+
+
+}
+
+//calculate the tangents and binormals
+void Model::calculateTangentBinormal(Vertex vertex1, Vertex vertex2, Vertex vertex3, DirectX::XMFLOAT3 & tangent, DirectX::XMFLOAT3 & biNormal)
+{
+	DirectX::XMFLOAT3 vector1, vector2;
+	DirectX::XMFLOAT2 tuVector, tvVector;
+	float den;
+	float length;
+
+	//Calculating the two vectors for this face
+	vector1.x = vertex2.x - vertex1.x;
+	vector1.y = vertex2.y - vertex1.y;
+	vector1.z = vertex2.z - vertex1.z;
+
+	vector2.x = vertex3.x - vertex1.x;
+	vector2.y = vertex3.y - vertex1.y;
+	vector2.z = vertex3.z - vertex1.z;
+
+	//calculating the tu and tv texture space vectors
+	tuVector.x = vertex2.u - vertex1.u;
+	tvVector.x = vertex2.v - vertex1.v;
+
+	tuVector.y = vertex3.u - vertex1.u;
+	tvVector.y = vertex3.v - vertex1.v;
+
+	//calculate the denominator
+	den = 1.0f / (tuVector.x*tvVector.y*-tuVector.y*tvVector.x);
+
+	//calculating the cross products and multiply by the coefficient
+	tangent.x = (tvVector.y * vector1.x - tvVector.x * vector2.x)*den;
+	tangent.y = (tvVector.y * vector1.y - tvVector.x * vector2.y)*den;
+	tangent.z = (tvVector.y * vector1.z - tvVector.x * vector2.z)*den;
+
+	biNormal.x = (tuVector.x * vector2.x - tuVector.y * vector1.x)*den;
+	biNormal.y = (tuVector.x * vector2.y - tuVector.y * vector1.y)*den;
+	biNormal.z = (tuVector.x * vector2.z - tuVector.y * vector1.z)*den;
+
+	//calculate the length of the tangent
+	length = sqrt((tangent.x * tangent.x) + (tangent.y * tangent.y) + (tangent.z * tangent.z));
+
+	//normalizing
+	tangent.x = tangent.x / length;
+	tangent.y = tangent.y / length;
+	tangent.z = tangent.z / length;
+
+	//calculate the length of the biNormal
+	length = sqrt((biNormal.x * biNormal.x)+(biNormal.y * biNormal.y)+(biNormal.z * biNormal.z));
+
+	//normalizing
+	biNormal.x = biNormal.x / length;
+	biNormal.y = biNormal.y / length;
+	biNormal.z = biNormal.z / length;
+
 }
 
 void Model::sendToConstantBuffer()
@@ -304,6 +396,10 @@ Model::~Model()
 		delete children;
 
 	}
+	if (texture != nullptr)
+		texture->Release();
+	if (normalMap != nullptr)
+		normalMap->Release();
 	if (vertices != nullptr)
 	{
 		delete vertices;
@@ -371,11 +467,11 @@ void Model::render()
 	this->gDeviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	//IF there is a texture. apply it to the pixel shader
 
-	if (texture != nullptr) {
-
+	if (texture != nullptr)
 		this->gDeviceContext->PSSetShaderResources(0, 1, &this->texture);
-	}
 
+	if (normalMap != nullptr)
+		this->gDeviceContext->PSSetShaderResources(2, 1, &this->normalMap);
 	//fix draw indexed, first place should be the number of indices
 	this->gDeviceContext->DrawIndexed(indicesCount, 0, 0);
 	//this->gDeviceContext->Draw(this->vertices->size(), 0); //This will be dynamic,

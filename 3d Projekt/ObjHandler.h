@@ -6,7 +6,7 @@ class ObjHandler
 {
 
 private:
-
+	void calculateOBJTangents(std::vector<Vertex> &vertices, std::vector<UINT> &indices);
 public:
 	ObjHandler();
 

@@ -38,11 +38,19 @@ protected:
 	worldConstantBuffer* worldStruct = nullptr;
 	ID3D11Buffer* worldBuffer = nullptr; //this is a pointer to the constant buffer, sent from the engine
 	
+	//pixelShaderConstants renderState; // Every Object has it's own renderstate.
+	/* 
+	For example. Some Models have normal maps, some don't.
+	We query
+	*/
 										 //Texture
 	ID3D11ShaderResourceView* texture = nullptr; //If multitextures are to be supported. this will be an array
+	ID3D11ShaderResourceView* normalMap = nullptr;
 #pragma endregion
 
 #pragma region Private functions
+	void calculateVertVectors();
+	void calculateTangentBinormal(Vertex vertex1, Vertex vertex2, Vertex vertex3, DirectX::XMFLOAT3 &tangent, DirectX::XMFLOAT3 &biNormal);
 	void sendToConstantBuffer();
 	virtual void createVertices(ID3D11Device* gDevice);
 	void loadTexture(ID3D11Device* gDevice, std::string filePath);
@@ -75,6 +83,7 @@ public:
 	virtual void update();
 	virtual void render();
 
+	void loadNormal(ID3D11Device* gDevice, std::string filePath);
 	void renderChildren();
 
 	virtual void updateWorldMatrix();

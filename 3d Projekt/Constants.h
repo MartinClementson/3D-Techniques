@@ -18,7 +18,7 @@
 enum Primitives{ PLANE , CUBE , PYRAMID, OBJ};
 enum lightTypes{ POINTLIGHT }; //add more light types here later
 enum moveDirection{ FORWARD,BACKWARD,LEFT,RIGHT};
-enum ShaderTypes { TEXTURESHADER, COLORSHADER, CUBEMAPSHADER,SKYBOXSHADER,TERRAINSHADER };
+enum ShaderTypes { TEXTURESHADER, COLORSHADER, CUBEMAPSHADER,SKYBOXSHADER,TERRAINSHADER,OVERLAYSHADER };
 
 
 /*
@@ -33,9 +33,10 @@ The index is as of now : (Update this if anything is changed!)
 
 0 = is the index that is being replaces each object with the objects texture map.
 1 = is the skymap texture, It is set on initialization and should (for now) not be changed during run time.
-2 = Is the render to texture resource, It works, just not implemented in a way that demonstrates it.
+2 = This is the NormalMap
 3 = the cubemap for the dynamic cube map
-
+4 = Is the render to texture resource(USED AS MINIMAP at the moment)
+5 = This is the ui overlay texture. Add a cool ui here! :)
 
 */
 
