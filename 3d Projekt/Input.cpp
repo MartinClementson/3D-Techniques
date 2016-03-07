@@ -69,10 +69,11 @@ Input::Input()
 
 }
 
-bool Input::initialize(HINSTANCE* hinstance, HWND* hwnd,Camera* camera)
+bool Input::initialize(HINSTANCE* hinstance, HWND* hwnd,Camera* camera, bool * miniMap)
 {
 	hwndP = hwnd;
 	this->camera = camera;
+	this->miniMap = miniMap;
 	HRESULT hr;
 	//Initialize the input interface
 	hr = DirectInput8Create(*hinstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&input, NULL);
@@ -260,8 +261,8 @@ void Input::ProcessInput()
 		camera->rotateYaw(-SENSITIVITY);
 	}
 
+#pragma region Show/hide Mouse
 	static float mouseShiftTimer = 3;
-
 	if (keyboardState[DIK_LSHIFT] && mouseShiftTimer > 3)
 	{
 		if (mouseHidden)
@@ -281,6 +282,7 @@ void Input::ProcessInput()
 			mouseHidden = true;
 			mouseShiftTimer = 0;
 		}
+
 				//look into
 				//ClientToScreen()
 				//getWindowRect()
@@ -292,11 +294,38 @@ void Input::ProcessInput()
 	{
 		mouseShiftTimer += 0.1;
 	}
+#pragma endregion
+
 	
+
+#pragma region Show/Hide minimap
+	static float miniMapShiftTimer = 3;
+	if (keyboardState[DIK_TAB] && miniMapShiftTimer > 3)
+	{
+		if (*miniMap)
+		{
+			
+			*miniMap = false;
+			miniMapShiftTimer = 0;
+		}
+
+		else if (!*miniMap)
+		{
+			
+			*miniMap = true;
+			miniMapShiftTimer = 0;
+		}
+
 	
 
 
-	
+	}
+	else if (miniMapShiftTimer < 3.5f)
+	{
+		miniMapShiftTimer += 0.1;
+	}
+#pragma endregion
+
 	if (mouseHidden)
 	{
 

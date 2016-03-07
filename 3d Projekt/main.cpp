@@ -24,7 +24,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	Input* input = new Input();
 	Engine* engine = new Engine(&hInstance,&wndHandle,input);
 	GameTimer* mTimer = new GameTimer();
-	
+	float hej = sizeof(BOOL);
 
 	if (wndHandle)
 	{

@@ -168,6 +168,7 @@
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="ObjHandler.cpp" />
+    <ClCompile Include="Overlay.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Pyramid.cpp" />
     <ClCompile Include="QuadTree.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ObjHandler.h" />
+    <ClInclude Include="Overlay.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Pyramid.h" />
     <ClInclude Include="QuadTree.h" />
@@ -206,6 +208,10 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="GeometryShaderCubeMap.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">GS_main</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="GeometryShaderOverlay.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">GS_main</EntryPointName>
     </FxCompile>
@@ -253,6 +259,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PS_main</EntryPointName>
     </FxCompile>
+    <FxCompile Include="PixelShaderOverlay.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PS_main</EntryPointName>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="PixelShaderSky.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
@@ -286,6 +296,10 @@
     <FxCompile Include="VertexShaderCubeMap.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VS_main</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="VertexShaderOverlay.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VS_main</EntryPointName>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="VertexShaderSky.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>

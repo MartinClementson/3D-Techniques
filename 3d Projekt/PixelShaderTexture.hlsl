@@ -1,4 +1,4 @@
-cbuffer lightBuffer
+cbuffer lightBuffer : register(b0)
 {
 	float4 lightPosition;
 	float4 lightColor;
@@ -7,12 +7,25 @@ cbuffer lightBuffer
 
 };
 
+cbuffer pixelShaderConstants: register(b1)
+{
+    bool miniMap;
+    bool normalMap;
+    bool distanceFog;
+
+};
+
 SamplerState SampleType;
 
 //modifies how the pixels are written to the polygon face when shaded
 Texture2D shaderTexture : register(t0);
 textureCUBE skyBoxTexture : register(t1);
+
 Texture2D normalTexture : register(t2);
+
+
+Texture2D renderTexture : register(t4);
+
 
 struct PS_IN
 {
@@ -76,8 +89,9 @@ float3 lightColor = mul(color, intensity);
 float shinyPower = 20.0f;
 
 float3 specularLight = { lightColor.xyz * pow(max(dot(r,v),0.0),shinyPower) };
+    float3 textureSample;
 
-float3 textureSample = shaderTexture.Sample(SampleType, input.Texture).xyz;
+textureSample = shaderTexture.Sample(SampleType, input.Texture).xyz;
 //float3 diffuse = textureSample * fDot;
 
 float3 ambient = { 0.5f, 0.5f, 0.5f };

@@ -38,6 +38,11 @@ protected:
 	worldConstantBuffer* worldStruct = nullptr;
 	ID3D11Buffer* worldBuffer = nullptr; //this is a pointer to the constant buffer, sent from the engine
 	
+	//pixelShaderConstants renderState; // Every Object has it's own renderstate.
+	/* 
+	For example. Some Models have normal maps, some don't.
+	We query
+	*/
 										 //Texture
 	ID3D11ShaderResourceView* texture = nullptr; //If multitextures are to be supported. this will be an array
 	ID3D11ShaderResourceView* normalMap = nullptr;

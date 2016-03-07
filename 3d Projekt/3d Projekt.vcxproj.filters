@@ -46,6 +46,15 @@
     <FxCompile Include="GeometryShaderTerrain.hlsl">
       <Filter>Shaders\TerrainShaders</Filter>
     </FxCompile>
+    <FxCompile Include="PixelShaderOverlay.hlsl">
+      <Filter>Shaders\Overlay Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexShaderOverlay.hlsl">
+      <Filter>Shaders\Overlay Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="GeometryShaderOverlay.hlsl">
+      <Filter>Shaders\Overlay Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -113,12 +122,14 @@
     <ClCompile Include="Terrain.cpp">
       <Filter>Classes\Terrain</Filter>
     </ClCompile>
-
     <ClCompile Include="QuadTree.cpp">
       <Filter>Classes\QuadTree</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="Frustum.cpp">
       <Filter>Classes\Frustum</Filter>
+    </ClCompile>
+    <ClCompile Include="Overlay.cpp">
+      <Filter>Classes\Overlay</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -184,13 +195,14 @@
     <ClInclude Include="Terrain.h">
       <Filter>Classes\Terrain</Filter>
     </ClInclude>
-
     <ClInclude Include="QuadTree.h">
       <Filter>Classes\QuadTree</Filter>
-	</ClInclude>
-	
+    </ClInclude>
     <ClInclude Include="Frustum.h">
       <Filter>Classes\Frustum</Filter>
+    </ClInclude>
+    <ClInclude Include="Overlay.h">
+      <Filter>Classes\Overlay</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -269,12 +281,17 @@
     <Filter Include="Shaders\TerrainShaders">
       <UniqueIdentifier>{4284a944-05f3-4a50-8ef8-51829377f883}</UniqueIdentifier>
     </Filter>
-
     <Filter Include="Classes\QuadTree">
       <UniqueIdentifier>{26db1b74-51b4-4950-89a4-991edc82acce}</UniqueIdentifier>
-	</Filter>
+    </Filter>
     <Filter Include="Classes\Frustum">
       <UniqueIdentifier>{635bf7f7-8155-498b-b068-8bd3793a2649}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Overlay Shaders">
+      <UniqueIdentifier>{e6687944-f460-4994-9947-7278f534ca8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Overlay">
+      <UniqueIdentifier>{517fd448-726a-4acf-9982-cc0ffa7dce17}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

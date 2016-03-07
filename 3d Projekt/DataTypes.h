@@ -148,3 +148,59 @@ struct lightConstantBuffer
 	float intensity;
 	DirectX::XMFLOAT3 pad;
 };
+
+struct pixelShaderConstants //hlsl uses 4 byte bools, c++ bools are 1 byte //Every register in hlsl is 16 byte (four floats)
+{ /*
+	WINDOWs booleans use 4 bytes, so we will use them instead
+
+	c++ : sizeof(bool) = 1.0
+	WINDOWS : sizeof(BOOL) = 4.0
+
+	The struct needs to be a multiple of 16 bytes
+
+  */
+
+
+	BOOL miniMap;     // 4 bytes
+
+	BOOL normalMap;   // 4 bytes
+	
+	BOOL distanceFog; // 4 bytes
+
+	BOOL Padding;	  // 4 bytes
+
+
+	pixelShaderConstants(BOOL normalMap, BOOL fog, BOOL miniMap)
+	{
+		this->miniMap = miniMap;
+		this->normalMap = normalMap;
+		this->distanceFog = fog;
+	};
+
+	pixelShaderConstants()
+	{
+		this->miniMap = FALSE;
+		this->normalMap = FALSE;
+		this->distanceFog = TRUE;
+	};
+
+	bool operator==(const pixelShaderConstants& other)
+	{
+		if (this->miniMap == other.miniMap &&
+			this->distanceFog == other.distanceFog &&
+			this->normalMap == other.normalMap)
+			return true;
+		else
+			return false;
+
+	};
+
+	pixelShaderConstants& operator=(const pixelShaderConstants& other) //operator = overload
+	{
+		this->distanceFog = other.distanceFog;
+		this->miniMap = other.miniMap;
+		this->normalMap = other.normalMap;
+		return *this;
+	}
+
+};

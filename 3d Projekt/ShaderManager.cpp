@@ -53,6 +53,10 @@ void ShaderManager::Release()
 	TERRAIN_PS->Release();
 	gVertexLayoutTerrain->Release();
 
+	OVERLAY_VS->Release();
+	OVERLAY_PS->Release();
+	gVertexLayoutOverlay->Release();
+
 }
 
 bool ShaderManager::createShaders()
@@ -66,6 +70,8 @@ bool ShaderManager::createShaders()
 	if (!createCubeMapShader())
 		return false;
 	if (!createTerrainShader())
+		return false;
+	if (!createOverlayShader())
 		return false;
 
 
@@ -492,6 +498,77 @@ bool ShaderManager::createCubeMapShader()
 }
 
 
+bool ShaderManager::createOverlayShader()
+{
+	ID3DBlob* pVS = nullptr;
+
+	D3DCompileFromFile(
+		L"VertexShaderOverlay.hlsl",
+		nullptr,
+		nullptr,
+		"VS_main",
+		"vs_4_0",
+		0,
+		0,
+		&pVS,
+		nullptr);
+
+	hr = this->gDevice->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &OVERLAY_VS);
+	if (FAILED(hr))
+		return false;
+	//Create input layout (every vertex)
+	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA,0 }
+
+	};
+
+	hr = this->gDevice->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &gVertexLayoutOverlay);
+	pVS->Release();
+	if (FAILED(hr))
+		return false;
+
+	ID3DBlob *pPs = nullptr;
+	D3DCompileFromFile(
+		L"PixelShaderOverlay.hlsl",
+		nullptr,
+		nullptr,
+		"PS_main",
+		"ps_4_0",
+		0,
+		0,
+		&pPs,
+		nullptr);
+
+	hr = this->gDevice->CreatePixelShader(pPs->GetBufferPointer(), pPs->GetBufferSize(), nullptr, &OVERLAY_PS);
+	pPs->Release();
+
+	if (FAILED(hr))
+		return false;
+
+	//Geometry shader
+	ID3DBlob* pGS = nullptr;
+	D3DCompileFromFile(
+		L"GeometryShaderOverlay.hlsl",
+		nullptr,
+		nullptr,
+		"GS_main",
+		"gs_4_0",
+		0,
+		0,
+		&pGS,
+		nullptr);
+
+	hr = this->gDevice->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &OVERLAY_GS);
+	pGS->Release();
+	if (FAILED(hr))
+		return false;
+
+	return true;
+}
+
+
 bool ShaderManager::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceContext)
 {
 	this->gDevice = gDevice;
@@ -555,6 +632,18 @@ void ShaderManager::setActiveShaders(ShaderTypes shader) {
 		this->gDeviceContext->PSSetShader(TERRAIN_PS, nullptr, 0);
 		this->gDeviceContext->IASetInputLayout(gVertexLayoutTerrain);
 		break;
+
+
+	case OVERLAYSHADER:
+
+		this->gDeviceContext->VSSetShader(OVERLAY_VS, nullptr, 0);
+		this->gDeviceContext->HSSetShader(nullptr, nullptr, 0);
+		this->gDeviceContext->DSSetShader(nullptr, nullptr, 0);
+		this->gDeviceContext->GSSetShader(OVERLAY_GS, nullptr, 0);
+		this->gDeviceContext->PSSetShader(OVERLAY_PS, nullptr, 0);
+		this->gDeviceContext->IASetInputLayout(gVertexLayoutOverlay);
+		break;
+
 
 
 
