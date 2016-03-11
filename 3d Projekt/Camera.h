@@ -35,7 +35,7 @@ public:
 	
 	
 	
-	
+	void teleportToTerrain();
 	
 	
 	//Setting

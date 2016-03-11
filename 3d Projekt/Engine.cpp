@@ -30,7 +30,7 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 
 
 
-	bool inputResult = input->initialize(hInstance, winHandle,this->cam,&this->miniMap);
+	bool inputResult = input->initialize(hInstance, winHandle,this->cam,&this->miniMap,&this->walkTerrain);
 	if (!inputResult)
 	{	//If there is a problem creating the input, show a warning
 		

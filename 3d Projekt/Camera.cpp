@@ -103,12 +103,16 @@ Camera::~Camera()
 void Camera::setViewPosition(DirectX::XMFLOAT3 nViewPos)
 {
 	this->viewPosition = nViewPos;
+	
+	
+
 }
 
 void Camera::setViewLookAt(DirectX::XMFLOAT3 nViewLookAt)
 {
 	
 	this->viewLookAt = nViewLookAt;
+	
 }
 
 void Camera::setViewUpDirection(XMFLOAT3 nViewUpDirection)
@@ -316,6 +320,15 @@ void Camera::updateView()
 	//converting the view matrix into an XMFLOAT4X4, for simpler use
 	DirectX::XMStoreFloat4x4(&this->view, viewMatrix);
 
+
+
+}
+
+void Camera::teleportToTerrain()
+{
+
+	this->viewPosition = XMFLOAT3(60, 30, 40);
+	
 
 
 }

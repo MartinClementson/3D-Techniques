@@ -37,6 +37,7 @@ private:
 	
 	Overlay* ui;
 	bool miniMap = true;
+	bool walkTerrain = false;
 
 #pragma endregion
 

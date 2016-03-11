@@ -69,11 +69,12 @@ Input::Input()
 
 }
 
-bool Input::initialize(HINSTANCE* hinstance, HWND* hwnd,Camera* camera, bool * miniMap)
+bool Input::initialize(HINSTANCE* hinstance, HWND* hwnd,Camera* camera, bool * miniMap, bool* walkTerrain)
 {
 	hwndP = hwnd;
 	this->camera = camera;
 	this->miniMap = miniMap;
+	this->walkTerrain = walkTerrain;
 	HRESULT hr;
 	//Initialize the input interface
 	hr = DirectInput8Create(*hinstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&input, NULL);
@@ -326,6 +327,38 @@ void Input::ProcessInput()
 	}
 #pragma endregion
 
+
+
+#pragma region Teleport to height map
+	static float terrainShiftTimer = 3;
+	if (keyboardState[DIK_T] && terrainShiftTimer > 3)
+	{
+		if (*walkTerrain)
+		{
+
+			*walkTerrain = false;
+			terrainShiftTimer = 0;
+		}
+
+		else if (!*walkTerrain)
+		{
+
+			*walkTerrain = true;
+			//this->camera->teleportToTerrain();
+			terrainShiftTimer = 0;
+		}
+
+
+
+
+	}
+	else if (terrainShiftTimer < 3.5f)
+	{
+		terrainShiftTimer += 0.1;
+	}
+
+
+#pragma endregion
 	if (mouseHidden)
 	{
 
