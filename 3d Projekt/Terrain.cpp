@@ -180,6 +180,15 @@ void Terrain::Render(ID3D11DeviceContext * gDeviceContext)
 
 }
 
+float Terrain::getYValue(float fX, float fZ)
+{
+	float returnY;
+	returnY = vertices[(int)fX + (int)fZ].y;
+	returnY += vertices[((int)fX + 1) + ((int)fZ + 1)].y;
+	returnY *= 0.5;
+	return returnY;
+}
+
 Terrain::Terrain()
 {
 	heightMapHeight = 512;
