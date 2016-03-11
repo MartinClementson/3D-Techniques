@@ -463,10 +463,16 @@ void Engine::run()
 
 void Engine::update()
 {
-	
-	
 	input->frame(); //Check for user input
-
+	
+	if (this->walkTerrain)
+	{
+		float terrainYValue = this->heightMap->getYValue(cam->getCamPos().x, cam->getCamPos().z);
+		XMFLOAT3 newPos = cam->getCamPos();
+		newPos.y = terrainYValue + 3;
+		this->cam->translateTo(newPos);
+	}
+	
 
 
 	this->updateCamera(this->cam); //This needs to be moved
@@ -783,6 +789,7 @@ void Engine::updateCamera(Camera* cameraToRender)
 {
 
 	
+
 	cameraToRender->updateView();
 
 	camStruct.view = cameraToRender->getView();

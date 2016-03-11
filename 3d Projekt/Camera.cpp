@@ -324,10 +324,29 @@ void Camera::updateView()
 
 }
 
-void Camera::teleportToTerrain()
+void Camera::translateTo(XMFLOAT3 newPos)
 {
+	
+	XMVECTOR r = XMLoadFloat3(&viewRightDirection);
+	XMVECTOR p = XMLoadFloat3(&viewPosition);
+	XMVECTOR l = XMLoadFloat3(&viewLookAt); // look at
 
-	this->viewPosition = XMFLOAT3(60, 30, 40);
+
+
+	XMVECTOR translateVector = XMVectorSubtract(XMLoadFloat3(&newPos), p);
+	XMMATRIX translateMatrix = XMMatrixTranslationFromVector(translateVector);
+
+	
+
+	p = XMVector3TransformCoord(p, translateMatrix);
+	XMStoreFloat3(&viewPosition, p); //Translate the viewposition
+
+	r = XMVector3TransformCoord(r, translateMatrix); //Translate the Right direction 
+	XMStoreFloat3(&viewRightDirection, r);
+
+	l = XMVector3TransformCoord(l, translateMatrix); //translate the Look at to follow the camera
+	XMStoreFloat3(&viewLookAt, l); //store the new "Look at"
+
 	
 
 

@@ -35,7 +35,7 @@ public:
 	
 	
 	
-	void teleportToTerrain();
+	void translateTo(XMFLOAT3 newPos);
 	
 	
 	//Setting

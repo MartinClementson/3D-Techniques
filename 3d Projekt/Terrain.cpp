@@ -182,11 +182,25 @@ void Terrain::Render(ID3D11DeviceContext * gDeviceContext)
 
 float Terrain::getYValue(float fX, float fZ)
 {
-	float returnY;
-	returnY = vertices[(int)fX + (int)fZ].y;
-	returnY += vertices[((int)fX + 1) + ((int)fZ + 1)].y;
-	returnY *= 0.5;
-	return returnY;
+	float returnY[4], upperY, lowerY;
+
+	//getting the offset decimal value
+	float deciX = fX - (float)(int)fX;
+	float deciZ = fZ - (float)(int)fZ;
+
+	//getting the y positions from the four points that define
+	//the quad we are currently on.
+	returnY[0] = m_HeightMap[((int)fZ*heightMapWidth) + (int)fX].y;
+	returnY[1] = m_HeightMap[(((int)fZ+1)*heightMapWidth) + ((int)fX+1)].y;
+	returnY[2] = m_HeightMap[(((int)fZ + 1)*heightMapWidth) + (int)fX].y;
+	returnY[3] = m_HeightMap[((int)fZ*heightMapWidth) + ((int)fX + 1)].y;
+
+	//interpolating the values on the X-axis
+	upperY = (returnY[0] * (1.0 - deciX))+(returnY[3]*deciX);
+	lowerY = (returnY[2] * (1.0 - deciX)) + (returnY[1] * deciX);
+
+	//returning the interpolating value on the Z-axis
+	return upperY*(1-deciZ)+lowerY*deciZ;
 }
 
 Terrain::Terrain()
