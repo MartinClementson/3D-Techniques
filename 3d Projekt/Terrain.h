@@ -66,6 +66,7 @@ public:
 	bool initializeBuffers(ID3D11Device *gDevice);
 	void Release();
 	void Render(ID3D11DeviceContext *gDeviceContext);
+	float getYValue(float fX, float fZ);
 	Terrain();
 	bool init(std::string fileName, ID3D11Device *gDevice, ID3D11DeviceContext *gDeviceContext, ID3D11Buffer* worldBuffer);
 	~Terrain();
