@@ -103,12 +103,16 @@ Camera::~Camera()
 void Camera::setViewPosition(DirectX::XMFLOAT3 nViewPos)
 {
 	this->viewPosition = nViewPos;
+	
+	
+
 }
 
 void Camera::setViewLookAt(DirectX::XMFLOAT3 nViewLookAt)
 {
 	
 	this->viewLookAt = nViewLookAt;
+	
 }
 
 void Camera::setViewUpDirection(XMFLOAT3 nViewUpDirection)
@@ -316,6 +320,34 @@ void Camera::updateView()
 	//converting the view matrix into an XMFLOAT4X4, for simpler use
 	DirectX::XMStoreFloat4x4(&this->view, viewMatrix);
 
+
+
+}
+
+void Camera::translateTo(XMFLOAT3 newPos)
+{
+	
+	XMVECTOR r = XMLoadFloat3(&viewRightDirection);
+	XMVECTOR p = XMLoadFloat3(&viewPosition);
+	XMVECTOR l = XMLoadFloat3(&viewLookAt); // look at
+
+
+
+	XMVECTOR translateVector = XMVectorSubtract(XMLoadFloat3(&newPos), p);
+	XMMATRIX translateMatrix = XMMatrixTranslationFromVector(translateVector);
+
+	
+
+	p = XMVector3TransformCoord(p, translateMatrix);
+	XMStoreFloat3(&viewPosition, p); //Translate the viewposition
+
+	r = XMVector3TransformCoord(r, translateMatrix); //Translate the Right direction 
+	XMStoreFloat3(&viewRightDirection, r);
+
+	l = XMVector3TransformCoord(l, translateMatrix); //translate the Look at to follow the camera
+	XMStoreFloat3(&viewLookAt, l); //store the new "Look at"
+
+	
 
 
 }

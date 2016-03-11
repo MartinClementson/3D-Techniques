@@ -30,7 +30,7 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 
 
 
-	bool inputResult = input->initialize(hInstance, winHandle,this->cam,&this->miniMap);
+	bool inputResult = input->initialize(hInstance, winHandle,this->cam,&this->miniMap,&this->walkTerrain);
 	if (!inputResult)
 	{	//If there is a problem creating the input, show a warning
 		
@@ -463,10 +463,16 @@ void Engine::run()
 
 void Engine::update()
 {
-	
-	
 	input->frame(); //Check for user input
-
+	
+	if (this->walkTerrain)
+	{
+		float terrainYValue = this->heightMap->getYValue(cam->getCamPos().x, cam->getCamPos().z);
+		XMFLOAT3 newPos = cam->getCamPos();
+		newPos.y = terrainYValue + 3;
+		this->cam->translateTo(newPos);
+	}
+	
 
 
 	this->updateCamera(this->cam); //This needs to be moved
@@ -783,6 +789,7 @@ void Engine::updateCamera(Camera* cameraToRender)
 {
 
 	
+
 	cameraToRender->updateView();
 
 	camStruct.view = cameraToRender->getView();

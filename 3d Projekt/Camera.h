@@ -35,7 +35,7 @@ public:
 	
 	
 	
-	
+	void translateTo(XMFLOAT3 newPos);
 	
 	
 	//Setting
