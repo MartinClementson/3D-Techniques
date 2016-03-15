@@ -165,6 +165,7 @@
     <ClCompile Include="Logic.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="md5Model.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="ObjHandler.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="Linker.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="md5Model.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ObjHandler.h" />
     <ClInclude Include="Overlay.h" />

@@ -131,6 +131,9 @@
     <ClCompile Include="Overlay.cpp">
       <Filter>Classes\Overlay</Filter>
     </ClCompile>
+    <ClCompile Include="md5Model.cpp">
+      <Filter>Classes\Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h">
@@ -203,6 +206,9 @@
     </ClInclude>
     <ClInclude Include="Overlay.h">
       <Filter>Classes\Overlay</Filter>
+    </ClInclude>
+    <ClInclude Include="md5Model.h">
+      <Filter>Classes\Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -292,6 +298,9 @@
     </Filter>
     <Filter Include="Classes\Overlay">
       <UniqueIdentifier>{517fd448-726a-4acf-9982-cc0ffa7dce17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Animation">
+      <UniqueIdentifier>{efbfa473-0adf-46c6-b484-7f23f4d1bdbb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
