@@ -1,6 +1,7 @@
 #pragma once
 #include "Linker.h"
 //http://www.braynzarsoft.net/viewtutorial/q16390-27-loading-an-md5-model
+//http://www.braynzarsoft.net/viewtutorial/q16390-28-skeletal-animation-based-on-the-md5-format
 class md5Model
 {
 
@@ -32,14 +33,50 @@ private:
 			this->indexBuff->Release(); }
 	};
 
+	struct BoundingBox
+	{
+		DirectX::XMFLOAT3 min;
+		DirectX::XMFLOAT3 max;
+	};
 	
+	struct AnimJointInfo
+	{
+		std::wstring name;
+		int parentID;
+		int flags;
+		int startIndex;
+
+	};
+
+	struct FrameData
+	{
+		int frameID;
+		std::vector<float> frameData;
+	};
+	struct ModelAnimation
+	{
+		int numFrames;
+		int numJoints;
+		int frameRate;
+		int numAnimatedComponents;
+
+		float frameTime;
+		float totalAnimTime;
+		float currAnimTime;
+
+		std::vector<AnimJointInfo> jointInfo;
+		std::vector<BoundingBox> frameBounds;
+		std::vector<Joint> baseFrameJoints;
+		std::vector<FrameData> frameData;
+		std::vector<std::vector<Joint>> frameSkeleton;
 	
+	};
 	int numSubsets;
 	int numJoints;
 
 	std::vector<Joint> joints;
 	std::vector<ModelSubset> subsets;
-
+	std::vector<ModelAnimation> animations;
 
 	
 	std::vector<std::wstring> texFileNameArray;
@@ -63,6 +100,7 @@ public:
 	md5Model();
 	bool Init(ID3D11DeviceContext* context, ID3D11Device* gDevice,ID3D11Buffer* worldbuffer);
 	bool loadModel(ID3D11Device* gDevice);
+	bool loadAnimation();
 	~md5Model();
 
 	void update();

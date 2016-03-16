@@ -11,8 +11,9 @@ md5Model::md5Model()
 
 	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
 	
-	world = XMMatrixMultiply(world, XMMatrixTranslation(-100, 0, 0));
-
+	world = XMMatrixMultiply(world, XMMatrixScaling(0.04f, 0.04f, 0.04f));
+	world = XMMatrixMultiply(world, XMMatrixTranslation(-5, 2, -5));
+	
 	world = XMMatrixTranspose(world);
 	DirectX::XMStoreFloat4x4(&this->worldMatrix,world);
 
@@ -438,6 +439,19 @@ bool md5Model::loadModel(ID3D11Device * gDevice)
 }
 
 
+
+
+
+bool md5Model::loadAnimation()
+{
+
+
+
+
+
+	return true;
+
+}
 md5Model::~md5Model()
 {
 	delete this->worldStruct;
@@ -475,13 +489,7 @@ void md5Model::render()
 	}
 
 
-	//IF there is a texture. apply it to the pixel shader
-
-	//if (texture != nullptr)
-
-	//if (normalMap != nullptr)
-	//	this->gDeviceContext->PSSetShaderResources(2, 1, &this->normalMap);
-	//fix draw indexed, first place should be the number of indices
+	
 }
 
 void md5Model::sendToConstantBuffer()

@@ -86,17 +86,18 @@ void Model::loadTexture(ID3D11Device* gDevice, std::string filePath)
 	const wchar_t* fileName = widestr.c_str();
 	
 	//load Texture
-	HRESULT hr = CoInitialize((LPVOID)0);
+	HRESULT hr;
 	
 	//The function will also create a subresource and bind it to the gpu
 	hr= CreateWICTextureFromFile(gDevice, fileName, nullptr, &this->texture);
 
 
 	//Create an error if texture is not loaded
-	/*if (!SUCCEEDED(hr))
-		MessageBox(*winHandle, L"Cannot intialize input device", L"Error", MB_OK);
+	if (!SUCCEEDED(hr))
+		
+		MessageBox(0, L"Cannot Load Texture from file", L"Error", MB_OK);
 
-	*/
+	
 	
 }
 
@@ -115,7 +116,7 @@ void Model::loadNormal(ID3D11Device* gDevice, std::string filePath)
 	const wchar_t* fileName = widestr.c_str();
 
 	//load Texture
-	HRESULT hr = CoInitialize((LPVOID)0);
+	HRESULT hr;// = CoInitialize((LPVOID)0);
 
 	//The function will also create a subresource and bind it to the gpu
 	hr = CreateWICTextureFromFile(gDevice, fileName, nullptr, &this->normalMap);
@@ -475,6 +476,41 @@ void Model::render()
 	//fix draw indexed, first place should be the number of indices
 	this->gDeviceContext->DrawIndexed(indicesCount, 0, 0);
 	//this->gDeviceContext->Draw(this->vertices->size(), 0); //This will be dynamic,
+
+
+}
+
+void Model::Release()
+{
+	if (children != nullptr)
+	{
+		for (int i = 0; i < this->children->size(); i++)
+		{
+			this->children->at(i)->Release();
+
+
+		}
+		
+
+	}
+	if (texture != nullptr)
+		texture->Release();
+	if (normalMap != nullptr)
+		normalMap->Release();
+	if (vertexBuffer != nullptr)
+	{
+		
+		this->vertexBuffer->Release();
+
+	}
+
+	if (indexBuffer != nullptr )
+	{
+
+		this->indexBuffer->Release();
+	}
+
+
 
 
 }

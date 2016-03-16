@@ -54,6 +54,7 @@ void ShaderManager::Release()
 	gVertexLayoutTerrain->Release();
 
 	OVERLAY_VS->Release();
+	OVERLAY_GS->Release();
 	OVERLAY_PS->Release();
 	gVertexLayoutOverlay->Release();
 

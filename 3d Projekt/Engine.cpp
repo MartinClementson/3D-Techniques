@@ -22,9 +22,9 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	this->quadTreeTerrain = new QuadTree();
 	this->input = input;
 	this->wndHandle = winHandle;
-	this->animationModel = new md5Model;
+	//this->animationModel = new md5Model;
 	drawCount = 0;
-
+	CoInitialize((LPVOID)0);
 	this->pixelStateStruct.distanceFog = TRUE;
 	
 	this->pixelStateStruct.normalMap = FALSE;
@@ -97,13 +97,13 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 		delete quadTreeTerrain;
 	}
 
-	if (!animationModel->Init(gDeviceContext, gDevice,this->worldBuffer))
-	{
-		{
-			errorMsg("Failed to initialize the md5 model");
-			delete animationModel;
-		}
-	}
+	//if (!animationModel->Init(gDeviceContext, gDevice,this->worldBuffer))
+	//{
+	//	
+	//		errorMsg("Failed to initialize the md5 model");
+	//		delete animationModel;
+	//	
+	//}
 
 	//Load the models and get their vertices
 	
@@ -128,9 +128,98 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 
 Engine::~Engine()
 {
+	//for (int i = 0; i < modelsColor->size(); i++)
+	//{
+	//	delete modelsColor->at(i); 
+
+	//}
+	//for (int i = 0; i < modelsTexture->size(); i++)
+	//{
+	//	delete modelsTexture->at(i);
+
+	//}
+
+	//for (int i = 0; i < cubeMapModels->size(); i++)
+	//{
+	//	delete cubeMapModels->at(i);
+
+	//}
+	//delete quadTreeTerrain;
+	//delete shaderManager;
+	//delete renderTexture;
+	//delete dynCubeMap;
+	//delete sky;
+	//delete heightMap;
+	//delete modelsTexture;
+	//delete modelsColor;
+	//delete cubeMapModels;
+	//delete lights;
+	//delete cam;
+	//delete miniMapCam;
+	////delete animationModel;
+	//
+	//delete ui;
+	//
+}
+
+void Engine::release()
+{
+
 	for (int i = 0; i < modelsColor->size(); i++)
 	{
-		delete modelsColor->at(i); 
+		modelsColor->at(i)->Release();
+
+	}
+	for (int i = 0; i < modelsTexture->size(); i++)
+	{
+		 modelsTexture->at(i)->Release();
+
+	}
+
+	for (int i = 0; i < cubeMapModels->size(); i++)
+	{
+		 cubeMapModels->at(i)->Release();
+
+	}
+	
+	
+
+	
+	if (gSampleState != nullptr)
+		gSampleState->Release();
+		
+	
+	quadTreeTerrain->Release();
+	shaderManager->Release();
+	renderTexture->Release();
+	dynCubeMap->Release();
+	sky->Release();
+	heightMap->Release();
+	lightBuffer->Release();
+	camBuffer->Release();
+
+	input->Shutdown();
+	gRasterizerState->Release();
+	gBackbufferRTV->Release();
+	gSwapChain->Release();
+	
+
+	
+	
+	depthBuffer->Release();
+	depthState->Release();
+	depthStencilView->Release();
+
+
+	worldBuffer->Release();
+	pixelStateBuffer->Release();
+	ui->Release();
+	//animationModel->Release();
+	
+
+	for (int i = 0; i < modelsColor->size(); i++)
+	{
+		delete modelsColor->at(i);
 
 	}
 	for (int i = 0; i < modelsTexture->size(); i++)
@@ -156,51 +245,20 @@ Engine::~Engine()
 	delete lights;
 	delete cam;
 	delete miniMapCam;
-	delete animationModel;
-	
+	//delete animationModel;
+
 	delete ui;
-	
-}
-
-void Engine::release()
-{
-	
-	
-
-	
-	if (gSampleState != nullptr)
-		gSampleState->Release();
-		
-	
-	input->Shutdown();
-	dynCubeMap->Release();
-	shaderManager->Release();
-	renderTexture->Release();
-	gRasterizerState->Release();
-	gBackbufferRTV->Release();
-	gSwapChain->Release();
-	
-
-	
-	
-	depthBuffer->Release();
-	depthState->Release();
-	depthStencilView->Release();
 
 
-	quadTreeTerrain->Release();
-	heightMap->Release();
-	worldBuffer->Release();
-	camBuffer->Release();
-	lightBuffer->Release();
-	pixelStateBuffer->Release();
-	sky->Release();
-	ui->Release();
-	animationModel->Release();
 	gDeviceContext->ClearState();
 	gDeviceContext->Release();
-	gDevice->Release();
-	//debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+
+	
+	
+	if(DEBUG == 2)
+		debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	SAFE_RELEASE(debug);
+	SAFE_RELEASE(gDevice);
 
 }
 
@@ -314,7 +372,7 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
-		D3D11_CREATE_DEVICE_DEBUG,
+		DEBUG,
 		NULL,
 		NULL,
 		D3D11_SDK_VERSION,
@@ -324,8 +382,15 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 		NULL,
 		&this->gDeviceContext);
 	
-	hr = gDevice->QueryInterface(__uuidof(ID3D11Debug), (void**)&debug);
-	if (FAILED(hr)) errorMsg("ERROR INITIALIZING DEBUG");
+	if (DEBUG == 2)
+	{
+		hr = gDevice->QueryInterface(__uuidof(ID3D11Debug), (void**)&debug);
+		if (FAILED(hr)) errorMsg("ERROR INITIALIZING DEBUG");
+
+	}
+	
+	
+	
 	//Here goes depth buffer
 	D3D11_TEXTURE2D_DESC desc;
 
@@ -702,8 +767,8 @@ void Engine::renderScene(Camera *camera) // This function will render the scene,
 	/////////////////////////////////////////////
 	//Render the Animation
 	//
-	this->shaderManager->setActiveShaders(ANIMATIONSHADER);
-	this->animationModel->render();
+	//this->shaderManager->setActiveShaders(ANIMATIONSHADER);
+	//this->animationModel->render();
 	//
 	////////////////////////////////////////////
 

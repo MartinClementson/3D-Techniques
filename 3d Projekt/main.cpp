@@ -46,7 +46,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			}
 		}
 		engine->release();
-		_CrtCheckMemory();
 		//input->Shutdown();
 		DestroyWindow(wndHandle);
 	}
@@ -54,6 +53,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	delete engine;
 	delete input;
 	
+	_CrtCheckMemory();
 	_CrtDumpMemoryLeaks();
 	return (int)msg.wParam;
 }

@@ -57,6 +57,15 @@ struct Vertex
 			sharedTangents = nullptr;
 		}
 	}
+	~Vertex()
+	{
+		if (sharedTangents != nullptr)
+		{
+			delete sharedTangents;
+			sharedTangents = nullptr;
+		}
+
+	}
 
 
 	Vertex(float x,float y,float z,float r,float g,float b) {
@@ -170,6 +179,7 @@ struct Weight
 	int jointID;
 	float influence;
 	position pos;
+	position normal;
 
 };
 struct worldConstantBuffer
