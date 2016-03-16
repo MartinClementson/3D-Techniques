@@ -41,9 +41,12 @@ private:
 	std::vector<ModelSubset> subsets;
 
 
-	std::vector<ID3D11ShaderResourceView*> modelTextures;
+	
 	std::vector<std::wstring> texFileNameArray;
+	
 	DirectX::XMFLOAT4X4 worldMatrix;
+
+	std::vector<ID3D11ShaderResourceView*> textures;
 	
 	//This is a pointer to a deviceContext, we will store the adress to the main device here.
 	//since we use it alot, we shall avoid putting it in all the functions.

@@ -1,5 +1,6 @@
 #include "md5Model.h"
 #include "Linker.h"
+#include "DirectXToolkit.h"
 #include <fstream>
 #include <string>
 
@@ -7,7 +8,14 @@ using namespace std;
 md5Model::md5Model()
 {
 	this->worldStruct = new worldConstantBuffer;
-	DirectX::XMStoreFloat4x4(&this->worldMatrix,DirectX::XMMatrixIdentity());
+
+	DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
+	
+	world = XMMatrixMultiply(world, XMMatrixTranslation(-100, 0, 0));
+
+	world = XMMatrixTranspose(world);
+	DirectX::XMStoreFloat4x4(&this->worldMatrix,world);
+
 }
 
 bool md5Model::Init(ID3D11DeviceContext * context, ID3D11Device * gDevice, ID3D11Buffer* worldbuffer)
@@ -138,8 +146,19 @@ bool md5Model::loadModel(ID3D11Device * gDevice)
 						}
 						if (!alreadyLoaded)
 						{
+							HRESULT hr;
 							ID3D11ShaderResourceView* tempMeshSRV;
 							//martin fixar här
+							hr = CreateWICTextureFromFile(gDevice, fileName.c_str(), nullptr, &tempMeshSRV);
+							if (SUCCEEDED(hr))
+							{
+								texFileNameArray.push_back(fileName.c_str());
+								subset.texArrayIndex = textures.size();
+								textures.push_back(tempMeshSRV);
+
+							}
+							else
+								MessageBox(0, fileName.c_str(), L"Could not open", MB_OK);
 						}
 						getline(loading, line); //skip the rest of the line
 					}
@@ -450,7 +469,7 @@ void md5Model::render()
 	
 	
 	// NO textures are loaded yet!
-	//this->gDeviceContext->PSSetShaderResources(0, 1, &modelTextures[this->subsets.at(i).texArrayIndex]);
+	this->gDeviceContext->PSSetShaderResources(0, 1, &textures[this->subsets.at(i).texArrayIndex]);
 	
 	this->gDeviceContext->DrawIndexed(this->subsets.at(i).indices.size(), 0, 0);
 	}
@@ -486,6 +505,12 @@ void md5Model::Release()
 	for (int i = 0; i < subsets.size(); i++)
 	{
 		this->subsets.at(i).Release();
+
+	}
+
+	for (int i = 0; i < textures.size(); i++)
+	{
+		this->textures.at(i)->Release();
 
 	}
 
