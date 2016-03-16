@@ -22,6 +22,7 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	this->quadTreeTerrain = new QuadTree();
 	this->input = input;
 	this->wndHandle = winHandle;
+	this->animationModel = new md5Model;
 	drawCount = 0;
 
 	this->pixelStateStruct.distanceFog = TRUE;
@@ -96,6 +97,14 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 		delete quadTreeTerrain;
 	}
 
+	if (!animationModel->Init(gDeviceContext, gDevice))
+	{
+		{
+			errorMsg("Failed to initialize the md5 model");
+			delete animationModel;
+		}
+	}
+
 	//Load the models and get their vertices
 	
 
@@ -147,6 +156,7 @@ Engine::~Engine()
 	delete lights;
 	delete cam;
 	delete miniMapCam;
+	delete animationModel;
 	
 	delete ui;
 	
@@ -186,7 +196,7 @@ void Engine::release()
 	pixelStateBuffer->Release();
 	sky->Release();
 	ui->Release();
-
+	animationModel->Release();
 	gDeviceContext->ClearState();
 	gDeviceContext->Release();
 	gDevice->Release();

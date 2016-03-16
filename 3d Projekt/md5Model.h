@@ -48,11 +48,22 @@ private:
 	//This is a pointer to a deviceContext, we will store the adress to the main device here.
 	//since we use it alot, we shall avoid putting it in all the functions.
 	ID3D11DeviceContext* gDeviceContext;
+
+
+
+	worldConstantBuffer* worldStruct = nullptr;
+	ID3D11Buffer* worldBuffer = nullptr; //this is a pointer to the constant buffer, sent from the engine
+	
+
+	void sendToConstantBuffer();
 public:
 	md5Model();
 	bool Init(ID3D11DeviceContext* context, ID3D11Device* gDevice);
 	bool loadModel(ID3D11Device* gDevice);
 	~md5Model();
+
+	void update();
+	void render();
 
 	void Release();
 };

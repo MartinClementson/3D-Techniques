@@ -15,6 +15,7 @@
 #include "Terrain.h"
 #include "QuadTree.h"
 #include "Overlay.h"
+#include "md5Model.h"
 class DynamicCubeMap; //forward declaration
 
 #pragma endregion
@@ -34,6 +35,7 @@ private:
 	DynamicCubeMap* dynCubeMap = nullptr;
 	RenderTexture* renderTexture;
 	QuadTree* quadTreeTerrain;
+	md5Model* animationModel;
 	
 	Overlay* ui;
 	bool miniMap = true;

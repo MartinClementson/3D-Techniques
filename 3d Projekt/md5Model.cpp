@@ -6,6 +6,8 @@
 using namespace std;
 md5Model::md5Model()
 {
+	this->worldStruct = new worldConstantBuffer;
+	DirectX::XMStoreFloat4x4(&this->worldMatrix,DirectX::XMMatrixIdentity());
 }
 
 bool md5Model::Init(ID3D11DeviceContext * context, ID3D11Device * gDevice)
@@ -39,6 +41,10 @@ bool md5Model::loadModel(ID3D11Device * gDevice)
 			{
 				loading >> this->numJoints;
 				//load the numjoints into some variable here
+			}
+			else if (line == L"commandline")
+			{
+				getline(loading, line); //skip this whole line
 			}
 			else if (line == L"numMeshes")
 			{
@@ -198,7 +204,7 @@ bool md5Model::loadModel(ID3D11Device * gDevice)
 
 						getline(loading, line); //skip the rest of the line
 
-						for (int i = 0; i > numWeights; i++)
+						for (int i = 0; i < numWeights; i++)
 						{
 							//a weight class we need to make
 							Weight tempWeight;
@@ -226,6 +232,7 @@ bool md5Model::loadModel(ID3D11Device * gDevice)
 						getline(loading, line); //skip anything else
 					loading >> line; //skip "}"
 				}
+
 
 				//find each vertex position using the joints and weights
 				for (int i = 0; i < subset.vertices.size(); ++i)
@@ -413,8 +420,66 @@ bool md5Model::loadModel(ID3D11Device * gDevice)
 
 md5Model::~md5Model()
 {
+	delete this->worldBuffer;
 }
 
+void md5Model::update()
+{
+}
+
+void md5Model::render()
+{
+
+	this->sendToConstantBuffer();
+	this->gDeviceContext->GSSetConstantBuffers(0, 1, &worldBuffer);
+
+	UINT32 vertexSize = sizeof(AnimVertex);
+	UINT32 offset = 0;
+
+	this->gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+
+
+	for (int i = 0; i < this->numSubsets; i++)
+	{
+
+	this->gDeviceContext->IASetIndexBuffer(this->subsets.at(i).indexBuff, DXGI_FORMAT_R32_UINT, 0);
+	this->gDeviceContext->IASetVertexBuffers(0, 1, &this->subsets.at(i).vertBuff, &vertexSize, &offset);
+
+	
+	
+	// NO textures are loaded yet!
+	//this->gDeviceContext->PSSetShaderResources(0, 1, &modelTextures[this->subsets.at(i).texArrayIndex]);
+	
+	this->gDeviceContext->DrawIndexed(this->subsets.at(i).indices.size(), 0, 0);
+	}
+
+
+	//IF there is a texture. apply it to the pixel shader
+
+	//if (texture != nullptr)
+
+	//if (normalMap != nullptr)
+	//	this->gDeviceContext->PSSetShaderResources(2, 1, &this->normalMap);
+	//fix draw indexed, first place should be the number of indices
+}
+
+void md5Model::sendToConstantBuffer()
+{
+	this->worldStruct->world = this->worldMatrix;
+	//this->worldStruct->normalWorld = this->normalWorld;
+	D3D11_MAPPED_SUBRESOURCE mappedResourceWorld;
+	ZeroMemory(&mappedResourceWorld, sizeof(mappedResourceWorld));
+
+	//mapping to the matrixbuffer
+	this->gDeviceContext->Map(worldBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResourceWorld);
+
+	worldConstantBuffer* temporaryWorld = (worldConstantBuffer*)mappedResourceWorld.pData;
+
+	*temporaryWorld = *worldStruct;
+
+	this->gDeviceContext->Unmap(worldBuffer, 0);
+}
 void md5Model::Release()
 {
 	for (int i = 0; i < subsets.size(); i++)
