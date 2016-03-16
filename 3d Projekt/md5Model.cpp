@@ -10,10 +10,10 @@ md5Model::md5Model()
 	DirectX::XMStoreFloat4x4(&this->worldMatrix,DirectX::XMMatrixIdentity());
 }
 
-bool md5Model::Init(ID3D11DeviceContext * context, ID3D11Device * gDevice)
+bool md5Model::Init(ID3D11DeviceContext * context, ID3D11Device * gDevice, ID3D11Buffer* worldbuffer)
 {
 	this->gDeviceContext = context;
-
+	this->worldBuffer = worldbuffer;
 	if (!loadModel(gDevice))
 		return false;
 
@@ -219,8 +219,8 @@ bool md5Model::loadModel(ID3D11Device * gDevice)
 							//store the weights position in the
 							//joints local space
 							loading >> tempWeight.pos.x
-								>> tempWeight.pos.y
-								>> tempWeight.pos.z;
+								>> tempWeight.pos.z
+								>> tempWeight.pos.y;
 
 							getline(loading, line); //skipping the rest of the line
 
@@ -413,6 +413,7 @@ bool md5Model::loadModel(ID3D11Device * gDevice)
 
 			}
 		}
+		loading.close();
 	}
 	return true;
 }
@@ -420,7 +421,7 @@ bool md5Model::loadModel(ID3D11Device * gDevice)
 
 md5Model::~md5Model()
 {
-	delete this->worldBuffer;
+	delete this->worldStruct;
 }
 
 void md5Model::update()

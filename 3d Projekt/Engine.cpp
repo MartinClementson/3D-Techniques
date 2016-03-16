@@ -97,7 +97,7 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 		delete quadTreeTerrain;
 	}
 
-	if (!animationModel->Init(gDeviceContext, gDevice))
+	if (!animationModel->Init(gDeviceContext, gDevice,this->worldBuffer))
 	{
 		{
 			errorMsg("Failed to initialize the md5 model");
@@ -692,13 +692,21 @@ void Engine::renderScene(Camera *camera) // This function will render the scene,
 	//Render the terrain
 	//
 
-	
 	this->shaderManager->setActiveShaders(TERRAINSHADER);
 	this->quadTreeTerrain->render(this->gDeviceContext, camera->getFrustum(),this->worldBuffer);
 	drawCount += this->quadTreeTerrain->GetDrawCount();
-	//OLD
-//	this->shaderManager->setActiveShaders(TERRAINSHADER);
-	//this->heightMap->Render(this->gDeviceContext);
+	
+	//
+	////////////////////////////////////////////
+
+	/////////////////////////////////////////////
+	//Render the Animation
+	//
+	this->shaderManager->setActiveShaders(ANIMATIONSHADER);
+	this->animationModel->render();
+	//
+	////////////////////////////////////////////
+
 
 }
 

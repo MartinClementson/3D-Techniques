@@ -49,25 +49,25 @@ void GS_main(
 	//////////////////////////////////////////////////
 	///////////Back-face culling test/////////////////
 
-	//multiply the face normal into world space
-	float3 faceNormal2 = normalize(mul(faceNormal, normalWorld));
+	////multiply the face normal into world space
+	//float3 faceNormal2 = normalize(mul(faceNormal, normalWorld));
 
-	//multiply one of the vertices into world space
-	float3 viewDir = mul(input[0].pos, world);
+	////multiply one of the vertices into world space
+	//float3 viewDir = mul(input[0].pos, world);
 
-	//Create a vector from that vertex to the cameras position
-	viewDir = normalize(viewDir - camPos);
+	////Create a vector from that vertex to the cameras position
+	//viewDir = normalize(viewDir - camPos);
 
-	//Take the dot product of the flipped vert<-cam vector and the normal
-	float dt = dot(-viewDir, faceNormal2);
+	////Take the dot product of the flipped vert<-cam vector and the normal
+	//float dt = dot(-viewDir, faceNormal2);
 
-	//if the dot product is less than 0, The angle is more than 90 degrees, which means we can't see it
-	///////////////////////////////////////////////////////////
+	////if the dot product is less than 0, The angle is more than 90 degrees, which means we can't see it
+	/////////////////////////////////////////////////////////////
 
-	//Note: To turn it off, Comment the IF statement below. 
-	//To show that it works : Create a vector from 0,0,-1  to viewDir,
-	if (dt > 0)
-	{
+	////Note: To turn it off, Comment the IF statement below. 
+	////To show that it works : Create a vector from 0,0,-1  to viewDir,
+	//if (dt > 0)
+	//{
 		//combining the matrices for simpler use, also more efficient
 		matrix combinedMatrix = mul(world, mul(view, projection));
 
@@ -87,5 +87,5 @@ void GS_main(
 
 			output.Append(element);
 		}
-	}
+	//}
 }

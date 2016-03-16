@@ -58,7 +58,7 @@ private:
 	void sendToConstantBuffer();
 public:
 	md5Model();
-	bool Init(ID3D11DeviceContext* context, ID3D11Device* gDevice);
+	bool Init(ID3D11DeviceContext* context, ID3D11Device* gDevice,ID3D11Buffer* worldbuffer);
 	bool loadModel(ID3D11Device* gDevice);
 	~md5Model();
 
