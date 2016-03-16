@@ -68,7 +68,11 @@ private:
 	ID3D11PixelShader* OVERLAY_PS = nullptr;
 	ID3D11InputLayout* gVertexLayoutOverlay = nullptr;
 
-
+	//Shaders for the Animation
+	ID3D11VertexShader* ANIMATION_VS = nullptr;
+	ID3D11GeometryShader* ANIMATION_GS = nullptr;
+	ID3D11PixelShader* ANIMATION_PS = nullptr;
+	ID3D11InputLayout* gVertexLayoutAnimation = nullptr;
 
 
 
@@ -83,6 +87,7 @@ private:
 	bool createTerrainShader();
 	bool createCubeMapShader();
 	bool createOverlayShader();
+	bool createAnimationShader();
 public:
 	ShaderManager();
 	~ShaderManager();

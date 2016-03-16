@@ -55,6 +55,15 @@
     <FxCompile Include="GeometryShaderOverlay.hlsl">
       <Filter>Shaders\Overlay Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="GeometryShaderAnimation.hlsl">
+      <Filter>Shaders\AnimationShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelShaderAnimation.hlsl">
+      <Filter>Shaders\AnimationShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexShaderAnimation.hlsl">
+      <Filter>Shaders\AnimationShaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -301,6 +310,9 @@
     </Filter>
     <Filter Include="Classes\Animation">
       <UniqueIdentifier>{efbfa473-0adf-46c6-b484-7f23f4d1bdbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\AnimationShaders">
+      <UniqueIdentifier>{78480cc2-7c2d-4f67-a868-d653b8775587}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

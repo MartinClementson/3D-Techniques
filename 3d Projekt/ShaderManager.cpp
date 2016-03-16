@@ -57,6 +57,16 @@ void ShaderManager::Release()
 	OVERLAY_PS->Release();
 	gVertexLayoutOverlay->Release();
 
+
+	ANIMATION_VS->Release();
+	ANIMATION_GS->Release();
+	ANIMATION_PS->Release();
+	gVertexLayoutAnimation->Release();
+
+
+
+
+
 }
 
 bool ShaderManager::createShaders()
@@ -72,6 +82,8 @@ bool ShaderManager::createShaders()
 	if (!createTerrainShader())
 		return false;
 	if (!createOverlayShader())
+		return false;
+	if (!createAnimationShader())
 		return false;
 
 
@@ -568,6 +580,85 @@ bool ShaderManager::createOverlayShader()
 	return true;
 }
 
+bool ShaderManager::createAnimationShader()
+{
+
+	ID3DBlob* pVS = nullptr;
+
+	D3DCompileFromFile(
+		L"VertexShaderAnimation.hlsl",
+		nullptr,
+		nullptr,
+		"VS_main",
+		"vs_4_0",
+		0,
+		0,
+		&pVS,
+		nullptr);
+
+	hr = this->gDevice->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &ANIMATION_VS);
+
+	if (FAILED(hr))
+		return false;
+	//Create input layout (every vertex)
+	// We are using the AnimVertex Struct here
+	D3D11_INPUT_ELEMENT_DESC inputDesc[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA,0 },
+	
+		{ "TEXCOORD",0, DXGI_FORMAT_R32G32_FLOAT, 0, sizeof(position), D3D11_INPUT_PER_VERTEX_DATA,0 },
+		{ "NORMALS",0, DXGI_FORMAT_R32G32B32_FLOAT , 0, sizeof(position)+ 8,D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		
+	};
+
+	this->gDevice->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &gVertexLayoutAnimation);
+	pVS->Release();
+
+
+	ID3DBlob *pPs = nullptr;
+	D3DCompileFromFile(
+		L"PixelShaderAnimation.hlsl",
+		nullptr,
+		nullptr,
+		"PS_main",
+		"ps_4_0",
+		0,
+		0,
+		&pPs,
+		nullptr);
+
+	hr = this->gDevice->CreatePixelShader(pPs->GetBufferPointer(), pPs->GetBufferSize(), nullptr, &ANIMATION_PS);
+	pPs->Release();
+
+	if (FAILED(hr))
+		return false;
+
+
+	//Geometry shader
+	ID3DBlob* pGS = nullptr;
+	D3DCompileFromFile(
+		L"GeometryShaderAnimation.hlsl",
+		nullptr,
+		nullptr,
+		"GS_main",
+		"gs_4_0",
+		0,
+		0,
+		&pGS,
+		nullptr);
+
+	hr = this->gDevice->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &ANIMATION_GS);
+	pGS->Release();
+
+	if (FAILED(hr))
+		return false;
+
+	return true;
+
+
+
+}
+
 
 bool ShaderManager::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceContext)
 {
@@ -643,6 +734,18 @@ void ShaderManager::setActiveShaders(ShaderTypes shader) {
 		this->gDeviceContext->PSSetShader(OVERLAY_PS, nullptr, 0);
 		this->gDeviceContext->IASetInputLayout(gVertexLayoutOverlay);
 		break;
+
+	case ANIMATIONSHADER:
+
+		this->gDeviceContext->VSSetShader(ANIMATION_VS, nullptr, 0);
+		this->gDeviceContext->HSSetShader(nullptr, nullptr, 0);
+		this->gDeviceContext->DSSetShader(nullptr, nullptr, 0);
+		this->gDeviceContext->GSSetShader(ANIMATION_GS, nullptr, 0);
+		this->gDeviceContext->PSSetShader(ANIMATION_PS, nullptr, 0);
+		this->gDeviceContext->IASetInputLayout(gVertexLayoutAnimation);
+		break;
+
+
 
 
 

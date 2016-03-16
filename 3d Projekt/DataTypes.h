@@ -138,9 +138,9 @@ struct AnimVertex {
 
 	position pos; // 0 byte offset
 
-	float u, v;  //12 byte offset
+	float u, v;  
 
-	position normal; // 24 byte offset
+	position normal; 
 
 	int StartWeight; // won't be sent to shader
 	int WeightCount; // won't be sent to shader
