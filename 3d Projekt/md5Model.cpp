@@ -8,10 +8,20 @@ md5Model::md5Model()
 {
 }
 
-bool md5Model::loadModel()
+bool md5Model::Init(ID3D11DeviceContext * context, ID3D11Device * gDevice)
 {
-	string line;
-	ifstream loading;
+	this->gDeviceContext = context;
+
+	if (!loadModel(gDevice))
+		return false;
+
+	return true;
+}
+
+bool md5Model::loadModel(ID3D11Device * gDevice)
+{
+	wstring line;
+	wifstream loading;
 	loading.open("boy.md5mesh");
 	if (!loading)
 		return false;
@@ -25,25 +35,30 @@ bool md5Model::loadModel()
 			//	//checking the version here, if we were to make the
 			//	//loader multifunctional with more versions
 			//}
-			if (line == "numJoints")
+			if (line == L"numJoints")
 			{
+				loading >> this->numJoints;
 				//load the numjoints into some variable here
 			}
-			else if (line == "numMeshes")
+			else if (line == L"numMeshes")
 			{
+				loading >> numSubsets;
 				//store number of meshes
 			}
-			else if (line == "joints")
+			else if (line == L"joints")
 			{
-				//joint struct here named tempJoint
+				
+				Joint tempJoint;
+
 				loading >> line;
-				for (int i = 0; i < /*numjoints*/; i++)
+				for (int i = 0; i < numJoints; i++)
 				{
-					loading >> /*tempJoint.name*/;
+					loading >> tempJoint.name; //skip the "{"
+
 					//an if controller if the jointname has spaces
 					while (tempJoint.name[tempJoint.name.size() - 1] != '"')
 					{
-						string temp;
+						wstring temp;
 						loading >> temp;
 						tempJoint.name = tempJoint.name + temp;
 					}
@@ -87,18 +102,18 @@ bool md5Model::loadModel()
 				}
 				loading >> line; //skip the "}"
 			}
-			else if (line == "mesh")
+			else if (line == L"mesh")
 			{
-				modelInfo subset;
+				ModelSubset subset;
 				int numVerts, numTris, numWeights;
 
 				loading >> line; //skip the "{"
 				loading >> line;
-				while (line != "}")
+				while (line != L"}")
 				{
-					if (line == "shader")
+					if (line == L"shader")
 					{
-						string fileName;
+						wstring fileName;
 						loading >> fileName;
 						
 						// remove the quatation marks from the filename
@@ -122,7 +137,7 @@ bool md5Model::loadModel()
 						}
 						getline(loading, line); //skip the rest of the line
 					}
-					else if (line == "numverts")
+					else if (line == L"numverts")
 					{
 						loading >> numVerts; //store the nhumber of vertices
 
@@ -132,7 +147,7 @@ bool md5Model::loadModel()
 						{
 							//this will be the specific vertex struct
 							//made for animation
-							Vertex tempVert;
+							AnimVertex tempVert;
 
 							loading >> line
 								>> line
@@ -153,7 +168,7 @@ bool md5Model::loadModel()
 							subset.vertices.push_back(tempVert);
 						}
 					}
-					else if (line == "numtris")
+					else if (line == L"numtris")
 					{
 						loading >> numTris;
 						subset.numTriangles = numTris;
@@ -177,7 +192,7 @@ bool md5Model::loadModel()
 							getline(loading, line); //skip the rest of the line
 						}
 					}
-					else if (line == "numweights")
+					else if (line == L"numweights")
 					{
 						loading >> numWeights;
 
@@ -197,9 +212,9 @@ bool md5Model::loadModel()
 
 							//store the weights position in the
 							//joints local space
-							loading >> tempWeight.x
-								>> tempWeight.y
-								>> tempWeight.z;
+							loading >> tempWeight.pos.x
+								>> tempWeight.pos.y
+								>> tempWeight.pos.z;
 
 							getline(loading, line); //skipping the rest of the line
 
@@ -216,12 +231,12 @@ bool md5Model::loadModel()
 				for (int i = 0; i < subset.vertices.size(); ++i)
 				{
 					//once again the special animation vertex
-					Vertex tempVert = subset.vertices[i];
+					AnimVertex tempVert = subset.vertices[i];
 					
 					//making sure that the postition is empty
-					tempVert.x = 0;
-					tempVert.y = 0;
-					tempVert.z = 0;
+					tempVert.pos.x = 0;
+					tempVert.pos.y = 0;
+					tempVert.pos.z = 0;
 
 					//sum up the joints and weights information to get the vertex position
 					for (int j = 0; j < tempVert.WeightCount; ++j)
@@ -233,7 +248,7 @@ bool md5Model::loadModel()
 						// When converting a 3d vector to a quaternion, you should put 0 for "w", and
 						// When converting a quaternion to a 3d vector, you can just ignore the "w"
 						DirectX::XMVECTOR tempJointOrientation = DirectX::XMVectorSet(tempJoint.orientation.x, tempJoint.orientation.y, tempJoint.orientation.z, tempJoint.orientation.w);
-						DirectX::XMVECTOR tempWeightPos = DirectX::XMVectorSet(tempWeight.x, tempWeight.y, tempWeight.z, 0.0f);
+						DirectX::XMVECTOR tempWeightPos = DirectX::XMVectorSet(tempWeight.pos.x, tempWeight.pos.y, tempWeight.pos.z, 0.0f);
 
 						// We will need to use the conjugate of the joint orientation quaternion
 						// To get the conjugate of a quaternion, all you have to do is inverse the x, y, and z
@@ -246,9 +261,9 @@ bool md5Model::loadModel()
 						
 						// Now move the verices position from joint space (0,0,0) to the joints position in world space, taking the weights influence into account
 						// The weight influence is used because multiple weights might have an effect on the vertices final position. Each weight is attached to one joint.
-						tempVert.x += (tempJoint.x + rotatedPoint.x) * tempWeight.influence;
-						tempVert.y += (tempJoint.y + rotatedPoint.y) * tempWeight.influence;
-						tempVert.z += (tempJoint.z + rotatedPoint.z) * tempWeight.influence;
+						tempVert.pos.x += (tempJoint.pos.x + rotatedPoint.x) * tempWeight.influence;
+						tempVert.pos.y += (tempJoint.pos.y + rotatedPoint.y) * tempWeight.influence;
+						tempVert.pos.z += (tempJoint.pos.z + rotatedPoint.z) * tempWeight.influence;
 
 						// Basically what has happened above, is we have taken the weights position relative to the joints position
 						// we then rotate the weights position (so that the weight is actually being rotated around (0, 0, 0) in world space) using
@@ -259,8 +274,9 @@ bool md5Model::loadModel()
 						// must add up to 1.
 					}
 
-					//look at this
-					subset.positions.push_back(tempVert.pos);            // Store the vertices position in the position vector instead of straight into the vertex vector
+					
+					DirectX::XMFLOAT3 tempPos = { tempVert.pos.x,tempVert.pos.y,tempVert.pos.z }; //Convert from "position" struct to XMFLOAT3
+					subset.positions.push_back(tempPos);            // Store the vertices position in the position vector instead of straight into the vertex vector
 																		 // since we can use the positions vector for certain things like collision detection or picking
 																		 // without having to work with the entire vertex structure.
 				}
@@ -268,7 +284,9 @@ bool md5Model::loadModel()
 				//put positions into the vertices for this subset
 				for (int i = 0; i < subset.vertices.size(); i++)
 				{
-					subset.vertices[i].pos = subset.positions[i];
+					subset.vertices[i].pos.x = subset.positions[i].x;
+					subset.vertices[i].pos.y = subset.positions[i].y;
+					subset.vertices[i].pos.z = subset.positions[i].z;
 				}
 
 				//Calculate vertex normals using normal averaging//
@@ -349,7 +367,7 @@ bool md5Model::loadModel()
 					normalSum = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 					faces = 0;
 				}
-
+				HRESULT hr;
 				// Create index buffer
 				D3D11_BUFFER_DESC indexBufferDesc;
 				ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
@@ -363,8 +381,9 @@ bool md5Model::loadModel()
 				D3D11_SUBRESOURCE_DATA iinitData;
 
 				iinitData.pSysMem = &subset.indices[0];
-				d3d11Device->CreateBuffer(&indexBufferDesc, &iinitData, &subset.indexBuff);
-
+				hr =gDevice->CreateBuffer(&indexBufferDesc, &iinitData, &subset.indexBuff);
+				if (FAILED(hr))
+					return false;
 				//Create Vertex Buffer
 				D3D11_BUFFER_DESC vertexBufferDesc;
 				ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
@@ -379,8 +398,9 @@ bool md5Model::loadModel()
 
 				ZeroMemory(&vertexBufferData, sizeof(vertexBufferData));
 				vertexBufferData.pSysMem = &subset.vertices[0];
-				hr = d3d11Device->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &subset.vertBuff);
-
+				hr = gDevice->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &subset.vertBuff);
+				if (FAILED(hr))
+					return false;
 				// Push back the temp subset into the models subset vector
 				this->subsets.push_back(subset);
 
@@ -393,4 +413,15 @@ bool md5Model::loadModel()
 
 md5Model::~md5Model()
 {
+}
+
+void md5Model::Release()
+{
+	for (int i = 0; i < subsets.size(); i++)
+	{
+		this->subsets.at(i).Release();
+
+	}
+
+
 }

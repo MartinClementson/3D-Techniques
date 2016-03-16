@@ -1,4 +1,8 @@
 #pragma once
+struct position {
+
+	float x, y, z;
+};
 
 struct Vertex 
 {
@@ -124,6 +128,50 @@ struct Vertex
 };
 
 
+
+
+
+
+struct AnimVertex {
+
+	//sizeof(float) == 4 byte!!!
+
+	position pos; // 0 byte offset
+
+	float u, v;  //12 byte offset
+
+	position normal; // 24 byte offset
+
+	int StartWeight; // won't be sent to shader
+	int WeightCount; // won't be sent to shader
+
+
+};
+
+
+struct Joint {
+
+	std::wstring name;
+	int parentID;
+
+	position pos;
+
+	struct orientation {
+
+		float x, y, z, w;
+	};
+
+	orientation orientation;
+
+};
+
+struct Weight
+{
+	int jointID;
+	float influence;
+	position pos;
+
+};
 struct worldConstantBuffer
 {
 	DirectX::XMFLOAT4X4 world;
@@ -168,7 +216,7 @@ struct pixelShaderConstants //hlsl uses 4 byte bools, c++ bools are 1 byte //Eve
 	BOOL Padding[2];	  // 8 bytes
 
 
-	pixelShaderConstants(BOOL normalMap, BOOL fog, BOOL miniMap)
+	pixelShaderConstants(BOOL normalMap, BOOL fog, BOOL miniMap) //Remove minimap
 	{
 		
 		this->normalMap = normalMap;
