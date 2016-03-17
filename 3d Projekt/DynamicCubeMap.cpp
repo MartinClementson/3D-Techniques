@@ -160,7 +160,7 @@ bool DynamicCubeMap::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceC
 		return false;
 	
 	//View Saves reference
-	//cubeTex->Release();
+	cubeTex->Release();
 
 	//Set up the depthBuffer
 
@@ -195,7 +195,7 @@ bool DynamicCubeMap::Init(ID3D11Device * gDevice, ID3D11DeviceContext * gDeviceC
 	if (FAILED(hr))
 		return false;
 	//View Saves reference
-	//depthTex->Release();
+	depthTex->Release();
 
 	//set the viewPort
 

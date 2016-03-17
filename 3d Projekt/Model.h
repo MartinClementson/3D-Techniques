@@ -82,7 +82,7 @@ public:
 #pragma region Public functions
 	virtual void update();
 	virtual void render();
-
+	void Release();
 	void loadNormal(ID3D11Device* gDevice, std::string filePath);
 	void renderChildren();
 

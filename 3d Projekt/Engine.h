@@ -117,8 +117,8 @@ public:
 
 
 	void release();
-	void run();
-	void update();
+	void run(float deltaTime);
+	void update(float deltaTime);
 	void render();
 #pragma region Adding models
 	void loadModels();

@@ -412,6 +412,7 @@ bool Terrain::init(std::string fileName, ID3D11Device *gDevice, ID3D11DeviceCont
 
 Terrain::~Terrain()
 {
+	delete[] indices;
 	delete[] vertices;
 	delete this->worldStruct;
 }
