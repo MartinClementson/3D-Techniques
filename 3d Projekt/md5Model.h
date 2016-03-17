@@ -21,7 +21,7 @@ private:
 	std::vector<DWORD> indices; // 32-bit unsigned int.
 	std::vector<Weight> weights;
 
-	std::vector<DirectX::XMFLOAT3> positions;
+	std::vector<position> positions;
 
 	ID3D11Buffer* vertBuff = nullptr;
 	ID3D11Buffer* indexBuff = nullptr;
@@ -103,7 +103,7 @@ public:
 	bool loadAnimation();
 	~md5Model();
 
-	void update();
+	void update(float deltaTime,int animation);
 	void render();
 
 	void Release();

@@ -22,7 +22,7 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	this->quadTreeTerrain = new QuadTree();
 	this->input = input;
 	this->wndHandle = winHandle;
-	//this->animationModel = new md5Model;
+	this->animationModel = new md5Model;
 	drawCount = 0;
 	CoInitialize((LPVOID)0);
 	this->pixelStateStruct.distanceFog = TRUE;
@@ -97,13 +97,13 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 		delete quadTreeTerrain;
 	}
 
-	//if (!animationModel->Init(gDeviceContext, gDevice,this->worldBuffer))
-	//{
-	//	
-	//		errorMsg("Failed to initialize the md5 model");
-	//		delete animationModel;
-	//	
-	//}
+	if (!animationModel->Init(gDeviceContext, gDevice,this->worldBuffer))
+	{
+		
+			errorMsg("Failed to initialize the md5 model");
+			delete animationModel;
+		
+	}
 
 	//Load the models and get their vertices
 	
@@ -214,7 +214,7 @@ void Engine::release()
 	worldBuffer->Release();
 	pixelStateBuffer->Release();
 	ui->Release();
-	//animationModel->Release();
+	animationModel->Release();
 	
 
 	for (int i = 0; i < modelsColor->size(); i++)
@@ -245,7 +245,7 @@ void Engine::release()
 	delete lights;
 	delete cam;
 	delete miniMapCam;
-	//delete animationModel;
+	delete animationModel;
 
 	delete ui;
 
@@ -524,10 +524,10 @@ void Engine::loadLights()
 	this->addLight(POINTLIGHT);
 }
 
-void Engine::run()
+void Engine::run(float deltaTime)
 {
 
-	this->update();
+	this->update(deltaTime);
 
 	this->render();
 
@@ -536,7 +536,7 @@ void Engine::run()
 
 }
 
-void Engine::update()
+void Engine::update(float deltaTime)
 {
 	input->frame(); //Check for user input
 	
@@ -571,7 +571,7 @@ void Engine::update()
 
 		this->cubeMapModels->at(i)->update();
 	}
-
+	this->animationModel->update(deltaTime,0);
 	
 	
 	this->updateLight();
@@ -767,8 +767,8 @@ void Engine::renderScene(Camera *camera) // This function will render the scene,
 	/////////////////////////////////////////////
 	//Render the Animation
 	//
-	//this->shaderManager->setActiveShaders(ANIMATIONSHADER);
-	//this->animationModel->render();
+	this->shaderManager->setActiveShaders(ANIMATIONSHADER);
+	this->animationModel->render();
 	//
 	////////////////////////////////////////////
 

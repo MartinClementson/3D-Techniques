@@ -1,7 +1,10 @@
 #pragma once
+#include <DirectXMath.h>
 struct position {
 
+	operator DirectX::XMFLOAT3() const { return DirectX::XMFLOAT3(x, y, z); } //this is a typecast overload
 	float x, y, z;
+
 };
 
 struct Vertex 

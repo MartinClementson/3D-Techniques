@@ -40,7 +40,8 @@ struct PS_IN
 
 float3 normalToWorldSpace(float3 normalMapSample, float3 normal, float3 tangent)
 {
-	// here we build the tbn basis. to transform the sampled normal from tangent space to the world space
+	
+    // here we build the tbn basis. to transform the sampled normal from tangent space to the world space
 	//then we return the normal in world
 
 	//Convert from [0,1] to [-1,1]
@@ -63,10 +64,16 @@ float3 normalToWorldSpace(float3 normalMapSample, float3 normal, float3 tangent)
 
 float4 PS_main(PS_IN input) : SV_TARGET
 {
-//sampling the normal
-float3 normalSample = normalTexture.Sample(SampleType, input.Texture).rgb;
 
-float3 bumpedNormal = normalToWorldSpace(normalSample, input.normal, input.Tangent);
+    float3 normal = input.normal;
+    if(normalMap)
+{
+    //sampling the normal
+    float3 normalSample = normalTexture.Sample(SampleType, input.Texture).rgb;
+
+     normal = normalToWorldSpace(normalSample, input.normal, input.Tangent);
+    }
+
 
 
  //The light ray from the vert position to the light
@@ -77,10 +84,10 @@ float3 vRay = normalize((float3)(lightPosition - input.wPos));
 float3 v = normalize(input.camPos - input.wPos.xyz);
 
 //Reflect is used in the specular shading
-float3 r = reflect(-vRay, normalize(bumpedNormal));
+    float3 r = reflect(-vRay, normalize(normal));
 
 //Calculate how much of the pixel is to be lit
-float fDot = max(0.0f, dot(normalize(vRay), normalize(bumpedNormal)));
+    float fDot = max(0.0f, dot(normalize(vRay), normalize(normal)));
 
 float3 color = lightColor.xyz;
 

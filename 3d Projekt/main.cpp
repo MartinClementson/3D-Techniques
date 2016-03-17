@@ -42,7 +42,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			{
 				mTimer->Tick();
 				CalculateFPS(wndHandle, *mTimer, engine->getQTdrawCount());
-				engine->run();
+				engine->run(mTimer->DeltaTime());
 			}
 		}
 		engine->release();
