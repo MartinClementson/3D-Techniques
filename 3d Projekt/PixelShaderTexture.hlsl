@@ -9,7 +9,6 @@ cbuffer lightBuffer : register(b0)
 
 cbuffer pixelShaderConstants: register(b1)
 {
-    bool miniMap;
     bool normalMap;
     bool distanceFog;
 
@@ -66,7 +65,7 @@ float4 PS_main(PS_IN input) : SV_TARGET
 {
 
     float3 normal = input.normal;
-    if(normalMap)
+    if(normalMap == true)
 {
     //sampling the normal
     float3 normalSample = normalTexture.Sample(SampleType, input.Texture).rgb;
@@ -76,7 +75,7 @@ float4 PS_main(PS_IN input) : SV_TARGET
 
 
 
- //The light ray from the vert position to the light
+//The light ray from the vert position to the light
 //normalized to be used as a direction vector
 float3 vRay = normalize((float3)(lightPosition - input.wPos));
 

@@ -229,7 +229,7 @@ struct pixelShaderConstants //hlsl uses 4 byte bools, c++ bools are 1 byte //Eve
 	BOOL Padding[2];	  // 8 bytes
 
 
-	pixelShaderConstants(BOOL normalMap, BOOL fog, BOOL miniMap) //Remove minimap
+	pixelShaderConstants(BOOL normalMap, BOOL fog) //Remove minimap
 	{
 		
 		this->normalMap = normalMap;

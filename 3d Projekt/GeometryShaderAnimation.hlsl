@@ -41,15 +41,15 @@ void GS_main(
 	inout TriangleStream< GSOutput > output)
 
 {
-	float3 faceEdgeA = input[1].pos - input[0].pos;
-	float3 faceEdgeB = input[2].pos - input[0].pos;
-	float3 faceNormal = normalize(cross(faceEdgeA, faceEdgeB));
+	//float3 faceEdgeA = input[1].pos - input[0].pos;
+	//float3 faceEdgeB = input[2].pos - input[0].pos;
+	
 
 
 	//////////////////////////////////////////////////
 	///////////Back-face culling test/////////////////
 
-	////multiply the face normal into world space
+	//////multiply the face normal into world space
 	//float3 faceNormal2 = normalize(mul(faceNormal, normalWorld));
 
 	////multiply one of the vertices into world space

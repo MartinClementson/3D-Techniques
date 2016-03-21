@@ -730,30 +730,30 @@ void md5Model::update(float deltaTime, int animation)
 
 	this->animations[animation].currAnimTime += deltaTime; //update the current animation time
 
-	if (this->animations[animation].currAnimTime > this->animations[animation].totalAnimTime)
+	if (this->animations[animation].currAnimTime > this->animations[animation].totalAnimTime) //If it's at the end, restart it
 		this->animations[animation].currAnimTime = 0.0f;
 
 	//which frame are we on
 	float currentFrame = this->animations[animation].currAnimTime * this->animations[animation].frameRate;
-	int frame0 = floorf(currentFrame);
-	int frame1 = frame0 + 1;
+	int frame0 = floorf(currentFrame); //round the float number
+	int frame1 = frame0 + 1; //Find the frame we are going to
 
-	//make sure w don't go over the number of frames
-	if (frame0 == this->animations[animation].numFrames - 1)
+	//make sure we don't go over the number of frames
+	if (frame0 == this->animations[animation].numFrames - 1) //If we're at the last frame, set the next frame as the first frame (looping the animation)
 		frame1 = 0;
 
-	float interpolation = currentFrame - frame0; //get the remainder time between frame 0 and frame 1 to use as interpolation factor
+	float interpolation = currentFrame - frame0; //get the remainder time between frame current frame and frame 0 to use as interpolation factor
 
 	std::vector<Joint> interpolatedSkeleton; // create a frame skeleton to store the intepolated skeleton in
 
 		//compute the interpolated skeleton
 
-		for (int i = 0; i < this->animations[animation].numJoints; i++)
+		for (int i = 0; i < this->animations[animation].numJoints; i++) //this->animations is an array of different animations, But we only have one
 		{
 
 			Joint tempJoint;
 			Joint joint0 = this->animations[animation].frameSkeleton[frame0][i]; // get the i'th joint of frame 0's skeleton
-			Joint joint1 = this->animations[animation].frameSkeleton[frame1][i];
+			Joint joint1 = this->animations[animation].frameSkeleton[frame1][i]; // and get the i'th joint of frame 1's skeleton
 
 			tempJoint.parentID = joint0.parentID; //set the tempJoints parent id
 
@@ -779,7 +779,7 @@ void md5Model::update(float deltaTime, int animation)
 			interpolatedSkeleton.push_back(tempJoint); //push back the joint into our interpolated skeleton
 		}
 
-		for (int k = 0; k < this->numSubsets; k++)
+		for (int k = 0; k < this->numSubsets; k++) //now we have to update the vertices in every subset
 		{
 			for (int i = 0; i < this->subsets[k].vertices.size(); ++i)
 			{
@@ -813,13 +813,13 @@ void md5Model::update(float deltaTime, int animation)
 					tempVert.pos.z += (tempJoint.pos.z + rotatedPoint.z) * tempWeight.influence;
 
 					// Compute the normals for this frames skeleton using the weight normals from before
-					// We can comput the normals the same way we compute the vertices position, only we don't have to translate them (just rotate)
+					// We can compute the normals the same way we compute the vertices position, only we don't have to translate them (just rotate)
 					XMVECTOR tempWeightNormal = XMVectorSet(tempWeight.normal.x, tempWeight.normal.y, tempWeight.normal.z, 0.0f);
 
 					// Rotate the normal
 					XMStoreFloat3(&rotatedPoint, XMQuaternionMultiply(XMQuaternionMultiply(tempJointOrientation, tempWeightNormal), tempJointOrientationConjugate));
 
-					// Add to vertices normal and ake weight bias into account
+					// Add to vertices normal and take weight bias(influence) into account
 					tempVert.normal.x -= rotatedPoint.x * tempWeight.influence;
 					tempVert.normal.y -= rotatedPoint.y * tempWeight.influence;
 					tempVert.normal.z -= rotatedPoint.z * tempWeight.influence;
@@ -884,7 +884,7 @@ void md5Model::render()
 
 	
 	
-	// NO textures are loaded yet!
+	
 	this->gDeviceContext->PSSetShaderResources(0, 1, &textures[this->subsets.at(i).texArrayIndex]);
 	
 	this->gDeviceContext->DrawIndexed(this->subsets.at(i).indices.size(), 0, 0);

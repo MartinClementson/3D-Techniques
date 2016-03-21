@@ -328,8 +328,3 @@ void Cube::update()
 	return Model::update();
 }
 
-void Cube::render()
-{
-
-	return Model::render();
-}

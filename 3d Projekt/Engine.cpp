@@ -644,7 +644,7 @@ void Engine::render()
 			
 			renderScene(this->cam);
 			this->shaderManager->setActiveShaders(CUBEMAPSHADER);	//Apply dynamic cube map shader
-			this->cubeMapModels->at(0)->render();					//Render the model using the dynamix cube map
+			this->cubeMapModels->at(0)->render(&this->pixelStateStruct,this->pixelStateBuffer);					//Render the model using the dynamix cube map
 			
 		}
 
@@ -654,7 +654,7 @@ void Engine::render()
 			this->gDeviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
 
 
-			this->updateCamera(this->cam);									//this sets the camera to the const buffer, Replacing the cameras
+			this->updateCamera(this->cam);				//this sets the camera to the const buffer, Replacing the cameras
 														// used with dynamic cube mapping and render to texture
 
 			this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, depthStencilView);	//Set backbuffer as render target
@@ -666,9 +666,9 @@ void Engine::render()
 			this->gDeviceContext->PSSetShaderResources(4, 1, &shaderResourceViewz);
 			//////////////////////////////////
 
-			renderScene(this->cam);											//Render scene
+			renderScene(this->cam);									//Render scene
 			this->shaderManager->setActiveShaders(CUBEMAPSHADER);	//Apply dynamic cube map shader
-			this->cubeMapModels->at(0)->render();					//Render the model using the dynamix cube map
+			this->cubeMapModels->at(0)->render(&this->pixelStateStruct, this->pixelStateBuffer);					//Render the model using the dynamix cube map
 
 
 
@@ -732,7 +732,10 @@ void Engine::renderScene(Camera *camera) // This function will render the scene,
 	{
 
 		
-		this->modelsColor->at(i)->render();
+
+		this->modelsColor->at(i)->render(&this->pixelStateStruct, this->pixelStateBuffer);
+
+
 
 	}
 	////////////////////////////////////////////
@@ -748,7 +751,7 @@ void Engine::renderScene(Camera *camera) // This function will render the scene,
 	for (int i = 0; i < this->modelsTexture->size(); i++)
 	{
 		 
-		this->modelsTexture->at(i)->render();
+		this->modelsTexture->at(i)->render(&this->pixelStateStruct,  this->pixelStateBuffer);
 	}
 	//
 	////////////////////////////////////////////
@@ -899,17 +902,17 @@ void Engine::updateCamera(Camera* cameraToRender)
 void Engine::updatePixelShaderState()
 {
 
-	static pixelShaderConstants previousValue;
+	//static pixelShaderConstants previousValue;
 
-	if (previousValue == this->pixelStateStruct)
-		return;
-	else
-	{
+	//if (previousValue == this->pixelStateStruct)
+	//	return;
+	//else
+	//{
 
-		previousValue = this->pixelStateStruct;
+	//	previousValue = this->pixelStateStruct;
 
-		this->sendPixelStateToBuffer();
-	}
+	//	this->sendPixelStateToBuffer();
+	//}
 
 }
 void Engine::sendPixelStateToBuffer()
