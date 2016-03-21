@@ -43,6 +43,7 @@ public:
 	void Release();
 
 	void SetRenderTarget(ID3D11DeviceContext* deviceContext, ID3D11DepthStencilView* depthStencilView);
+	ID3D11RenderTargetView** getRenderTarget() { return &this->renderTargetView; };
 	void ClearRenderTarget(ID3D11DeviceContext* deviceContext, ID3D11DepthStencilView* depthStencilView,
 		float red, float green, float blue, float alpha);
 	ID3D11ShaderResourceView* GetShaderResourceView();

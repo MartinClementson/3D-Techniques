@@ -16,7 +16,7 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	
 
 	this->heightMap = new Terrain();
-	this->renderTexture = new RenderTexture();
+	this->miniMapTexture = new RenderTexture();
 	this->shaderManager = new ShaderManager();
 	this->dynCubeMap = new DynamicCubeMap();
 	this->quadTreeTerrain = new QuadTree();
@@ -24,6 +24,7 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	this->wndHandle = winHandle;
 	this->animationModel = new md5Model();
 	this->postProcess = new ComputeShaderClass();
+	this->postProcessTexture = new RenderTexture();
 	drawCount = 0;
 	CoInitialize((LPVOID)0);
 	this->pixelStateStruct.distanceFog = TRUE;
@@ -72,10 +73,10 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	}
 
 
-	if (!renderTexture->Init(this->gDevice, WINDOW_WIDTH, WINDOW_HEIGHT))
+	if (!miniMapTexture->Init(this->gDevice, WINDOW_WIDTH, WINDOW_HEIGHT))
 	{
 		errorMsg("Failed to initalize Render Texture");
-		delete this->renderTexture;
+		delete this->miniMapTexture;
 	}
 
 	if (!dynCubeMap->Init(gDevice, gDeviceContext))
@@ -110,6 +111,11 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 
 		errorMsg("Failed to initialize the compute shader");
 		delete postProcess;
+	}
+	if (!postProcessTexture->Init(gDevice, WINDOW_WIDTH, WINDOW_HEIGHT))
+	{
+		errorMsg("Failed to initialize the post process render texture");
+		delete postProcessTexture;
 	}
 	
 
@@ -199,7 +205,7 @@ void Engine::release()
 	
 	quadTreeTerrain->Release();
 	shaderManager->Release();
-	renderTexture->Release();
+	miniMapTexture->Release();
 	dynCubeMap->Release();
 	sky->Release();
 	heightMap->Release();
@@ -209,6 +215,7 @@ void Engine::release()
 	input->Shutdown();
 	gRasterizerState->Release();
 	gBackbufferRTV->Release();
+	gBackBufferUAV->Release();
 	gSwapChain->Release();
 	
 
@@ -227,9 +234,9 @@ void Engine::release()
 
 
 	BackBufferTexture->Release();
+	postProcessTexture->Release();
 
 
-	gPostProcessedBB->Release();
 	
 
 	for (int i = 0; i < modelsColor->size(); i++)
@@ -250,7 +257,7 @@ void Engine::release()
 	}
 	delete quadTreeTerrain;
 	delete shaderManager;
-	delete renderTexture;
+	delete miniMapTexture;
 	delete dynCubeMap;
 	delete sky;
 	delete heightMap;
@@ -262,6 +269,7 @@ void Engine::release()
 	delete miniMapCam;
 	delete animationModel;
 	delete postProcess;
+	delete postProcessTexture;
 
 	delete ui;
 
@@ -444,7 +452,7 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 	if (SUCCEEDED(hr))
 	{
 		ID3D11Texture2D* pBackBuffer = nullptr;
-
+		
 		//D3D11_TEXTURE2D_DESC texDesc;
 		//ZeroMemory(&texDesc, sizeof(texDesc));
 		//texDesc.Width = WINDOW_WIDTH;
@@ -467,17 +475,28 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 
 
 		hr =this->gDevice->CreateRenderTargetView(pBackBuffer, NULL, &this->gBackbufferRTV);
+		if (FAILED(hr))
+			errorMsg("FAILED to create Backbuffer RTV");
 
 		hr = this->gDevice->CreateShaderResourceView(pBackBuffer, nullptr, &BackBufferTexture);
+
 		if (FAILED(hr))
 			errorMsg("FAILD");
+
+		//hr = this->gDevice->CreateUnorderedAccessView(pBackBuffer, nullptr, &gBackBufferUAV);
+		if (FAILED(hr))
+			errorMsg("Failed to create UAV");
+
+
+
+		
 
 
 		
 		pBackBuffer->Release();
 
 		this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, depthStencilView); 
-
+		currentRTV = &gBackbufferRTV;
 
 	}
 
@@ -648,7 +667,28 @@ void Engine::updateLight()
 
 void Engine::render()
 {
+	
+	if (this->postProcessActive)
+	{
+		/*
+		If post processing is active then we have to render everything to a texture. Then in the end we send that texture into
+		the compute shader to process.
+		*/
+
+		this->currentRTV = this->postProcessTexture->getRenderTarget();
+
+	}
+	else
+	{
+		//IF we are not using post process, just render to the back buffer as normal
+		this->currentRTV = &this->gBackbufferRTV;
+	}
+
+	
+	
 	drawCount = 0;
+
+
 
 	//In this function different render passes will be made.
 	//The scene is rendered in the renderScene() function
@@ -674,7 +714,7 @@ void Engine::render()
 	
 
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 5; i++)
 	{
 
 		if (i == 0 && this->miniMap == true) //Render to texture (minimap). first loop
@@ -683,8 +723,8 @@ void Engine::render()
 
 			
 			this->updateCamera(this->miniMapCam);
-			renderTexture->SetRenderTarget(&*gDeviceContext, depthStencilView);
-			renderTexture->ClearRenderTarget(gDeviceContext, depthStencilView, 0, 0, 0, 0);
+			miniMapTexture->SetRenderTarget(&*gDeviceContext, depthStencilView);
+			miniMapTexture->ClearRenderTarget(gDeviceContext, depthStencilView, 0, 0, 0, 0);
 			//this->shaderManager->setActiveShaders(SKYBOXSHADER);
 			
 			
@@ -694,7 +734,7 @@ void Engine::render()
 			
 		}
 
-		else if( i == 1) //render to backbuffer/screen. next loop
+		else if( i == 1) //render to backbuffer/screen(or post process texture). next loop
 		{
 			this->gDeviceContext->ClearRenderTargetView(gBackbufferRTV, clearColor);
 			this->gDeviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
@@ -703,12 +743,12 @@ void Engine::render()
 			this->updateCamera(this->cam);				//this sets the camera to the const buffer, Replacing the cameras
 														// used with dynamic cube mapping and render to texture
 
-			this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, depthStencilView);	//Set backbuffer as render target
+			this->gDeviceContext->OMSetRenderTargets(1, this->currentRTV, depthStencilView);	//Set backbuffer/or post process texture as render target
 			
 			/////////////////////////////////
-			//Set the renderToTexture as a subresource
-			ID3D11ShaderResourceView* shaderResourceViewz = renderTexture->GetShaderResourceView();
-			//Applu the renderTexture to the pixel shader
+			//Set the minimap as a subresource
+			ID3D11ShaderResourceView* shaderResourceViewz = miniMapTexture->GetShaderResourceView();
+			//Appluythe renderTexture(minimap) to the pixel shader
 			this->gDeviceContext->PSSetShaderResources(4, 1, &shaderResourceViewz);
 			//////////////////////////////////
 
@@ -723,16 +763,35 @@ void Engine::render()
 			
 		}
 
-		else if (i == 2 && this->miniMap == true)//Render UI, (Put minimap on screen, etc.)
+		else if (i == 2 && this->postProcessActive == true)
+		{
+			//do postprocessing yo
+
+
+			//change the rendertarget t
+
+
+			/////////////////////////////////
+			//Set the postProcess texture as a subresource
+			ID3D11ShaderResourceView* shaderResourceViewz = postProcessTexture->GetShaderResourceView();
+			//Apply the renderTexture(postProcess texture) to the compute shader
+			this->gDeviceContext->PSSetShaderResources(4, 1, &shaderResourceViewz);
+			//////////////////////////////////
+
+
+
+		}
+		else if (i == 3 && this->miniMap == true)//Render UI, (Put minimap on screen, etc.)
 		{
 			this->shaderManager->setActiveShaders(OVERLAYSHADER);
 			this->ui->Render();
 
 		}
+
 		
-		else 
+		else if (i == 4)
 		{
-			
+
 
 
 			//The render texture needs to be taken of as a shader resource
@@ -743,6 +802,8 @@ void Engine::render()
 			this->gDeviceContext->PSSetShaderResources(4, 1, tab);
 
 		}
+		else
+			continue;
 
 
 
@@ -1002,6 +1063,6 @@ void Engine::errorMsg(std::string msg)
 	LPCWSTR sw = stemp.c_str();
 
 	MessageBox(*wndHandle, sw, L"Error", MB_ICONERROR | MB_OK);
-	throw; //This generates an exception. because there isn't really any exception to throw
+	//throw; //This generates an exception. because there isn't really any exception to throw
 	//this allows for the debugger to break, and the programmer can look at the call stack to find the issue
 }
