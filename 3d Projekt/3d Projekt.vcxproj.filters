@@ -64,6 +64,9 @@
     <FxCompile Include="VertexShaderAnimation.hlsl">
       <Filter>Shaders\AnimationShaders</Filter>
     </FxCompile>
+    <FxCompile Include="ComputeShader.hlsl">
+      <Filter>Shaders\Compute Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -143,6 +146,9 @@
     <ClCompile Include="md5Model.cpp">
       <Filter>Classes\Animation</Filter>
     </ClCompile>
+    <ClCompile Include="ComputeShaderClass.cpp">
+      <Filter>Classes\ComputeShader</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h">
@@ -218,6 +224,9 @@
     </ClInclude>
     <ClInclude Include="md5Model.h">
       <Filter>Classes\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeShaderClass.h">
+      <Filter>Classes\ComputeShader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -313,6 +322,12 @@
     </Filter>
     <Filter Include="Shaders\AnimationShaders">
       <UniqueIdentifier>{78480cc2-7c2d-4f67-a868-d653b8775587}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Compute Shader">
+      <UniqueIdentifier>{c73c211e-548f-44c9-bb40-c1bb48c25bbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\ComputeShader">
+      <UniqueIdentifier>{e5d2a6c3-e278-4746-a6de-cf3a423030d5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

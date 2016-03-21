@@ -22,7 +22,8 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	this->quadTreeTerrain = new QuadTree();
 	this->input = input;
 	this->wndHandle = winHandle;
-	this->animationModel = new md5Model;
+	this->animationModel = new md5Model();
+	this->postProcess = new ComputeShaderClass();
 	drawCount = 0;
 	CoInitialize((LPVOID)0);
 	this->pixelStateStruct.distanceFog = TRUE;
@@ -104,6 +105,13 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 			delete animationModel;
 		
 	}
+	if (!postProcess->Initialize(gDevice, gDeviceContext))
+	{
+
+		errorMsg("Failed to initialize the compute shader");
+		delete postProcess;
+	}
+	
 
 	//Load the models and get their vertices
 	
@@ -215,6 +223,13 @@ void Engine::release()
 	pixelStateBuffer->Release();
 	ui->Release();
 	animationModel->Release();
+	postProcess->Release();
+
+
+	BackBufferTexture->Release();
+
+
+	gPostProcessedBB->Release();
 	
 
 	for (int i = 0; i < modelsColor->size(); i++)
@@ -246,6 +261,7 @@ void Engine::release()
 	delete cam;
 	delete miniMapCam;
 	delete animationModel;
+	delete postProcess;
 
 	delete ui;
 
@@ -362,13 +378,16 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 
 	ZeroMemory(&scd, sizeof(DXGI_SWAP_CHAIN_DESC));
 
+	scd.BufferDesc.Width = WINDOW_WIDTH;
+	scd.BufferDesc.Height = WINDOW_HEIGHT;
 	scd.BufferCount = 1;
 	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
 	scd.OutputWindow = *wndHandle;
 	scd.SampleDesc.Count = 4;
 	scd.Windowed = WINDOWED;
 	scd.BufferDesc.RefreshRate.Numerator = 60; //fps cap
+	scd.BufferDesc.RefreshRate.Denominator = 1;
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
@@ -425,9 +444,36 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 	if (SUCCEEDED(hr))
 	{
 		ID3D11Texture2D* pBackBuffer = nullptr;
+
+		//D3D11_TEXTURE2D_DESC texDesc;
+		//ZeroMemory(&texDesc, sizeof(texDesc));
+		//texDesc.Width = WINDOW_WIDTH;
+		//texDesc.Height = WINDOW_HEIGHT;
+		//texDesc.MipLevels = 0;
+		//texDesc.ArraySize = 1;
+		//texDesc.SampleDesc.Count = 1;
+		//texDesc.SampleDesc.Quality = 0;
+		//texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		//texDesc.Usage = D3D11_USAGE_DEFAULT;
+		//texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		//texDesc.CPUAccessFlags = 0;
+		//texDesc.MiscFlags = 0;
+
 		this->gSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 
-		this->gDevice->CreateRenderTargetView(pBackBuffer, NULL, &this->gBackbufferRTV);
+		//hr = gDevice->CreateTexture2D(&texDesc, 0, &pBackBuffer);
+		//if (FAILED(hr))
+		//	errorMsg("failed to init backbuffer rtv");
+
+
+		hr =this->gDevice->CreateRenderTargetView(pBackBuffer, NULL, &this->gBackbufferRTV);
+
+		hr = this->gDevice->CreateShaderResourceView(pBackBuffer, nullptr, &BackBufferTexture);
+		if (FAILED(hr))
+			errorMsg("FAILD");
+
+
+		
 		pBackBuffer->Release();
 
 		this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, depthStencilView); 

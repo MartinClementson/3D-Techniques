@@ -16,6 +16,7 @@
 #include "QuadTree.h"
 #include "Overlay.h"
 #include "md5Model.h"
+#include "ComputeShaderClass.h"
 class DynamicCubeMap; //forward declaration
 
 #pragma endregion
@@ -36,6 +37,7 @@ private:
 	RenderTexture* renderTexture;
 	QuadTree* quadTreeTerrain;
 	md5Model* animationModel;
+	ComputeShaderClass* postProcess;
 	
 	Overlay* ui;
 	bool miniMap = true;
@@ -66,7 +68,10 @@ private:
 
 	IDXGISwapChain* gSwapChain = nullptr;
 	ID3D11RenderTargetView* gBackbufferRTV = nullptr;
+	ID3D11ShaderResourceView *BackBufferTexture = nullptr;
 
+
+	ID3D11RenderTargetView* gPostProcessedBB = nullptr;
 	//Depth stencil
 	ID3D11DepthStencilState* depthState = nullptr;
 	ID3D11DepthStencilView* depthStencilView = nullptr;
