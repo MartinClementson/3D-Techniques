@@ -11,8 +11,12 @@ ComputeShaderClass::~ComputeShaderClass()
 {
 }
 
-bool ComputeShaderClass::Initialize(ID3D11Device* gDevice, ID3D11DeviceContext* gDeviceContext)
+bool ComputeShaderClass::Initialize(ID3D11Device* gDevice, ID3D11DeviceContext* gDeviceContext, ID3D11UnorderedAccessView*	uav)
 {
+
+	this->gDevice = gDevice;
+	this->gDeviceContext = gDeviceContext;
+	this->uav = uav;
 	HRESULT hr;
 	//Connecting the CS
 	ID3DBlob *pCs = nullptr;
@@ -44,7 +48,19 @@ void ComputeShaderClass::Release()
 
 void ComputeShaderClass::Dispatch()
 {
+	ID3D11UnorderedAccessView* uavA[] = { uav };
 
+	gDeviceContext->CSSetUnorderedAccessViews(0, 1, uavA, nullptr);
+	gDeviceContext->CSSetShader(this->gCompute, nullptr, 0);
+
+	gDeviceContext->Dispatch(32, 30, 1);
+
+	uavA[0] = nullptr;
+	gDeviceContext->CSSetShader(nullptr, nullptr, 0);
+	gDeviceContext->CSSetUnorderedAccessViews(0, 1, uavA, nullptr);
+
+
+		
 
 
 }

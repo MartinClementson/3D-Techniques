@@ -106,7 +106,7 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 			delete animationModel;
 		
 	}
-	if (!postProcess->Initialize(gDevice, gDeviceContext))
+	if (!postProcess->Initialize(gDevice, gDeviceContext,this->gBackBufferUAV))
 	{
 
 		errorMsg("Failed to initialize the compute shader");
@@ -753,6 +753,9 @@ void Engine::render()
 		else if( i == 1) //render to backbuffer/screen(or post process texture). next loop
 		{
 			this->gDeviceContext->ClearRenderTargetView(gBackbufferRTV, clearColor);
+			if(postProcessActive)
+				this->gDeviceContext->ClearRenderTargetView(*postProcessTexture->getRenderTarget(), clearColor);
+
 			this->gDeviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
 
 
@@ -784,15 +787,20 @@ void Engine::render()
 			//do postprocessing yo
 
 
-			//change the rendertarget t
+			
 
+			this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, depthStencilView); //change render target,  because we want the postprocess texture as an input now, 
+																								 //and if it's set as a render target, then it wont work.
+			currentRTV = &gBackbufferRTV;
 
 			/////////////////////////////////
 			//Set the postProcess texture as a subresource
 			ID3D11ShaderResourceView* shaderResourceViewz = postProcessTexture->GetShaderResourceView();
 			//Apply the renderTexture(postProcess texture) to the compute shader
-			this->gDeviceContext->PSSetShaderResources(4, 1, &shaderResourceViewz);
+			this->gDeviceContext->CSSetShaderResources(4, 1, &shaderResourceViewz);
 			//////////////////////////////////
+
+			this->postProcess->Dispatch();
 
 
 

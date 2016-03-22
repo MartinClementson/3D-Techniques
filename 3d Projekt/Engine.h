@@ -81,8 +81,8 @@ private:
 										 // And the dynamic cube map needs to know which render target to reset to
 										 // if post process is on = reset to the RenderTexture object "postProcessTexture"
 										 // else if it's off : reset to the back buffer rtv
-										//the dynamic cube map just calls the engine function "getRenderTargetView()" 
-										//this double pointer returns the current active RTV to be used.
+										 //the dynamic cube map just calls the engine function "getRenderTargetView()" 
+										 //this double pointer returns the current active RTV to be used.
 	//Depth stencil
 	ID3D11DepthStencilState* depthState = nullptr;
 	ID3D11DepthStencilView* depthStencilView = nullptr;

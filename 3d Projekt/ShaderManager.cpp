@@ -113,6 +113,7 @@ bool ShaderManager::createTextureShader()
 
 
 	hr = gDevice->CreateSamplerState(&samplerDesc, &gSampleState);
+	
 
 	if (FAILED(hr))
 	{
@@ -121,7 +122,12 @@ bool ShaderManager::createTextureShader()
 
 	}
 	else
+	{
+		//Set sampler to pixel shader and the compute shader
 		gDeviceContext->PSSetSamplers(0, 1, &this->gSampleState);
+		gDeviceContext->CSSetSamplers(0, 1, &this->gSampleState);
+	}
+		
 	//Load the shaders
 
 
