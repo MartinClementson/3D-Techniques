@@ -802,7 +802,7 @@ void Engine::render()
 			//////////////////////////////////
 
 			this->postProcess->Dispatch();
-
+			this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, depthStencilView);
 
 
 		}
