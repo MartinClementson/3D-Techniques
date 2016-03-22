@@ -38,7 +38,7 @@ protected:
 	worldConstantBuffer* worldStruct = nullptr;
 	ID3D11Buffer* worldBuffer = nullptr; //this is a pointer to the constant buffer, sent from the engine
 	
-	//pixelShaderConstants renderState; // Every Object has it's own renderstate.
+	pixelShaderConstants renderState; // Every Object has it's own renderstate.
 	/* 
 	For example. Some Models have normal maps, some don't.
 	We query
@@ -81,10 +81,10 @@ public:
 	
 #pragma region Public functions
 	virtual void update();
-	virtual void render();
-
+	virtual void render(pixelShaderConstants* renderstate, ID3D11Buffer* pixelStateBuffer);
+	void Release();
 	void loadNormal(ID3D11Device* gDevice, std::string filePath);
-	void renderChildren();
+	void renderChildren(pixelShaderConstants* renderstate, ID3D11Buffer* pixelStateBuffer);
 
 	virtual void updateWorldMatrix();
 #pragma endregion

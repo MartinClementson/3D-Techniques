@@ -6,8 +6,8 @@
 #define VSYNC 1 //1 == ON, 0 = OFF
 #define MAX_TRIANGLES 10000
 #define SCREEN_DEPTH 10000.0f
-
-
+#define DEBUG 0 /* 2 = debug,  or : D3D11_CREATE_DEVICE_DEBUG */
+#define SAFE_RELEASE(p) { if ( (p) ) { (p)->Release(); (p) = 0; } }
 #define PAD 0.0f
 #define PI 3.14159265359f
 #define SENSITIVITY 1.0f
@@ -18,7 +18,15 @@
 enum Primitives{ PLANE , CUBE , PYRAMID, OBJ};
 enum lightTypes{ POINTLIGHT }; //add more light types here later
 enum moveDirection{ FORWARD,BACKWARD,LEFT,RIGHT};
-enum ShaderTypes { TEXTURESHADER, COLORSHADER, CUBEMAPSHADER,SKYBOXSHADER,TERRAINSHADER,OVERLAYSHADER };
+enum ShaderTypes 
+{
+	TEXTURESHADER,
+	COLORSHADER, 
+	CUBEMAPSHADER,
+	SKYBOXSHADER,
+	TERRAINSHADER,
+	OVERLAYSHADER,
+	ANIMATIONSHADER};
 
 
 /*

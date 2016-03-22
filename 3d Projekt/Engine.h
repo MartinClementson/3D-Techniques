@@ -15,6 +15,8 @@
 #include "Terrain.h"
 #include "QuadTree.h"
 #include "Overlay.h"
+#include "md5Model.h"
+#include "ComputeShaderClass.h"
 class DynamicCubeMap; //forward declaration
 
 #pragma endregion
@@ -32,12 +34,19 @@ private:
 	SkyBox* sky = nullptr;
 	ShaderManager* shaderManager = nullptr;
 	DynamicCubeMap* dynCubeMap = nullptr;
-	RenderTexture* renderTexture;
+	RenderTexture* miniMapTexture;
 	QuadTree* quadTreeTerrain;
+	md5Model* animationModel;
+	ComputeShaderClass* postProcess;
+	
+	RenderTexture* postProcessTexture = nullptr; //We use this if we want post processing. 
+												 //We render the whole scene to this texture. 
+												 //Then we send it into the compute shader for post processing
 	
 	Overlay* ui;
 	bool miniMap = true;
 	bool walkTerrain = false;
+	bool postProcessActive = false;
 
 #pragma endregion
 
@@ -64,7 +73,16 @@ private:
 
 	IDXGISwapChain* gSwapChain = nullptr;
 	ID3D11RenderTargetView* gBackbufferRTV = nullptr;
+	ID3D11UnorderedAccessView* gBackBufferUAV = nullptr; //This is needed for the compute shader, since it doesent use "renderTargetView", but it's connected to the same texture
+	ID3D11ShaderResourceView *BackBufferTexture = nullptr;
 
+	ID3D11RenderTargetView** currentRTV; //This is a way for us to keep trackof the active render target view.
+										 //It's needed since we have the post process render target now. 
+										 // And the dynamic cube map needs to know which render target to reset to
+										 // if post process is on = reset to the RenderTexture object "postProcessTexture"
+										 // else if it's off : reset to the back buffer rtv
+										 //the dynamic cube map just calls the engine function "getRenderTargetView()" 
+										 //this double pointer returns the current active RTV to be used.
 	//Depth stencil
 	ID3D11DepthStencilState* depthState = nullptr;
 	ID3D11DepthStencilView* depthStencilView = nullptr;
@@ -115,8 +133,8 @@ public:
 
 
 	void release();
-	void run();
-	void update();
+	void run(float deltaTime);
+	void update(float deltaTime);
 	void render();
 #pragma region Adding models
 	void loadModels();
@@ -133,7 +151,7 @@ public:
 
 	int getQTdrawCount() { return this->drawCount; }//this->quadTreeTerrain->GetDrawCount(); }
 	D3D11_VIEWPORT getViewPort() { return this->vp; };
-	ID3D11RenderTargetView* getRenderTargetView() { return this->gBackbufferRTV; };
+	ID3D11RenderTargetView* getRenderTargetView() { return *this->currentRTV; };
 	ID3D11DepthStencilView* getDepthStencilView() { return this->depthStencilView; };
 
 

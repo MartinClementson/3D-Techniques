@@ -16,21 +16,25 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	
 
 	this->heightMap = new Terrain();
-	this->renderTexture = new RenderTexture();
+	this->miniMapTexture = new RenderTexture();
 	this->shaderManager = new ShaderManager();
 	this->dynCubeMap = new DynamicCubeMap();
 	this->quadTreeTerrain = new QuadTree();
 	this->input = input;
 	this->wndHandle = winHandle;
+	this->animationModel = new md5Model();
+	this->postProcess = new ComputeShaderClass();
+	this->postProcessTexture = new RenderTexture();
 	drawCount = 0;
-
+	CoInitialize((LPVOID)0);
 	this->pixelStateStruct.distanceFog = TRUE;
 	
 	this->pixelStateStruct.normalMap = FALSE;
 
 
 
-	bool inputResult = input->initialize(hInstance, winHandle,this->cam,&this->miniMap,&this->walkTerrain);
+	bool inputResult = input->initialize(hInstance, winHandle,this->cam,&this->miniMap,&this->walkTerrain,
+		&this->postProcessActive);
 	if (!inputResult)
 	{	//If there is a problem creating the input, show a warning
 		
@@ -70,10 +74,10 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	}
 
 
-	if (!renderTexture->Init(this->gDevice, WINDOW_WIDTH, WINDOW_HEIGHT))
+	if (!miniMapTexture->Init(this->gDevice, WINDOW_WIDTH, WINDOW_HEIGHT))
 	{
 		errorMsg("Failed to initalize Render Texture");
-		delete this->renderTexture;
+		delete this->miniMapTexture;
 	}
 
 	if (!dynCubeMap->Init(gDevice, gDeviceContext))
@@ -95,6 +99,26 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 		errorMsg("Failed to initialize the Quad Tree");
 		delete quadTreeTerrain;
 	}
+
+	if (!animationModel->Init(gDeviceContext, gDevice,this->worldBuffer))
+	{
+		
+			errorMsg("Failed to initialize the md5 model");
+			delete animationModel;
+		
+	}
+	if (!postProcess->Initialize(gDevice, gDeviceContext,this->gBackBufferUAV))
+	{
+
+		errorMsg("Failed to initialize the compute shader");
+		delete postProcess;
+	}
+	if (!postProcessTexture->Init(gDevice, WINDOW_WIDTH, WINDOW_HEIGHT))
+	{
+		errorMsg("Failed to initialize the post process render texture");
+		delete postProcessTexture;
+	}
+	
 
 	//Load the models and get their vertices
 	
@@ -119,9 +143,106 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 
 Engine::~Engine()
 {
+	//for (int i = 0; i < modelsColor->size(); i++)
+	//{
+	//	delete modelsColor->at(i); 
+
+	//}
+	//for (int i = 0; i < modelsTexture->size(); i++)
+	//{
+	//	delete modelsTexture->at(i);
+
+	//}
+
+	//for (int i = 0; i < cubeMapModels->size(); i++)
+	//{
+	//	delete cubeMapModels->at(i);
+
+	//}
+	//delete quadTreeTerrain;
+	//delete shaderManager;
+	//delete renderTexture;
+	//delete dynCubeMap;
+	//delete sky;
+	//delete heightMap;
+	//delete modelsTexture;
+	//delete modelsColor;
+	//delete cubeMapModels;
+	//delete lights;
+	//delete cam;
+	//delete miniMapCam;
+	////delete animationModel;
+	//
+	//delete ui;
+	//
+}
+
+void Engine::release()
+{
+
 	for (int i = 0; i < modelsColor->size(); i++)
 	{
-		delete modelsColor->at(i); 
+		modelsColor->at(i)->Release();
+
+	}
+	for (int i = 0; i < modelsTexture->size(); i++)
+	{
+		 modelsTexture->at(i)->Release();
+
+	}
+
+	for (int i = 0; i < cubeMapModels->size(); i++)
+	{
+		 cubeMapModels->at(i)->Release();
+
+	}
+	
+	
+
+	
+	if (gSampleState != nullptr)
+		gSampleState->Release();
+		
+	
+	quadTreeTerrain->Release();
+	shaderManager->Release();
+	miniMapTexture->Release();
+	dynCubeMap->Release();
+	sky->Release();
+	heightMap->Release();
+	lightBuffer->Release();
+	camBuffer->Release();
+
+	input->Shutdown();
+	gRasterizerState->Release();
+	gBackbufferRTV->Release();
+	gBackBufferUAV->Release();
+	gSwapChain->Release();
+	
+
+	
+	
+	depthBuffer->Release();
+	depthState->Release();
+	depthStencilView->Release();
+
+
+	worldBuffer->Release();
+	pixelStateBuffer->Release();
+	ui->Release();
+	animationModel->Release();
+	postProcess->Release();
+
+
+	BackBufferTexture->Release();
+	postProcessTexture->Release();
+
+
+	
+
+	for (int i = 0; i < modelsColor->size(); i++)
+	{
+		delete modelsColor->at(i);
 
 	}
 	for (int i = 0; i < modelsTexture->size(); i++)
@@ -137,7 +258,7 @@ Engine::~Engine()
 	}
 	delete quadTreeTerrain;
 	delete shaderManager;
-	delete renderTexture;
+	delete miniMapTexture;
 	delete dynCubeMap;
 	delete sky;
 	delete heightMap;
@@ -147,50 +268,22 @@ Engine::~Engine()
 	delete lights;
 	delete cam;
 	delete miniMapCam;
-	
+	delete animationModel;
+	delete postProcess;
+	delete postProcessTexture;
+
 	delete ui;
-	
-}
 
-void Engine::release()
-{
-	
-	
-
-	
-	if (gSampleState != nullptr)
-		gSampleState->Release();
-		
-	
-	input->Shutdown();
-	dynCubeMap->Release();
-	shaderManager->Release();
-	renderTexture->Release();
-	gRasterizerState->Release();
-	gBackbufferRTV->Release();
-	gSwapChain->Release();
-	
-
-	
-	
-	depthBuffer->Release();
-	depthState->Release();
-	depthStencilView->Release();
-
-
-	quadTreeTerrain->Release();
-	heightMap->Release();
-	worldBuffer->Release();
-	camBuffer->Release();
-	lightBuffer->Release();
-	pixelStateBuffer->Release();
-	sky->Release();
-	ui->Release();
 
 	gDeviceContext->ClearState();
 	gDeviceContext->Release();
-	gDevice->Release();
-	//debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+
+	
+	
+	if(DEBUG == 2)
+		debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	SAFE_RELEASE(debug);
+	SAFE_RELEASE(gDevice);
 
 }
 
@@ -294,17 +387,21 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 
 	ZeroMemory(&scd, sizeof(DXGI_SWAP_CHAIN_DESC));
 
+	scd.BufferDesc.Width = WINDOW_WIDTH;
+	scd.BufferDesc.Height = WINDOW_HEIGHT;
 	scd.BufferCount = 1;
 	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT | DXGI_USAGE_UNORDERED_ACCESS ;
 	scd.OutputWindow = *wndHandle;
-	scd.SampleDesc.Count = 4;
+	scd.SampleDesc.Count = 1;
 	scd.Windowed = WINDOWED;
 	scd.BufferDesc.RefreshRate.Numerator = 60; //fps cap
+	scd.BufferDesc.RefreshRate.Denominator = 1;
+	
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
-		D3D11_CREATE_DEVICE_DEBUG,
+		DEBUG,
 		NULL,
 		NULL,
 		D3D11_SDK_VERSION,
@@ -313,9 +410,19 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 		&this->gDevice,
 		NULL,
 		&this->gDeviceContext);
+
+	if (FAILED(hr))
+		errorMsg("Failed to create Swap Chain");
 	
-	hr = gDevice->QueryInterface(__uuidof(ID3D11Debug), (void**)&debug);
-	if (FAILED(hr)) errorMsg("ERROR INITIALIZING DEBUG");
+	if (DEBUG == 2)
+	{
+		hr = gDevice->QueryInterface(__uuidof(ID3D11Debug), (void**)&debug);
+		if (FAILED(hr)) errorMsg("ERROR INITIALIZING DEBUG");
+
+	}
+	
+	
+	
 	//Here goes depth buffer
 	D3D11_TEXTURE2D_DESC desc;
 
@@ -324,10 +431,10 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 	desc.MipLevels = 1;
 	desc.ArraySize = 1;
 	desc.Format = DXGI_FORMAT_D32_FLOAT;
-	desc.SampleDesc.Count = 4;
+	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = 0;
 	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.BindFlags = D3D10_BIND_DEPTH_STENCIL;
+	desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	desc.CPUAccessFlags = 0;
 	desc.MiscFlags = 0;
 
@@ -350,13 +457,63 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 	if (SUCCEEDED(hr))
 	{
 		ID3D11Texture2D* pBackBuffer = nullptr;
+		
+		//D3D11_TEXTURE2D_DESC texDesc;
+		//ZeroMemory(&texDesc, sizeof(texDesc));
+		//texDesc.Width = WINDOW_WIDTH;
+		//texDesc.Height = WINDOW_HEIGHT;
+		//texDesc.MipLevels = 0;
+		//texDesc.ArraySize = 1;
+		//texDesc.SampleDesc.Count = 1;
+		//texDesc.SampleDesc.Quality = 0;
+		//texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		//texDesc.Usage = D3D11_USAGE_DEFAULT;
+		//texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		//texDesc.CPUAccessFlags = 0;
+		//texDesc.MiscFlags = 0;
+
 		this->gSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 
-		this->gDevice->CreateRenderTargetView(pBackBuffer, NULL, &this->gBackbufferRTV);
+		//hr = gDevice->CreateTexture2D(&texDesc, 0, &pBackBuffer);
+		//if (FAILED(hr))
+		//	errorMsg("failed to init backbuffer rtv");
+
+
+		hr =this->gDevice->CreateRenderTargetView(pBackBuffer, NULL, &this->gBackbufferRTV);
+		if (FAILED(hr))
+			errorMsg("FAILED to create Backbuffer RTV");
+
+
+	/*	
+
+		D3D11_UNORDERED_ACCESS_VIEW_DESC UAVdesc;
+
+		ZeroMemory(&UAVdesc, sizeof(UAVdesc));
+		UAVdesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+		UAVdesc.Buffer.FirstElement = 0;
+		UAVdesc.Format = DXGI_FORMAT_UNKNOWN;
+		UAVdesc.Buffer.NumElements = WINDOW_WIDTH * WINDOW_HEIGHT;*/
+		
+
+		
+		hr = this->gDevice->CreateUnorderedAccessView(pBackBuffer, nullptr, &gBackBufferUAV);
+		if (FAILED(hr))
+			errorMsg("Failed to create UAV");
+
+
+
+		
+		hr = this->gDevice->CreateShaderResourceView(pBackBuffer, nullptr, &BackBufferTexture);
+
+		if (FAILED(hr))
+			errorMsg("FAILD");
+
+
+		
 		pBackBuffer->Release();
 
 		this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, depthStencilView); 
-
+		currentRTV = &gBackbufferRTV;
 
 	}
 
@@ -449,10 +606,10 @@ void Engine::loadLights()
 	this->addLight(POINTLIGHT);
 }
 
-void Engine::run()
+void Engine::run(float deltaTime)
 {
 
-	this->update();
+	this->update(deltaTime);
 
 	this->render();
 
@@ -461,7 +618,7 @@ void Engine::run()
 
 }
 
-void Engine::update()
+void Engine::update(float deltaTime)
 {
 	input->frame(); //Check for user input
 	
@@ -496,7 +653,7 @@ void Engine::update()
 
 		this->cubeMapModels->at(i)->update();
 	}
-
+	this->animationModel->update(deltaTime,0);
 	
 	
 	this->updateLight();
@@ -527,7 +684,28 @@ void Engine::updateLight()
 
 void Engine::render()
 {
+	
+	if (this->postProcessActive)
+	{
+		/*
+		If post processing is active then we have to render everything to a texture. Then in the end we send that texture into
+		the compute shader to process.
+		*/
+
+		this->currentRTV = this->postProcessTexture->getRenderTarget();
+
+	}
+	else
+	{
+		//IF we are not using post process, just render to the back buffer as normal
+		this->currentRTV = &this->gBackbufferRTV;
+	}
+
+	
+	
 	drawCount = 0;
+
+
 
 	//In this function different render passes will be made.
 	//The scene is rendered in the renderScene() function
@@ -553,7 +731,7 @@ void Engine::render()
 	
 
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 5; i++)
 	{
 
 		if (i == 0 && this->miniMap == true) //Render to texture (minimap). first loop
@@ -562,38 +740,41 @@ void Engine::render()
 
 			
 			this->updateCamera(this->miniMapCam);
-			renderTexture->SetRenderTarget(&*gDeviceContext, depthStencilView);
-			renderTexture->ClearRenderTarget(gDeviceContext, depthStencilView, 0, 0, 0, 0);
+			miniMapTexture->SetRenderTarget(&*gDeviceContext, depthStencilView);
+			miniMapTexture->ClearRenderTarget(gDeviceContext, depthStencilView, 0, 0, 0, 0);
 			//this->shaderManager->setActiveShaders(SKYBOXSHADER);
 			
 			
 			renderScene(this->cam);
 			this->shaderManager->setActiveShaders(CUBEMAPSHADER);	//Apply dynamic cube map shader
-			this->cubeMapModels->at(0)->render();					//Render the model using the dynamix cube map
+			this->cubeMapModels->at(0)->render(&this->pixelStateStruct,this->pixelStateBuffer);					//Render the model using the dynamix cube map
 			
 		}
 
-		else if( i == 1) //render to backbuffer/screen. next loop
+		else if( i == 1) //render to backbuffer/screen(or post process texture). next loop
 		{
 			this->gDeviceContext->ClearRenderTargetView(gBackbufferRTV, clearColor);
+			if(postProcessActive)
+				this->gDeviceContext->ClearRenderTargetView(*postProcessTexture->getRenderTarget(), clearColor);
+
 			this->gDeviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1, 0);
 
 
-			this->updateCamera(this->cam);									//this sets the camera to the const buffer, Replacing the cameras
+			this->updateCamera(this->cam);				//this sets the camera to the const buffer, Replacing the cameras
 														// used with dynamic cube mapping and render to texture
 
-			this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, depthStencilView);	//Set backbuffer as render target
+			this->gDeviceContext->OMSetRenderTargets(1, this->currentRTV, depthStencilView);	//Set backbuffer/or post process texture as render target
 			
 			/////////////////////////////////
-			//Set the renderToTexture as a subresource
-			ID3D11ShaderResourceView* shaderResourceViewz = renderTexture->GetShaderResourceView();
-			//Applu the renderTexture to the pixel shader
+			//Set the minimap as a subresource
+			ID3D11ShaderResourceView* shaderResourceViewz = miniMapTexture->GetShaderResourceView();
+			//Appluythe renderTexture(minimap) to the pixel shader
 			this->gDeviceContext->PSSetShaderResources(4, 1, &shaderResourceViewz);
 			//////////////////////////////////
 
-			renderScene(this->cam);											//Render scene
+			renderScene(this->cam);									//Render scene
 			this->shaderManager->setActiveShaders(CUBEMAPSHADER);	//Apply dynamic cube map shader
-			this->cubeMapModels->at(0)->render();					//Render the model using the dynamix cube map
+			this->cubeMapModels->at(0)->render(&this->pixelStateStruct, this->pixelStateBuffer);					//Render the model using the dynamix cube map
 
 
 
@@ -602,16 +783,40 @@ void Engine::render()
 			
 		}
 
-		else if (i == 2 && this->miniMap == true)//Render UI, (Put minimap on screen, etc.)
+		else if (i == 2 && this->postProcessActive == true)
+		{
+			//do postprocessing yo
+
+
+			
+
+			this->gDeviceContext->OMSetRenderTargets(1, &this->gBackbufferRTV, depthStencilView); //change render target,  because we want the postprocess texture as an input now, 
+																								 //and if it's set as a render target, then it wont work.
+			currentRTV = &gBackbufferRTV;
+
+			/////////////////////////////////
+			//Set the postProcess texture as a subresource
+			ID3D11ShaderResourceView* shaderResourceViewz = postProcessTexture->GetShaderResourceView();
+			//Apply the renderTexture(postProcess texture) to the compute shader
+			this->gDeviceContext->CSSetShaderResources(0, 1, &shaderResourceViewz);
+			//////////////////////////////////
+
+			this->postProcess->Dispatch();
+
+
+
+		}
+		else if (i == 3 && this->miniMap == true)//Render UI, (Put minimap on screen, etc.)
 		{
 			this->shaderManager->setActiveShaders(OVERLAYSHADER);
 			this->ui->Render();
 
 		}
+
 		
-		else 
+		else if (i == 4)
 		{
-			
+
 
 
 			//The render texture needs to be taken of as a shader resource
@@ -622,6 +827,8 @@ void Engine::render()
 			this->gDeviceContext->PSSetShaderResources(4, 1, tab);
 
 		}
+		else
+			continue;
 
 
 
@@ -657,7 +864,10 @@ void Engine::renderScene(Camera *camera) // This function will render the scene,
 	{
 
 		
-		this->modelsColor->at(i)->render();
+
+		this->modelsColor->at(i)->render(&this->pixelStateStruct, this->pixelStateBuffer);
+
+
 
 	}
 	////////////////////////////////////////////
@@ -673,7 +883,7 @@ void Engine::renderScene(Camera *camera) // This function will render the scene,
 	for (int i = 0; i < this->modelsTexture->size(); i++)
 	{
 		 
-		this->modelsTexture->at(i)->render();
+		this->modelsTexture->at(i)->render(&this->pixelStateStruct,  this->pixelStateBuffer);
 	}
 	//
 	////////////////////////////////////////////
@@ -682,13 +892,21 @@ void Engine::renderScene(Camera *camera) // This function will render the scene,
 	//Render the terrain
 	//
 
-	
 	this->shaderManager->setActiveShaders(TERRAINSHADER);
 	this->quadTreeTerrain->render(this->gDeviceContext, camera->getFrustum(),this->worldBuffer);
 	drawCount += this->quadTreeTerrain->GetDrawCount();
-	//OLD
-//	this->shaderManager->setActiveShaders(TERRAINSHADER);
-	//this->heightMap->Render(this->gDeviceContext);
+	
+	//
+	////////////////////////////////////////////
+
+	/////////////////////////////////////////////
+	//Render the Animation
+	//
+	this->shaderManager->setActiveShaders(ANIMATIONSHADER);
+	this->animationModel->render();
+	//
+	////////////////////////////////////////////
+
 
 }
 
@@ -816,17 +1034,17 @@ void Engine::updateCamera(Camera* cameraToRender)
 void Engine::updatePixelShaderState()
 {
 
-	static pixelShaderConstants previousValue;
+	//static pixelShaderConstants previousValue;
 
-	if (previousValue == this->pixelStateStruct)
-		return;
-	else
-	{
+	//if (previousValue == this->pixelStateStruct)
+	//	return;
+	//else
+	//{
 
-		previousValue = this->pixelStateStruct;
+	//	previousValue = this->pixelStateStruct;
 
-		this->sendPixelStateToBuffer();
-	}
+	//	this->sendPixelStateToBuffer();
+	//}
 
 }
 void Engine::sendPixelStateToBuffer()
@@ -870,6 +1088,6 @@ void Engine::errorMsg(std::string msg)
 	LPCWSTR sw = stemp.c_str();
 
 	MessageBox(*wndHandle, sw, L"Error", MB_ICONERROR | MB_OK);
-	throw; //This generates an exception. because there isn't really any exception to throw
+	//throw; //This generates an exception. because there isn't really any exception to throw
 	//this allows for the debugger to break, and the programmer can look at the call stack to find the issue
 }

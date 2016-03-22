@@ -9,6 +9,7 @@ cbuffer lightBuffer : register(b0)
 
 cbuffer pixelShaderConstants: register(b1)
 {
+    bool miniMap;
     bool normalMap;
     bool distanceFog;
 
@@ -33,49 +34,16 @@ struct PS_IN
 	float3 normal : NORMAL;
 	float4 wPos: WORLDPOS;
 	float3 camPos : CAMERAPOS;
-	float3 Tangent:TANGENT;
+	
 	
 };
 
-float3 normalToWorldSpace(float3 normalMapSample, float3 normal, float3 tangent)
-{
-	
-    // here we build the tbn basis. to transform the sampled normal from tangent space to the world space
-	//then we return the normal in world
 
-	//Convert from [0,1] to [-1,1]
-	float3 normalT = 2.0f * normalMapSample - 1.0f;
-
-	//Build basis
-	float3 N = normal;
-	float3 T = normalize(tangent - dot(tangent, N)* N); //Read page 582
-	float3 B = cross(N, T); //Bitangent
-
-	float3x3 TBN = float3x3(T, B, N);
-
-	//Transform from tangent space to world space
-
-	float3 bumpedNormal = mul(normalT, TBN);
-
-	return bumpedNormal;
-
-}
 
 float4 PS_main(PS_IN input) : SV_TARGET
 {
 
-    float3 normal = input.normal;
-    if(normalMap == true)
-{
-    //sampling the normal
-    float3 normalSample = normalTexture.Sample(SampleType, input.Texture).rgb;
-
-     normal = normalToWorldSpace(normalSample, input.normal, input.Tangent);
-    }
-
-
-
-//The light ray from the vert position to the light
+ //The light ray from the vert position to the light
 //normalized to be used as a direction vector
 float3 vRay = normalize((float3)(lightPosition - input.wPos));
 
@@ -83,10 +51,10 @@ float3 vRay = normalize((float3)(lightPosition - input.wPos));
 float3 v = normalize(input.camPos - input.wPos.xyz);
 
 //Reflect is used in the specular shading
-    float3 r = reflect(-vRay, normalize(normal));
+    float3 r = reflect(-vRay, normalize(input.normal));
 
 //Calculate how much of the pixel is to be lit
-    float fDot = max(0.0f, dot(normalize(vRay), normalize(normal)));
+float fDot = max(0.0f, dot(normalize(vRay), normalize(input.normal)));
 
 float3 color = lightColor.xyz;
 

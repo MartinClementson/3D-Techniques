@@ -9,6 +9,7 @@ private:
 	bool mouseHidden;
 	bool* miniMap;
 	bool* walkTerrain;
+	bool* postProcessing;
 	Camera* camera;
 	
 	LPDIRECTINPUT8 input;
@@ -25,7 +26,8 @@ private:
 public:
 	Input();
 	
-	bool initialize(HINSTANCE* hinstance, HWND* hwnd, Camera* camera,bool* miniMap,bool* walkTerrain);
+	bool initialize(HINSTANCE* hinstance, HWND* hwnd, Camera* camera,bool* miniMap,bool* walkTerrain,
+		bool* postProcessing);
 	void Shutdown();
 	bool frame();
 	~Input();

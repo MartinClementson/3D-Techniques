@@ -42,7 +42,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 			{
 				mTimer->Tick();
 				CalculateFPS(wndHandle, *mTimer, engine->getQTdrawCount());
-				engine->run();
+				engine->run(mTimer->DeltaTime());
 			}
 		}
 		engine->release();
@@ -53,6 +53,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 	delete engine;
 	delete input;
 	
+	_CrtCheckMemory();
 	_CrtDumpMemoryLeaks();
 	return (int)msg.wParam;
 }

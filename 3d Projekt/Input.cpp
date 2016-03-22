@@ -69,12 +69,14 @@ Input::Input()
 
 }
 
-bool Input::initialize(HINSTANCE* hinstance, HWND* hwnd,Camera* camera, bool * miniMap, bool* walkTerrain)
+bool Input::initialize(HINSTANCE* hinstance, HWND* hwnd,Camera* camera, bool * miniMap, bool* walkTerrain,
+	bool* postProcessing)
 {
 	hwndP = hwnd;
 	this->camera = camera;
 	this->miniMap = miniMap;
 	this->walkTerrain = walkTerrain;
+	this->postProcessing = postProcessing;
 	HRESULT hr;
 	//Initialize the input interface
 	hr = DirectInput8Create(*hinstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&input, NULL);
@@ -358,6 +360,34 @@ void Input::ProcessInput()
 	}
 
 
+#pragma endregion
+
+#pragma region gaussian filter
+	static float gaussianFilterTimer = 3;
+	if (keyboardState[DIK_G] && gaussianFilterTimer > 3)
+	{
+		if (*postProcessing)
+		{
+
+			*postProcessing = false;
+			gaussianFilterTimer = 0;
+		}
+
+		else if (!*walkTerrain)
+		{
+
+			*postProcessing = true;
+			gaussianFilterTimer = 0;
+		}
+
+
+
+
+	}
+	else if (gaussianFilterTimer < 3.5f)
+	{
+		gaussianFilterTimer += 0.1;
+	}
 #pragma endregion
 	if (mouseHidden)
 	{

@@ -1,4 +1,11 @@
 #pragma once
+#include <DirectXMath.h>
+struct position {
+
+	operator DirectX::XMFLOAT3() const { return DirectX::XMFLOAT3(x, y, z); } //this is a typecast overload
+	float x, y, z;
+
+};
 
 struct Vertex 
 {
@@ -52,6 +59,15 @@ struct Vertex
 			delete sharedTangents;
 			sharedTangents = nullptr;
 		}
+	}
+	~Vertex()
+	{
+		if (sharedTangents != nullptr)
+		{
+			delete sharedTangents;
+			sharedTangents = nullptr;
+		}
+
 	}
 
 
@@ -124,6 +140,51 @@ struct Vertex
 };
 
 
+
+
+
+
+struct AnimVertex {
+
+	//sizeof(float) == 4 byte!!!
+
+	position pos; // 0 byte offset
+
+	float u, v;  
+
+	position normal; 
+
+	int StartWeight; // won't be sent to shader
+	int WeightCount; // won't be sent to shader
+
+
+};
+
+
+struct Joint {
+
+	std::wstring name;
+	int parentID;
+
+	position pos;
+
+	struct orientation {
+
+		float x, y, z, w;
+	};
+
+	orientation orientation;
+
+};
+
+struct Weight
+{
+	int jointID;
+	float influence;
+	position pos;
+	position normal;
+
+};
 struct worldConstantBuffer
 {
 	DirectX::XMFLOAT4X4 world;
@@ -168,7 +229,7 @@ struct pixelShaderConstants //hlsl uses 4 byte bools, c++ bools are 1 byte //Eve
 	BOOL Padding[2];	  // 8 bytes
 
 
-	pixelShaderConstants(BOOL normalMap, BOOL fog, BOOL miniMap)
+	pixelShaderConstants(BOOL normalMap, BOOL fog) //Remove minimap
 	{
 		
 		this->normalMap = normalMap;

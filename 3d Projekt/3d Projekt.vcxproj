@@ -153,6 +153,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="ComputeShaderClass.cpp" />
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="DirectXTK\Src\DDSTextureLoader.cpp" />
     <ClCompile Include="DirectXTK\Src\WICTextureLoader.cpp" />
@@ -165,6 +166,7 @@
     <ClCompile Include="Logic.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
+    <ClCompile Include="md5Model.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="ObjHandler.cpp" />
@@ -182,6 +184,7 @@
   <ItemGroup>
     <ClInclude Include="bth_image.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="ComputeShaderClass.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="DirectXToolkit.h" />
@@ -194,6 +197,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="Linker.h" />
     <ClInclude Include="Material.h" />
+    <ClInclude Include="md5Model.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ObjHandler.h" />
     <ClInclude Include="Overlay.h" />
@@ -207,6 +211,24 @@
     <ClInclude Include="windowInit.h" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="ComputeShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="GeometryShaderAnimation.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">GS_main</EntryPointName>
+    </FxCompile>
     <FxCompile Include="GeometryShaderCubeMap.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">GS_main</EntryPointName>
@@ -255,6 +277,10 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">GS_main</EntryPointName>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <FxCompile Include="PixelShaderAnimation.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PS_main</EntryPointName>
+    </FxCompile>
     <FxCompile Include="PixelShaderCubeMap.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PS_main</EntryPointName>
@@ -292,6 +318,10 @@
     <FxCompile Include="PixelShaderTexture.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PS_main</EntryPointName>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="VertexShaderAnimation.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VS_main</EntryPointName>
     </FxCompile>
     <FxCompile Include="VertexShaderCubeMap.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

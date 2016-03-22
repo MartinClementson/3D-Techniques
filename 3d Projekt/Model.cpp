@@ -12,12 +12,16 @@ Model::Model()
 {
 	
 }
+
+
+
 //this is the constructor for the children in the obj importer
 Model::Model(std::vector<Vertex> *vertArray, std::string * texturePath, ID3D11Device* gDevice,
 	ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct, std::vector<UINT> &indices)
 {
 	
 	this->vertices = new std::vector<Vertex>;
+	this->renderState.normalMap = FALSE;
 
 	for (int i = 0; i < vertArray->size(); i++)
 	{
@@ -86,17 +90,18 @@ void Model::loadTexture(ID3D11Device* gDevice, std::string filePath)
 	const wchar_t* fileName = widestr.c_str();
 	
 	//load Texture
-	HRESULT hr = CoInitialize((LPVOID)0);
+	HRESULT hr;
 	
 	//The function will also create a subresource and bind it to the gpu
 	hr= CreateWICTextureFromFile(gDevice, fileName, nullptr, &this->texture);
 
 
 	//Create an error if texture is not loaded
-	/*if (!SUCCEEDED(hr))
-		MessageBox(*winHandle, L"Cannot intialize input device", L"Error", MB_OK);
+	if (!SUCCEEDED(hr))
+		
+		MessageBox(0, L"Cannot Load Texture from file", L"Error", MB_OK);
 
-	*/
+	
 	
 }
 
@@ -115,12 +120,15 @@ void Model::loadNormal(ID3D11Device* gDevice, std::string filePath)
 	const wchar_t* fileName = widestr.c_str();
 
 	//load Texture
-	HRESULT hr = CoInitialize((LPVOID)0);
+	HRESULT hr;// = CoInitialize((LPVOID)0);
 
 	//The function will also create a subresource and bind it to the gpu
 	hr = CreateWICTextureFromFile(gDevice, fileName, nullptr, &this->normalMap);
 
-
+	if (SUCCEEDED(hr))
+	{
+		this->renderState.normalMap = TRUE;
+	}
 	//Create an error if texture is not loaded
 	/*if (!SUCCEEDED(hr))
 	MessageBox(*winHandle, L"Cannot intialize input device", L"Error", MB_OK);
@@ -145,7 +153,7 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 	//texture file name
 	std::string textureFileName;
 	std::vector<UINT> indices;
-
+	this->renderState.normalMap = FALSE;
 	ObjHandler* importer = new ObjHandler(&children,filePath,vertices, textureFileName,gDevice,gDeviceContext,worldBuffer,worldStruct,indices);//Make import
 
 	//Load Texture 
@@ -447,17 +455,37 @@ void Model::update()
 
 }
 
-void Model::render()
+void Model::render(pixelShaderConstants* renderstate, ID3D11Buffer* pixelStateBuffer)
 {
 	//update and render all the children
 	
 	if (this->children != nullptr)
 	{
-		renderChildren();
+		renderChildren(renderstate,pixelStateBuffer);
 
 	}
 	this->sendToConstantBuffer();
 	this->gDeviceContext->GSSetConstantBuffers(0, 1, &worldBuffer); 
+
+	if (!(this->renderState == *renderstate)) //if they are not equal Update the constant buffer!
+	{
+		*renderstate = this->renderState;
+		//this->worldStruct->world = this->worldMatrix;
+		//this->worldStruct->normalWorld = this->normalWorld;
+		D3D11_MAPPED_SUBRESOURCE mappedResourceRender;
+		ZeroMemory(&mappedResourceRender, sizeof(mappedResourceRender));
+
+		//mapping to the matrixbuffer
+		this->gDeviceContext->Map(pixelStateBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResourceRender);
+
+		pixelShaderConstants* temporaryRenderState = (pixelShaderConstants*)mappedResourceRender.pData;
+
+		*temporaryRenderState = renderState;
+
+		this->gDeviceContext->Unmap(pixelStateBuffer, 0);
+		this->gDeviceContext->PSSetConstantBuffers(1, 1, &pixelStateBuffer);
+
+	}
 
 	UINT32 vertexSize = sizeof(Vertex);
 	UINT32 offset = 0;
@@ -479,14 +507,49 @@ void Model::render()
 
 }
 
-void Model::renderChildren()
+void Model::Release()
+{
+	if (children != nullptr)
+	{
+		for (int i = 0; i < this->children->size(); i++)
+		{
+			this->children->at(i)->Release();
+
+
+		}
+		
+
+	}
+	if (texture != nullptr)
+		texture->Release();
+	if (normalMap != nullptr)
+		normalMap->Release();
+	if (vertexBuffer != nullptr)
+	{
+		
+		this->vertexBuffer->Release();
+
+	}
+
+	if (indexBuffer != nullptr )
+	{
+
+		this->indexBuffer->Release();
+	}
+
+
+
+
+}
+
+void Model::renderChildren(pixelShaderConstants* renderstate, ID3D11Buffer* pixelStateBuffer)
 {
 		//update and render all the children
 	for (int i = 0; i < this->children->size(); i++)
 	{
 		this->children->at(i)->worldMatrix = this->worldMatrix;
 		this->children->at(i)->normalWorld = this->normalWorld;
-		this->children->at(i)->render();
+		this->children->at(i)->render(renderstate,pixelStateBuffer);
 	}
 
 
