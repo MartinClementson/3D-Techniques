@@ -390,12 +390,13 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 	scd.BufferDesc.Height = WINDOW_HEIGHT;
 	scd.BufferCount = 1;
 	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT;
+	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT | DXGI_USAGE_UNORDERED_ACCESS;
 	scd.OutputWindow = *wndHandle;
-	scd.SampleDesc.Count = 4;
+	scd.SampleDesc.Count = 1;
 	scd.Windowed = WINDOWED;
 	scd.BufferDesc.RefreshRate.Numerator = 60; //fps cap
 	scd.BufferDesc.RefreshRate.Denominator = 1;
+	
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
@@ -408,6 +409,9 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 		&this->gDevice,
 		NULL,
 		&this->gDeviceContext);
+
+	if (FAILED(hr))
+		errorMsg("Failed to create Swap Chain");
 	
 	if (DEBUG == 2)
 	{
@@ -426,7 +430,7 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 	desc.MipLevels = 1;
 	desc.ArraySize = 1;
 	desc.Format = DXGI_FORMAT_D32_FLOAT;
-	desc.SampleDesc.Count = 4;
+	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = 0;
 	desc.Usage = D3D11_USAGE_DEFAULT;
 	desc.BindFlags = D3D10_BIND_DEPTH_STENCIL;
@@ -478,18 +482,30 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 		if (FAILED(hr))
 			errorMsg("FAILED to create Backbuffer RTV");
 
-		hr = this->gDevice->CreateShaderResourceView(pBackBuffer, nullptr, &BackBufferTexture);
 
-		if (FAILED(hr))
-			errorMsg("FAILD");
+	/*	
 
-		//hr = this->gDevice->CreateUnorderedAccessView(pBackBuffer, nullptr, &gBackBufferUAV);
+		D3D11_UNORDERED_ACCESS_VIEW_DESC UAVdesc;
+
+		ZeroMemory(&UAVdesc, sizeof(UAVdesc));
+		UAVdesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+		UAVdesc.Buffer.FirstElement = 0;
+		UAVdesc.Format = DXGI_FORMAT_UNKNOWN;
+		UAVdesc.Buffer.NumElements = WINDOW_WIDTH * WINDOW_HEIGHT;*/
+		
+
+		
+		hr = this->gDevice->CreateUnorderedAccessView(pBackBuffer, nullptr, &gBackBufferUAV);
 		if (FAILED(hr))
 			errorMsg("Failed to create UAV");
 
 
 
 		
+		hr = this->gDevice->CreateShaderResourceView(pBackBuffer, nullptr, &BackBufferTexture);
+
+		if (FAILED(hr))
+			errorMsg("FAILD");
 
 
 		
