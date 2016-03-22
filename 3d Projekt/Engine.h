@@ -46,7 +46,7 @@ private:
 	Overlay* ui;
 	bool miniMap = true;
 	bool walkTerrain = false;
-	bool postProcessActive = true;
+	bool postProcessActive = false;
 
 #pragma endregion
 
