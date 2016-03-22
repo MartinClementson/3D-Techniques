@@ -25,7 +25,7 @@ bool ComputeShaderClass::Initialize(ID3D11Device* gDevice, ID3D11DeviceContext* 
 		nullptr,
 		nullptr,
 		"main",
-		"cs_4_0",
+		"cs_5_0",
 		0,
 		0,
 		&pCs,

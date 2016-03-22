@@ -390,7 +390,7 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 	scd.BufferDesc.Height = WINDOW_HEIGHT;
 	scd.BufferCount = 1;
 	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT | DXGI_USAGE_UNORDERED_ACCESS;
+	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT | DXGI_USAGE_UNORDERED_ACCESS ;
 	scd.OutputWindow = *wndHandle;
 	scd.SampleDesc.Count = 1;
 	scd.Windowed = WINDOWED;
@@ -433,7 +433,7 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = 0;
 	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.BindFlags = D3D10_BIND_DEPTH_STENCIL;
+	desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	desc.CPUAccessFlags = 0;
 	desc.MiscFlags = 0;
 
@@ -797,7 +797,7 @@ void Engine::render()
 			//Set the postProcess texture as a subresource
 			ID3D11ShaderResourceView* shaderResourceViewz = postProcessTexture->GetShaderResourceView();
 			//Apply the renderTexture(postProcess texture) to the compute shader
-			this->gDeviceContext->CSSetShaderResources(4, 1, &shaderResourceViewz);
+			this->gDeviceContext->CSSetShaderResources(0, 1, &shaderResourceViewz);
 			//////////////////////////////////
 
 			this->postProcess->Dispatch();
