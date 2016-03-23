@@ -94,7 +94,7 @@ void Model::loadTexture(ID3D11Device* gDevice, std::string filePath)
 	
 	//The function will also create a subresource and bind it to the gpu
 	hr= CreateWICTextureFromFile(gDevice, fileName, nullptr, &this->texture);
-
+	gDeviceContext->GenerateMips(this->texture);
 
 	//Create an error if texture is not loaded
 	if (!SUCCEEDED(hr))
@@ -124,7 +124,7 @@ void Model::loadNormal(ID3D11Device* gDevice, std::string filePath)
 
 	//The function will also create a subresource and bind it to the gpu
 	hr = CreateWICTextureFromFile(gDevice, fileName, nullptr, &this->normalMap);
-
+	gDeviceContext->GenerateMips(this->normalMap);
 	if (SUCCEEDED(hr))
 	{
 		this->renderState.normalMap = TRUE;

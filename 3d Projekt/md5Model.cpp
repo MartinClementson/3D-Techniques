@@ -857,7 +857,7 @@ void md5Model::update(float deltaTime, int animation)
 		}
 
 
-		//now make the whole mesh move (so that he does not run in place
+		//now make the whole mesh move (so that he does not run in place) ;)
 
 		
 
