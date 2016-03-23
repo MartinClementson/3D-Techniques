@@ -2,6 +2,8 @@
 //It would be much more demanding if we were to calculate the matrix
 //each time we ran this CS
 static const float gaussianFilter[7][7] = {
+    //These are the Weights that the neighbouring pixels will contribute to the blur
+
 	/*first row = seventh row*/
 	0.000840725, 0.00301024, 0.00647097, 0.00835139, 0.00647097,
 	0.00301024, 0.000840725,
