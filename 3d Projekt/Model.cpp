@@ -1,5 +1,5 @@
 #include "Model.h"
-#include "bth_image.h"
+
 #include "DirectXToolkit.h"
 
 #include "objHandler.h"
