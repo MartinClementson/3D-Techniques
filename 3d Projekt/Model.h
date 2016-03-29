@@ -43,6 +43,12 @@ protected:
 	For example. Some Models have normal maps, some don't.
 	We query
 	*/
+
+
+	materialConstBuffer materialValues; // This will hold each objects mtl information from the obj importer.
+	//ID3D11Buffer* materialBuffer = nullptr; //This is a pointer to the material const buffer. updated each object.
+
+
 										 //Texture
 	ID3D11ShaderResourceView* texture = nullptr; //If multitextures are to be supported. this will be an array
 	ID3D11ShaderResourceView* normalMap = nullptr;
@@ -52,6 +58,7 @@ protected:
 	void calculateVertVectors();
 	void calculateTangentBinormal(Vertex vertex1, Vertex vertex2, Vertex vertex3, DirectX::XMFLOAT3 &tangent, DirectX::XMFLOAT3 &biNormal);
 	void sendToConstantBuffer();
+	
 	virtual void createVertices(ID3D11Device* gDevice);
 	void loadTexture(ID3D11Device* gDevice, std::string filePath);
 #pragma endregion
@@ -81,10 +88,10 @@ public:
 	
 #pragma region Public functions
 	virtual void update();
-	virtual void render(pixelShaderConstants* renderstate, ID3D11Buffer* pixelStateBuffer);
+	virtual void render(modelBuffers* objectInfo);
 	void Release();
 	void loadNormal(ID3D11Device* gDevice, std::string filePath);
-	void renderChildren(pixelShaderConstants* renderstate, ID3D11Buffer* pixelStateBuffer);
+	void renderChildren(modelBuffers* objectInfo);
 
 	virtual void updateWorldMatrix();
 #pragma endregion

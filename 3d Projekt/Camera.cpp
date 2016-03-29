@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-DirectX::XMFLOAT3 operator*(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b) {
+inline DirectX::XMFLOAT3 operator*(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b) {
 	DirectX::XMFLOAT3 result;
 
 	result.x = a.x * b.x;
@@ -10,7 +10,7 @@ DirectX::XMFLOAT3 operator*(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b) {
 	return result;
 }
 
-DirectX::XMFLOAT3 operator*(DirectX::XMFLOAT3 a, float b) {
+inline DirectX::XMFLOAT3 operator*(DirectX::XMFLOAT3 a, float b) {
 	DirectX::XMFLOAT3 result;
 
 	result.x = a.x * b;
@@ -20,7 +20,7 @@ DirectX::XMFLOAT3 operator*(DirectX::XMFLOAT3 a, float b) {
 	return result;
 }
 
-DirectX::XMFLOAT3 operator+=(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b) {
+inline DirectX::XMFLOAT3 operator+=(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b) {
 	DirectX::XMFLOAT3 result;
 
 	result.x = a.x + b.x;
@@ -29,7 +29,7 @@ DirectX::XMFLOAT3 operator+=(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b) {
 
 	return result;
 }
-DirectX::XMFLOAT3 operator+(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b) {
+inline DirectX::XMFLOAT3 operator+(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b) {
 	DirectX::XMFLOAT3 result;
 
 	result.x = a.x + b.x;
@@ -38,7 +38,7 @@ DirectX::XMFLOAT3 operator+(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b) {
 
 	return result;
 }
-DirectX::XMFLOAT3 operator-=(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b) {
+inline DirectX::XMFLOAT3 operator-=(DirectX::XMFLOAT3 a, DirectX::XMFLOAT3 b) {
 	DirectX::XMFLOAT3 result;
 
 	result.x = a.x - b.x;

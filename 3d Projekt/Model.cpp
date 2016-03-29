@@ -140,7 +140,7 @@ void Model::loadNormal(ID3D11Device* gDevice, std::string filePath)
 //This is the constructor for OBJ import
 Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct)
 {
-
+	materialValues.NS = 800.0f;
 	this->vertices = new std::vector<Vertex>;
 	this->gDeviceContext = gDeviceContext;
 	XMStoreFloat4x4(&this->worldMatrix, XMMatrixIdentity());
@@ -455,36 +455,55 @@ void Model::update()
 
 }
 
-void Model::render(pixelShaderConstants* renderstate, ID3D11Buffer* pixelStateBuffer)
+void Model::render(modelBuffers* objectInfo)
 {
 	//update and render all the children
 	
 	if (this->children != nullptr)
 	{
-		renderChildren(renderstate,pixelStateBuffer);
+		renderChildren(objectInfo);
 
 	}
 	this->sendToConstantBuffer();
 	this->gDeviceContext->GSSetConstantBuffers(0, 1, &worldBuffer); 
 
-	if (!(this->renderState == *renderstate)) //if they are not equal Update the constant buffer!
+	if (!(this->renderState == *objectInfo->renderstate)) //if they are not equal Update the constant buffer!
 	{
-		*renderstate = this->renderState;
+		*objectInfo->renderstate = this->renderState;
 		//this->worldStruct->world = this->worldMatrix;
 		//this->worldStruct->normalWorld = this->normalWorld;
 		D3D11_MAPPED_SUBRESOURCE mappedResourceRender;
 		ZeroMemory(&mappedResourceRender, sizeof(mappedResourceRender));
 
 		//mapping to the matrixbuffer
-		this->gDeviceContext->Map(pixelStateBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResourceRender);
+		this->gDeviceContext->Map(objectInfo->pixelStateBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResourceRender);
 
 		pixelShaderConstants* temporaryRenderState = (pixelShaderConstants*)mappedResourceRender.pData;
 
 		*temporaryRenderState = renderState;
 
-		this->gDeviceContext->Unmap(pixelStateBuffer, 0);
-		this->gDeviceContext->PSSetConstantBuffers(1, 1, &pixelStateBuffer);
+		this->gDeviceContext->Unmap(objectInfo->pixelStateBuffer, 0);
+		this->gDeviceContext->PSSetConstantBuffers(1, 1, &objectInfo->pixelStateBuffer);
 
+	}
+
+	//update object material.
+
+	if (!(this->materialValues == *objectInfo->materialValues)) //if they are not equal, update the constant buffer
+	{
+		*objectInfo->materialValues = this->materialValues;
+		D3D11_MAPPED_SUBRESOURCE mappedResourceMaterial;
+		ZeroMemory(&mappedResourceMaterial, sizeof(mappedResourceMaterial));
+
+		//mapping to the matrixbuffer
+		this->gDeviceContext->Map(objectInfo->objectMaterialBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResourceMaterial);
+
+		materialConstBuffer* temporaryRenderState = (materialConstBuffer*)mappedResourceMaterial.pData;
+
+		*temporaryRenderState = this->materialValues;
+
+		this->gDeviceContext->Unmap(objectInfo->objectMaterialBuffer, 0);
+		this->gDeviceContext->PSSetConstantBuffers(2, 1, &objectInfo->objectMaterialBuffer);
 	}
 
 	UINT32 vertexSize = sizeof(Vertex);
@@ -542,14 +561,14 @@ void Model::Release()
 
 }
 
-void Model::renderChildren(pixelShaderConstants* renderstate, ID3D11Buffer* pixelStateBuffer)
+void Model::renderChildren(modelBuffers* objectInfo)
 {
 		//update and render all the children
 	for (int i = 0; i < this->children->size(); i++)
 	{
 		this->children->at(i)->worldMatrix = this->worldMatrix;
 		this->children->at(i)->normalWorld = this->normalWorld;
-		this->children->at(i)->render(renderstate,pixelStateBuffer);
+		this->children->at(i)->render(objectInfo);
 	}
 
 

@@ -149,6 +149,7 @@
     <ClCompile Include="ComputeShaderClass.cpp">
       <Filter>Classes\ComputeShader</Filter>
     </ClCompile>
+    <ClCompile Include="DataTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h">
