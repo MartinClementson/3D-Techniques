@@ -14,6 +14,7 @@ public:
 	{
 		std::string mtlName;
 		std::string fileName;
+		materialConstBuffer values;
 	};
 	
 	ObjHandler(std::vector<Model*>** childrenArray,std::string filePath, std::vector<Vertex>* modelVerts,

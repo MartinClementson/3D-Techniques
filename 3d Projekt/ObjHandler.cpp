@@ -90,19 +90,52 @@ void ObjHandler::MtlHandler(std::string &filePath, std::vector<Material> &objMat
 		std::cout << "\nfailed to load texturefile";
 	else
 	{
+		tempMat.mtlName = "";
 		while (!loading.eof())
 		{
 			loading >> line2;
 			if (line2 == "newmtl")
 			{
-				loading >> tempMat.mtlName;
+				if (tempMat.mtlName == "")
+					loading >> tempMat.mtlName;
+				else
+				{
+					objMaterials.push_back(tempMat);
+					loading >> tempMat.mtlName;
+				}
 			}
-			if (line2 == "map_Kd")
+			else if (line2 == "Kd")
+			{
+				loading.ignore(); //skip a space
+				loading >> tempMat.values.KD.x;
+				loading >> tempMat.values.KD.y;
+				loading >> tempMat.values.KD.z;
+			}
+			else if (line2 == "Ka")
+			{
+				loading.ignore(); // skip a space
+				loading >> tempMat.values.KA.x;
+				loading >> tempMat.values.KA.y;
+				loading >> tempMat.values.KA.z;
+			}
+			else if (line2 == "Ks")
+			{
+				loading.ignore(); //skip a space
+				loading >> tempMat.values.KS.x;
+				loading >> tempMat.values.KS.y;
+				loading >> tempMat.values.KS.z;
+			}
+			else if (line2 == "Ns")
+			{
+				loading.ignore();
+				loading >> tempMat.values.NS;
+			}
+			else if (line2 == "map_Kd")
 			{
 				loading >> tempMat.fileName;
-				objMaterials.push_back(tempMat);
 			}
 		}
+		objMaterials.push_back(tempMat);
 	}
 	loading.close();
 }
