@@ -263,7 +263,7 @@ struct materialConstBuffer
 
 		KS = DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f);
 	}
-
+	
 
 };
 struct pixelShaderConstants //hlsl uses 4 byte bools, c++ bools are 1 byte //Every register in hlsl is 16 byte (four floats)

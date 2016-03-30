@@ -155,7 +155,6 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ComputeShaderClass.cpp" />
     <ClCompile Include="Cube.cpp" />
-    <ClCompile Include="DataTypes.cpp" />
     <ClCompile Include="DirectXTK\Src\DDSTextureLoader.cpp" />
     <ClCompile Include="DirectXTK\Src\WICTextureLoader.cpp" />
     <ClCompile Include="DynamicCubeMap.cpp" />
