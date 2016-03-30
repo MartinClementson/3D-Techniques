@@ -17,7 +17,8 @@ Model::Model()
 
 //this is the constructor for the children in the obj importer
 Model::Model(std::vector<Vertex> *vertArray, std::string * texturePath, ID3D11Device* gDevice,
-	ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct, std::vector<UINT> &indices)
+	ID3D11DeviceContext * gDeviceContext, ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct, std::vector<UINT> &indices,
+	materialConstBuffer childMaterial)
 {
 	
 	this->vertices = new std::vector<Vertex>;
@@ -31,6 +32,7 @@ Model::Model(std::vector<Vertex> *vertArray, std::string * texturePath, ID3D11De
 		
 	}
 
+	this->materialValues = childMaterial;
 	this->gDeviceContext = gDeviceContext;
 	XMStoreFloat4x4(&this->worldMatrix, XMMatrixIdentity());
 	this->worldBuffer = worldBuffer;
@@ -154,7 +156,7 @@ Model::Model(std::string filePath, ID3D11Device* gDevice, ID3D11DeviceContext * 
 	std::string textureFileName;
 	std::vector<UINT> indices;
 	this->renderState.normalMap = FALSE;
-	ObjHandler* importer = new ObjHandler(&children,filePath,vertices, textureFileName,gDevice,gDeviceContext,worldBuffer,worldStruct,indices);//Make import
+	ObjHandler* importer = new ObjHandler(&children,filePath,vertices, textureFileName,gDevice,gDeviceContext,worldBuffer,worldStruct,indices, materialValues);//Make import
 
 	//Load Texture 
 	loadTexture(gDevice, textureFileName);

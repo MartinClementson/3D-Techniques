@@ -106,28 +106,24 @@ void ObjHandler::MtlHandler(std::string &filePath, std::vector<Material> &objMat
 			}
 			else if (line2 == "Kd")
 			{
-				loading.ignore(); //skip a space
 				loading >> tempMat.values.KD.x;
 				loading >> tempMat.values.KD.y;
 				loading >> tempMat.values.KD.z;
 			}
 			else if (line2 == "Ka")
 			{
-				loading.ignore(); // skip a space
 				loading >> tempMat.values.KA.x;
 				loading >> tempMat.values.KA.y;
 				loading >> tempMat.values.KA.z;
 			}
 			else if (line2 == "Ks")
 			{
-				loading.ignore(); //skip a space
 				loading >> tempMat.values.KS.x;
 				loading >> tempMat.values.KS.y;
 				loading >> tempMat.values.KS.z;
 			}
 			else if (line2 == "Ns")
 			{
-				loading.ignore();
 				loading >> tempMat.values.NS;
 			}
 			else if (line2 == "map_Kd")
@@ -141,7 +137,7 @@ void ObjHandler::MtlHandler(std::string &filePath, std::vector<Material> &objMat
 }
 
 void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>* modelVerts,
-	std::string &textureName, ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext,
+	Material &material, ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext,
 	ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct, int &count, std::vector<DirectX::XMFLOAT3> *uvCoord,
 	std::vector<DirectX::XMFLOAT3> *vCoord, std::vector<DirectX::XMINT3> *testIn, int &offset, bool &father,
 	std::vector<UINT> &indices, std::vector<DirectX::XMFLOAT3> *vNCoord)
@@ -261,7 +257,8 @@ void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>
 			offset++;
 		}
 		
-		childrenArray[0]->push_back(new Model(&sendCoordinates, &textureName, gDevice, gDeviceContext, worldBuffer, worldStruct, childIndices));
+		childrenArray[0]->push_back(new Model(&sendCoordinates, &material.fileName, gDevice, gDeviceContext,
+			worldBuffer, worldStruct, childIndices, material.values));
 		count = 0;
 	}
 }
@@ -269,7 +266,7 @@ void ObjHandler::create(std::vector<Model*>** childrenArray, std::vector<Vertex>
 ObjHandler::ObjHandler(std::vector<Model*>** childrenArray,std::string filePath, std::vector<Vertex>* modelVerts, std::string &textureName,
 	ID3D11Device* gDevice, ID3D11DeviceContext * gDeviceContext,
 	ID3D11Buffer * worldBuffer, worldConstantBuffer * worldStruct,
-	 std::vector<UINT> &indices)
+	 std::vector<UINT> &indices, materialConstBuffer& parentMaterial)
 {
 
 #pragma region Description
@@ -363,6 +360,7 @@ Engine->render()
 	vector<DirectX::XMINT3> testIn;
 	DirectX::XMINT3 index;
 	vector<Material> objMaterial;
+	Material *sendMaterial = nullptr;
 
 	//std::string mtlLib = "";
 
@@ -397,7 +395,14 @@ Engine->render()
 					{
 						if (objMaterial.at(i).mtlName == tempString)
 						{
-							textureName = objMaterial.at(i).fileName;
+							if (father)
+							{
+								textureName = objMaterial.at(i).fileName;
+								parentMaterial = objMaterial.at(i).values;
+								sendMaterial = &objMaterial.at(i);
+							}
+							else
+								sendMaterial = &objMaterial.at(i);
 							break;
 						}
 					}
@@ -441,12 +446,12 @@ Engine->render()
 								count++;
 								if (loading.peek() == 'u')
 								{
-									create(childrenArray, modelVerts, textureName, gDevice, gDeviceContext, worldBuffer,
+									create(childrenArray, modelVerts, *sendMaterial, gDevice, gDeviceContext, worldBuffer,
 										worldStruct, count, &uvCoord, &vCoord, &testIn, offset, father, indices, &vNCoord);
 								}
 								if (loading.peek() == 'g' || loading.eof())
 								{
-									create(childrenArray, modelVerts, textureName, gDevice, gDeviceContext, worldBuffer,
+									create(childrenArray, modelVerts, *sendMaterial, gDevice, gDeviceContext, worldBuffer,
 										worldStruct, count, &uvCoord, &vCoord, &testIn, offset, father, indices, &vNCoord);
 								}
 							}
