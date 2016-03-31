@@ -1,5 +1,20 @@
 #pragma once
 #include <DirectXMath.h>
+
+
+
+inline bool operator==(const DirectX::XMFLOAT3& a, const DirectX::XMFLOAT3& b)
+{
+	if (
+		a.x == b.x &&
+		a.y == b.y &&
+		a.z == b.z)
+		return true;
+
+	else
+		return false;
+};
+
 struct position {
 
 	operator DirectX::XMFLOAT3() const { return DirectX::XMFLOAT3(x, y, z); } //this is a typecast overload
@@ -210,6 +225,47 @@ struct lightConstantBuffer
 	DirectX::XMFLOAT3 pad;
 };
 
+
+
+struct materialConstBuffer
+{
+	public:DirectX::XMFLOAT3 KA;			//Ambient color 0 - 1
+	private:float padKA;
+
+	public:DirectX::XMFLOAT3 KD;	//Diffuse,  0- 1
+	private:float padKD;
+
+	public:DirectX::XMFLOAT3 KS;	//Specular Color,  0- 1
+	private:float padKS;
+
+	public:float NS;				//Specular power, 0 - 1000
+	private:float padNS[3];
+
+	public:
+	bool operator==(const materialConstBuffer& other)
+	{
+		if (
+			this->KA == other.KA &&
+			this->KD == other.KD &&
+			this->KS == other.KS &&
+			this->NS == other.NS)
+			return true;
+		else
+			return false;
+
+	};
+	materialConstBuffer()
+	{
+		NS = 10.0f;
+		KA.x = 0.5f;
+		KA.y = 0.5f;
+		KA.z = 0.5f;
+
+		KS = DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f);
+	}
+	
+
+};
 struct pixelShaderConstants //hlsl uses 4 byte bools, c++ bools are 1 byte //Every register in hlsl is 16 byte (four floats)
 { /*
 	WINDOWs booleans use 4 bytes, so we will use them instead
@@ -261,4 +317,49 @@ struct pixelShaderConstants //hlsl uses 4 byte bools, c++ bools are 1 byte //Eve
 		return *this;
 	}
 
+};
+struct modelBuffers
+{
+	pixelShaderConstants* renderstate;
+	materialConstBuffer* materialValues;
+	ID3D11Buffer* pixelStateBuffer;
+	ID3D11Buffer* objectMaterialBuffer;
+
+	modelBuffers()
+	{
+		this->renderstate = new pixelShaderConstants();
+		this->materialValues = new materialConstBuffer();
+	};
+	modelBuffers(
+		pixelShaderConstants* renderstate,
+		ID3D11Buffer* pixelStateBuffer,
+		ID3D11Buffer* objectMaterialBuffer)
+	{
+		this->renderstate = renderstate;
+		this->pixelStateBuffer = pixelStateBuffer;
+		this->objectMaterialBuffer = objectMaterialBuffer;
+	};
+	~modelBuffers()
+	{
+		if (this->renderstate != nullptr)
+			delete this->renderstate;
+		if (this->materialValues != nullptr)
+			delete this->materialValues;
+		pixelStateBuffer->Release();
+		objectMaterialBuffer->Release();
+
+	};
+
+
+	bool operator==(const modelBuffers& other)
+	{
+		if (
+			this->renderstate == other.renderstate &&
+			this->pixelStateBuffer == other.pixelStateBuffer &&
+			this->objectMaterialBuffer == other.objectMaterialBuffer)
+			return true;
+		else
+			return false;
+
+	};
 };

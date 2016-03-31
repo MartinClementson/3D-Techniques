@@ -104,10 +104,12 @@ private:
 	lightConstantBuffer lightStruct;
 	ID3D11Buffer* lightBuffer = nullptr;
 
-	pixelShaderConstants pixelStateStruct;
-	ID3D11Buffer* pixelStateBuffer =nullptr; //This buffer is for the booleans in the pixel shader, normal= on/off, etc
-	
-	
+	//pixelShaderConstants pixelStateStruct;
+	//ID3D11Buffer* pixelStateBuffer =nullptr; //This buffer is for the booleans in the pixel shader, normal= on/off, etc
+	//ID3D11Buffer* objectMaterialBuffer; //THis buffer is the material of the object being rendered/ kd,ka,tf,ni
+	//
+	modelBuffers* modelBuffer;
+
 	D3D11_VIEWPORT vp; //Viewport
 	D3D11_VIEWPORT miniMapVP;
 
@@ -155,8 +157,8 @@ public:
 	ID3D11DepthStencilView* getDepthStencilView() { return this->depthStencilView; };
 
 
-	void setDistanceFog(BOOL x) { this->pixelStateStruct.distanceFog = x; sendPixelStateToBuffer(); };
-	void setNormalMap(BOOL x) { this->pixelStateStruct.normalMap = x; sendPixelStateToBuffer(); };
+	void setDistanceFog(BOOL x) { this->modelBuffer->renderstate->distanceFog = x; sendPixelStateToBuffer(); };
+	void setNormalMap(BOOL x) { this->modelBuffer->renderstate->normalMap = x; sendPixelStateToBuffer(); };
 	
 };
 

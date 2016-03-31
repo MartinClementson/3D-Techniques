@@ -4,6 +4,10 @@
 #pragma region Comment
 //pragma region makes the text collapsable
 /*
+	
+	 Author: Martin
+
+
 	What this class does: it creates a render target and store what is rendered
 	to a texture. 
 

@@ -14,6 +14,18 @@ cbuffer pixelShaderConstants: register(b1)
 
 };
 
+cbuffer materialAttributes : register(b2)
+{
+    float3 KA; //Ambient  color
+    float pad1;
+    float3 KD; //Diffuse  color
+    float pad2;
+    float3 KS; //Specular color
+    float pad3;
+    float  NS; //Specular Power
+
+};
+
 SamplerState SampleType;
 
 //modifies how the pixels are written to the polygon face when shaded
@@ -88,22 +100,24 @@ float3 v = normalize(input.camPos - input.wPos.xyz);
 //Reflect is used in the specular shading
 float3 r = reflect(-vRay, normalize(normal));
 
-//Calculate how much of the pixel is to be lit
-float fDot = max(0.0f, dot(normalize(vRay), normalize(normal)));
+//Calculate how much of the pixel is to be lit "intensity"
+float fDot =  saturate(dot(vRay, normalize(normal)));
 
 float3 color = lightColor.xyz;
+   
 
 float3 lightColor = mul(color, intensity);
 
-float shinyPower = 20.0f;
+    float shinyPower = NS;
 
-float3 specularLight = { lightColor.xyz * pow(max(dot(r,v),0.0),shinyPower) };
+float3 specularLight = { KS * pow(max(dot(r,v),0.0f),shinyPower) };
     float3 textureSample;
 
 textureSample = shaderTexture.Sample(SampleType, input.Texture).xyz;
-//float3 diffuse = textureSample * fDot;
 
-float3 ambient = { 0.5f, 0.5f, 0.5f };
+
+    float3 ambient = KA.rgb;
+    //{ 0.5f, 0.5f, 0.5f };
 
 
 
@@ -122,7 +136,7 @@ float3 diffuse = lightColor * fDot;
 
 float3 finalCol = (diffuse + ambient);
 finalCol = textureSample* finalCol; // texture * (diffuse + ambient)
-finalCol = finalCol + specularLight; // + specular
+finalCol = finalCol + specularLight; 
 
 //float4 col ={ (ambient + diffuse + specularLight),1.0 }; //old Calculation
 

@@ -14,7 +14,7 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	this->miniMapCam = new Camera(XMFLOAT3(0.0,100.0,0.0),XMFLOAT3(0.0,-1.0,0.0));
 	this->sky = new SkyBox();
 	
-
+	this->modelBuffer = new modelBuffers();
 	this->heightMap = new Terrain();
 	this->miniMapTexture = new RenderTexture();
 	this->shaderManager = new ShaderManager();
@@ -27,9 +27,9 @@ Engine::Engine(HINSTANCE* hInstance,HWND* winHandle, Input* input)
 	this->postProcessTexture = new RenderTexture();
 	drawCount = 0;
 	CoInitialize((LPVOID)0);
-	this->pixelStateStruct.distanceFog = TRUE;
+	this->modelBuffer->renderstate->distanceFog = TRUE;
 	
-	this->pixelStateStruct.normalMap = FALSE;
+	this->modelBuffer->renderstate->normalMap = FALSE;
 
 
 
@@ -226,9 +226,11 @@ void Engine::release()
 	depthState->Release();
 	depthStencilView->Release();
 
+	/*objectMaterialBuffer->Release();
+	pixelStateBuffer->Release();*/
+	delete modelBuffer;
 
 	worldBuffer->Release();
-	pixelStateBuffer->Release();
 	ui->Release();
 	animationModel->Release();
 	postProcess->Release();
@@ -341,12 +343,32 @@ void Engine::createConstantBuffers()
 	bufferDescPixelBools.MiscFlags = 0;
 	bufferDescPixelBools.StructureByteStride = 0;
 
-	hr = this->gDevice->CreateBuffer(&bufferDescPixelBools, nullptr, &pixelStateBuffer);
+	hr = this->gDevice->CreateBuffer(&bufferDescPixelBools, nullptr, &this->modelBuffer->pixelStateBuffer);
 	if (SUCCEEDED(hr))
 	{
 
-		this->gDeviceContext->PSSetConstantBuffers(1, 1, &pixelStateBuffer);
+		this->gDeviceContext->PSSetConstantBuffers(1, 1, &this->modelBuffer->pixelStateBuffer);
 		this->sendPixelStateToBuffer();
+	}
+
+
+
+	//Object material buffer
+	CD3D11_BUFFER_DESC bufferDescMaterial;
+	ZeroMemory(&bufferDescMaterial, sizeof(bufferDescMaterial));
+	bufferDescMaterial.ByteWidth = sizeof(materialConstBuffer);
+	bufferDescMaterial.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufferDescMaterial.Usage = D3D11_USAGE_DYNAMIC;
+	bufferDescMaterial.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bufferDescMaterial.MiscFlags = 0;
+	bufferDescPixelBools.StructureByteStride = 0;
+
+	hr = this->gDevice->CreateBuffer(&bufferDescMaterial, nullptr, &this->modelBuffer->objectMaterialBuffer);
+	if (SUCCEEDED(hr))
+	{
+
+		this->gDeviceContext->PSSetConstantBuffers(2, 1, &this->modelBuffer->objectMaterialBuffer);
+		
 	}
 
 
@@ -368,7 +390,7 @@ void Engine::createRasterizerState()
 		rastDesc.FillMode = D3D11_FILL_SOLID;
 
 
-	rastDesc.CullMode = D3D11_CULL_BACK;//D3D11_CULL_NONE; //disable back face culling
+	rastDesc.CullMode = D3D11_CULL_NONE; //disable back face culling //D3D11_CULL_BACK;//
 	rastDesc.DepthClipEnable = true;
 
 	hr = gDevice->CreateRasterizerState(&rastDesc, &gRasterizerState);
@@ -398,7 +420,8 @@ HRESULT Engine::CreateDirect3DContext(HWND* wndHandle)
 	scd.BufferDesc.RefreshRate.Numerator = 60; //fps cap
 	scd.BufferDesc.RefreshRate.Denominator = 1;
 	
-	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL,
+	HRESULT hr = D3D11CreateDeviceAndSwapChain(
+		NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
 		DEBUG,
@@ -747,7 +770,7 @@ void Engine::render()
 			
 			renderScene(this->cam);
 			this->shaderManager->setActiveShaders(CUBEMAPSHADER);	//Apply dynamic cube map shader
-			this->cubeMapModels->at(0)->render(&this->pixelStateStruct,this->pixelStateBuffer);					//Render the model using the dynamix cube map
+			this->cubeMapModels->at(0)->render(modelBuffer);					//Render the model using the dynamix cube map
 			
 		}
 
@@ -774,7 +797,7 @@ void Engine::render()
 
 			renderScene(this->cam);									//Render scene
 			this->shaderManager->setActiveShaders(CUBEMAPSHADER);	//Apply dynamic cube map shader
-			this->cubeMapModels->at(0)->render(&this->pixelStateStruct, this->pixelStateBuffer);					//Render the model using the dynamix cube map
+			this->cubeMapModels->at(0)->render(modelBuffer);					//Render the model using the dynamix cube map
 
 
 
@@ -865,7 +888,7 @@ void Engine::renderScene(Camera *camera) // This function will render the scene,
 
 		
 
-		this->modelsColor->at(i)->render(&this->pixelStateStruct, this->pixelStateBuffer);
+		this->modelsColor->at(i)->render(this->modelBuffer);
 
 
 
@@ -883,7 +906,7 @@ void Engine::renderScene(Camera *camera) // This function will render the scene,
 	for (int i = 0; i < this->modelsTexture->size(); i++)
 	{
 		 
-		this->modelsTexture->at(i)->render(&this->pixelStateStruct,  this->pixelStateBuffer);
+		this->modelsTexture->at(i)->render(this->modelBuffer);
 	}
 	//
 	////////////////////////////////////////////
@@ -1054,13 +1077,13 @@ void Engine::sendPixelStateToBuffer()
 	ZeroMemory(&mappedResource, sizeof(mappedResource));
 
 	//mapping to the matrixbuffer
-	this->gDeviceContext->Map(pixelStateBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	this->gDeviceContext->Map(this->modelBuffer->pixelStateBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
 	pixelShaderConstants* temporary = (pixelShaderConstants*)mappedResource.pData;
 
-	*temporary = pixelStateStruct;
+	*temporary = *this->modelBuffer->renderstate;
 
-	this->gDeviceContext->Unmap(pixelStateBuffer, 0);
+	this->gDeviceContext->Unmap(this->modelBuffer->pixelStateBuffer, 0);
 
 }
 
