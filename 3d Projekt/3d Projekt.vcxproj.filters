@@ -184,7 +184,6 @@
     <ClInclude Include="Input.h">
       <Filter>Classes\Input</Filter>
     </ClInclude>
-    <ClInclude Include="bth_image.h" />
     <ClInclude Include="DirectXToolkit.h" />
     <ClInclude Include="GameTimer.h">
       <Filter>Classes\GameTimer</Filter>

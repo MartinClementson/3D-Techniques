@@ -149,6 +149,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -179,7 +181,6 @@
     <ClCompile Include="windowInit.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="bth_image.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ComputeShaderClass.h" />
     <ClInclude Include="Constants.h" />
