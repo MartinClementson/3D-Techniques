@@ -1,4 +1,4 @@
-# 3d-projekt
+# 3d- Project
 
 This project was done during a course called 3D-Programming. 
 The project contains various rendering techniques.
