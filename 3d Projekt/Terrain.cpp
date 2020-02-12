@@ -1,7 +1,6 @@
 #include "Terrain.h"
 #include <fstream>
 
-
 void Terrain::copyIndexArray(void * indexList)
 {
 	memcpy(indexList, (void*)indices, sizeof(unsigned long)*m_vertexCount);
