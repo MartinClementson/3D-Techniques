@@ -8,7 +8,6 @@ DynamicCubeMap::DynamicCubeMap()
 {
 }
 
-
 DynamicCubeMap::~DynamicCubeMap()
 {
 }
